@@ -1,0 +1,101 @@
+# --- Loksit ja virheet ---
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# --- Käyttöjärjestelmän roskat (TÄRKEÄT PUUTTUI) ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# --- IDE ja Editori asetukset (Suositeltavaa) ---
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# --- Projektikohtaiset tiedostot (TÄRKEIN LISÄYS) ---
+# Estetään testidatan ja potilastapausten joutuminen Gitiin
+*.medcase
+*.zip
+# Jos purat zippejä johonkin temp-kansioon testatessa
+temp/
+uploads/
+
+# --- Build-kansiot (Vite ja Server) ---
+dist/
+dist-ssr/
+build/
+# Monorepossa joskus serverin build-kansio on eri niminen, esim:
+server/dist/
+client/dist/
+
+# --- Riippuvuudet ---
+node_modules/
+# Tämä hoitaa myös client/node_modules ja server/node_modules
+jspm_packages/
+
+# --- Ympäristömuuttujat (Erittäin tärkeä) ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+!.env.example
+
+# --- Muut yleiset Node/Web roskat ---
+pids
+*.pid
+*.seed
+*.pid.lock
+lib-cov
+coverage
+*.lcov
+.nyc_output
+.grunt
+bower_components
+.lock-wscript
+build/Release
+web_modules/
+*.tsbuildinfo
+.npm
+.eslintcache
+.stylelintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+.cache
+.parcel-cache
+.next
+out
+.nuxt
+.vuepress/dist
+.temp
+.svelte-kit/
+**/.vitepress/dist
+**/.vitepress/cache
+.docusaurus
+.serverless/
+.fusebox/
+.dynamodb/
+.firebase/
+.tern-port
+.vscode-test
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Vite logs files
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*

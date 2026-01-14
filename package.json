@@ -1,0 +1,27 @@
+{
+  "name": "medcases-root",
+  "version": "1.0.0",
+  "description": "A teaching tool for creating and presenting medical cases classroom quizzes",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paunoko/medcases.git"
+  },
+  "keywords": [],
+  "author": "Pauno Komulainen",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/paunoko/medcases/issues"
+  },
+  "homepage": "https://github.com/paunoko/medcases#readme"
+}
