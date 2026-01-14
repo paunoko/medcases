@@ -1,3 +1,6 @@
+# Project Structure
+
+```text
 medcases/
 ├── package.json              # Juuri: Orkestroi serverin ja clientin käynnistyksen
 ├── .gitignore                # Git-asetukset (sis. .medcase-eston)
@@ -40,3 +43,4 @@ medcases/
             ├── EditorView.tsx        # Editorin UI
             ├── TeacherView.tsx       # Opettajan dashboard
             └── StudentView.tsx       # Opiskelijan mobiili-UI
+```
