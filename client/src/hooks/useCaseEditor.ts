@@ -8,7 +8,7 @@ export const useCaseEditor = () => {
     const [caseData, setCaseData] = useState<PatientCase>({
         meta: {
             id: uuid(),
-            title: 'Uusi potilastapaus',
+            title: '',
             description: '',
             author: '',
             created: new Date().toISOString(),
@@ -29,9 +29,9 @@ export const useCaseEditor = () => {
         const newSlide: any = {
             id: uuid(),
             type,
-            title: 'Uusi dia',
+            title: '',
             content: '',
-            question: type !== 'INFO' ? 'Kirjoita kysymys...' : undefined,
+            question: type !== 'INFO' ? '' : undefined,
             options: type === 'MULTIPLE_CHOICE' ? [] : undefined,
             correctAnswer: type === 'TRUE_FALSE' ? true : undefined
         };
@@ -81,7 +81,7 @@ export const useCaseEditor = () => {
             setActiveSlideIndex(0);
         } catch (e) {
             console.error("Lataus epäonnistui", e);
-            alert("Tiedoston lataus epäonnistui. Varmista että se on .medcase tai .zip");
+            alert("Tiedoston lataus epäonnistui. Varmista että se on \".medcase\"-tiedosto.");
         }
     };
 

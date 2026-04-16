@@ -77,8 +77,8 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
         <div className="flex h-screen bg-gray-900 text-white overflow-hidden">
 
             {/* VASEN: Projektori (Tämä näkyy oppilaille) */}
-            <div className="flex-1 p-4 flex flex-col">
-                <div className="flex-1 relative">
+            <div className="flex-1 p-4 flex flex-col min-h-0">
+                <div className="flex-1 relative min-h-0">
                     {session.currentSlide && (
                         <SlideRenderer
                             slide={session.currentSlide}
