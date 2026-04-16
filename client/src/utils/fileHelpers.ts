@@ -2,7 +2,7 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import type { PatientCase } from '../types';
 
-// Tyyppi puretuille kuville: tiedostonimi -> selaimen sisäinen URL
+// Type for extracted images: filename -> browser internal URL
 export type ImageMap = Record<string, string>;
 
 export const saveCaseToZip = async (
@@ -11,13 +11,13 @@ export const saveCaseToZip = async (
 ) => {
     const zip = new JSZip();
 
-    // 1. Lisätään JSON
+    // 1. Add JSON
     zip.file("data.json", JSON.stringify(caseData, null, 2));
 
-    // 2. Lisätään kuvat images-kansioon
+    // 2. Add images to images-folder
     const imgFolder = zip.folder("images");
     if (imgFolder) {
-        // Käydään läpi vain ne kuvat, joita oikeasti käytetään datassa
+        // Process only images that are actually used in data
         caseData.slides.forEach(slide => {
             if (slide.imageFileName && imageFiles[slide.imageFileName]) {
                 imgFolder.file(slide.imageFileName, imageFiles[slide.imageFileName]);
@@ -25,10 +25,10 @@ export const saveCaseToZip = async (
         });
     }
 
-    // 3. Generoidaan ja ladataan
+    // 3. Generate and download
     const blob = await zip.generateAsync({ type: "blob" });
 
-    // Siivotaan tiedostonimi ja lisätään aikaleima
+    // Sanitize filename and add timestamp
     const safeName = caseData.meta.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
 
     const date = new Date();
@@ -46,25 +46,25 @@ export const loadCaseFromZip = async (file: File) => {
     const zip = new JSZip();
     const loadedZip = await zip.loadAsync(file);
 
-    // 1. Luetaan JSON
+    // 1. Read JSON
     const jsonFile = loadedZip.file("data.json");
     if (!jsonFile) throw new Error("Virheellinen tiedosto: data.json puuttuu");
 
     const jsonStr = await jsonFile.async("string");
     const caseData = JSON.parse(jsonStr) as PatientCase;
 
-    // 2. Luetaan kuvat ja luodaan niille Object URLit
+    // 2. Read images and create Object URLs
     const images: ImageMap = {};
-    const imageFiles: Record<string, File> = {}; // Tarvitaan editoria varten
+    const imageFiles: Record<string, File> = {}; // Required for the editor
 
     const imageFolder = loadedZip.folder("images");
 
     if (imageFolder) {
         const filePaths = Object.keys(imageFolder.files);
 
-        // Ajetaan rinnakkain nopeuden vuoksi
+        // Run in parallel for speed
         await Promise.all(filePaths.map(async (relativePath) => {
-            // Ohitetaan kansiot
+            // Skip directories
             if (imageFolder.files[relativePath].dir) return;
 
             const fileEntry = imageFolder.files[relativePath];
@@ -72,10 +72,10 @@ export const loadCaseFromZip = async (file: File) => {
 
             const fileName = relativePath.split('/').pop() || relativePath;
 
-            // Luodaan URL (esim. blob:http://localhost...)
+            // Create URL (e.g., blob:http://localhost...)
             const objectUrl = URL.createObjectURL(blob);
 
-            // Luodaan File-objekti editoria varten
+            // Create File object for the editor
             const fileObj = new File([blob], fileName, { type: blob.type });
 
             images[fileName] = objectUrl;

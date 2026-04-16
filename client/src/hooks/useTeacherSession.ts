@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import type { PatientCase, StudentPayload } from '../types';
 import { createStudentPayload } from '../utils/sanitizer';
 
-// Productionissa käytetään suhteellista polkua, devissä localhostia
+// Use relative path in production, localhost in dev
 const SOCKET_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_SERVER_URL || 'http://localhost:3000');
 
 export const useTeacherSession = (patientCase: PatientCase | null) => {
@@ -17,7 +17,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
 
     const socketRef = useRef<Socket | null>(null);
 
-    // Yhteys
+    // Connection
     useEffect(() => {
         const newSocket = io(SOCKET_URL, {
             path: `${import.meta.env.BASE_URL}/socket.io`.replace('//', '/')
@@ -32,7 +32,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         return () => { newSocket.disconnect(); };
     }, []);
 
-    // Lähetyslogiikka
+    // Broadcast logic
     const broadcastCurrentSlide = useCallback(() => {
         if (!socketRef.current || !roomId || !patientCase) return;
 
@@ -42,12 +42,12 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         socketRef.current.emit('PUSH_UPDATE', { roomId, payload });
     }, [currentIndex, slideState, roomId, patientCase]);
 
-    // Reagoi tilamuutoksiin
+    // React to state changes
     useEffect(() => {
         if (roomId) broadcastCurrentSlide();
     }, [currentIndex, slideState, roomId, broadcastCurrentSlide]);
 
-    // Toiminnot
+    // Actions
     const createRoom = () => socketRef.current?.emit('CREATE_ROOM');
 
     const nextSlide = () => {

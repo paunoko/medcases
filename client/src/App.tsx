@@ -10,7 +10,7 @@ function App() {
         <Route path="/teacher" element={<TeacherView />} />
         <Route path="/editor" element={<EditorView />} />
 
-        {/* Dev Menu: Helpottaa testailua */}
+        {/* Dev Menu: Facilitates testing */}
         <Route path="/menu" element={
           <div className="min-h-screen flex flex-col items-center justify-center space-y-6 bg-gray-50">
             <h1 className="text-4xl font-bold text-gray-800">MedCases Dev Menu</h1>

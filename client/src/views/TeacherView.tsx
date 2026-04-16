@@ -9,11 +9,11 @@ import type { PatientCase } from '../types';
 
 export const TeacherView = () => {
     const navigate = useNavigate();
-    // Tila ladatulle datalle
+    // State for loaded data
     const [caseData, setCaseData] = useState<PatientCase | null>(null);
     const [images, setImages] = useState<Record<string, string>>({});
 
-    // Jos dataa ei ole, näytä latausruutu
+    // If no data, show upload screen
     if (!caseData) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4 relative">
@@ -55,7 +55,7 @@ export const TeacherView = () => {
     return <Dashboard caseData={caseData} images={images} onExit={() => setCaseData(null)} />;
 };
 
-// Varsinainen istunto
+// Actual session
 const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images: Record<string, string>, onExit: () => void }) => {
     const session = useTeacherSession(caseData);
 
@@ -77,7 +77,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
     return (
         <div className="flex h-screen bg-gray-900 text-white overflow-hidden">
 
-            {/* VASEN: Projektori (Tämä näkyy oppilaille) */}
+            {/* LEFT: Projector (This is what students see) */}
             <div className="flex-1 p-4 flex flex-col min-h-0">
                 <div className="flex-1 relative min-h-0">
                     {session.currentSlide && (
@@ -91,7 +91,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                 </div>
             </div>
 
-            {/* OIKEA: Kontrollipaneeli (Vain opettajalle) */}
+            {/* RIGHT: Control Panel (Teacher only) */}
             <div className="w-80 bg-gray-800 p-6 flex flex-col border-l border-gray-700">
 
                 <div className="bg-gray-700 p-4 rounded-lg mb-6 text-center">
@@ -106,7 +106,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                 </div>
 
                 <div className="flex-1 overflow-y-auto mb-4">
-                    {/* Opettajan muistiinpanot */}
+                    {/* Teacher notes */}
                     {session.currentSlide?.teacherNotes && (
                         <div className="bg-yellow-900/50 border border-yellow-600 p-3 rounded text-yellow-100 text-sm mb-4">
                             <strong>Note:</strong> {session.currentSlide.teacherNotes}
@@ -119,7 +119,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                 </div>
 
                 <div className="flex flex-col gap-3 mt-auto">
-                    {/* PÄÄNAPPI */}
+                    {/* MAIN BUTTON */}
                     {session.slideState !== 'REVEALED' && session.currentSlide?.type !== 'INFO' ? (
                         <button
                             onClick={session.revealAnswer}

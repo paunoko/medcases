@@ -97,13 +97,13 @@ export const EditorView = () => {
 
       <div className="flex flex-1 overflow-hidden">
 
-        {/* VASEN: WYSIWYG Esikatselu / Editori */}
+        {/* LEFT: WYSIWYG Preview / Editor */}
         <div className="flex-1 p-4 flex flex-col bg-gray-900 overflow-hidden min-h-0">
           <div className="flex-1 relative transition-all duration-300 min-h-0">
             {activeSlide ? (
               <div className="flex flex-col h-full w-full bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-200 text-left text-gray-900 p-8 gap-6 animate-fade-in min-h-0">
                 
-                {/* Otsikko */}
+                {/* Title */}
                 <input
                   className="text-5xl font-bold text-gray-800 shrink-0 w-full bg-transparent border-b-2 border-dashed border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:outline-none transition-colors pb-2"
                   placeholder="Dian otsikko..."
@@ -111,9 +111,9 @@ export const EditorView = () => {
                   onChange={e => updateSlide(activeSlideIndex!, 'title', e.target.value)}
                 />
 
-                {/* Keskiosa: Teksti ja Kuva (50/50) */}
+                {/* Middle part: Text and Image (50/50) */}
                 <div className="flex flex-row gap-6 flex-1 min-h-0">
-                  {/* Sisältöteksti */}
+                  {/* Content text */}
                   <textarea
                     ref={contentRef}
                     className="flex-1 min-h-0 overflow-y-auto prose max-w-none text-3xl leading-snug text-gray-700 whitespace-pre-wrap bg-transparent border-2 border-dashed border-transparent hover:border-gray-200 focus:border-blue-500 focus:outline-none resize-none transition-colors rounded-lg p-2 -ml-2 custom-scrollbar"
@@ -122,7 +122,7 @@ export const EditorView = () => {
                     onChange={e => updateSlide(activeSlideIndex!, 'content', e.target.value)}
                   />
 
-                  {/* Kuva */}
+                  {/* Image */}
                   <div className="flex-1 min-h-0 flex items-center justify-center bg-black/5 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50/50 transition-colors relative group">
                     {(activeSlide.imageFileName && imagePreviews[activeSlide.imageFileName]) ? (
                       <>
@@ -161,7 +161,7 @@ export const EditorView = () => {
                   </div>
                 </div>
 
-                {/* Interaktio (Alaosa) */}
+                {/* Interaction (Bottom part) */}
                 <div className={`shrink-0 flex flex-col gap-6 ${(!activeSlide.imageFileName || !imagePreviews[activeSlide.imageFileName]) ? 'mt-auto' : ''}`}>
                   {activeSlide.type !== 'INFO' && (
                     <input
@@ -258,7 +258,7 @@ export const EditorView = () => {
           </div>
         </div>
 
-        {/* OIKEA: Asetukset ja Diat (TeacherView w-80 paneeli) */}
+        {/* RIGHT: Settings and Slides (TeacherView w-80 panel) */}
         <div className="w-80 bg-gray-800 flex flex-col border-l border-gray-700 p-6 overflow-hidden">
           <div className="mb-6 bg-gray-750 p-4 rounded-xl border border-gray-700 shadow-inner bg-gray-900/50">
             <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Tapauksen nimi</label>

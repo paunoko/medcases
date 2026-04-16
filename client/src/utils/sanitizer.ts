@@ -5,19 +5,19 @@ export const createStudentPayload = (
     state: 'WAITING' | 'ANSWERING' | 'LOCKED' | 'REVEALED'
 ): StudentPayload => {
 
-    // Perusrunko
+    // Base structure
     const payload: StudentPayload = {
         slideId: slide.id,
         type: slide.type,
         state: state
     };
 
-    // Jos ollaan INFO-tilassa tai vastaus on paljastettu, voidaan lähettää enemmän tietoa.
-    // Mutta pidetään tämä yksinkertaisena: Opiskelija näkee tekstin VASTA kun slide on aktiivinen.
+    // If in INFO state or answer is revealed, more info can be sent.
+    // But let's keep it simple: Student sees text ONLY when the slide is active.
 
     if (slide.type === 'MULTIPLE_CHOICE') {
         payload.questionText = slide.question;
-        // TÄRKEÄÄ: Mapataan uusi objekti, jotta 'isCorrect' ja 'teacherNotes' jäävät pois
+        // IMPORTANT: Map to a new object to exclude 'isCorrect' and 'teacherNotes'
         payload.options = slide.options.map(opt => ({
             id: opt.id,
             text: opt.text
@@ -26,7 +26,7 @@ export const createStudentPayload = (
 
     else if (slide.type === 'TRUE_FALSE') {
         payload.questionText = slide.question;
-        // Luodaan keinotekoiset vaihtoehdot
+        // Create artificial options
         payload.options = [
             { id: 'true', text: 'Kyllä / Tosi' },
             { id: 'false', text: 'Ei / Epätosi' }
@@ -35,7 +35,7 @@ export const createStudentPayload = (
 
     else if (slide.type === 'OPEN_TEXT') {
         payload.questionText = slide.question;
-        // Ei modelAnsweria!
+        // No modelAnswer!
     }
 
     return payload;

@@ -58,7 +58,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
     );
   }
 
-  // 2. ODOTUS
+  // 2. WAITING
   if (isWaiting || !activeSlide) {
     return (
       <div className="h-full bg-blue-600 flex flex-col items-center justify-center text-white p-8 text-center">
@@ -69,7 +69,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
     );
   }
 
-  // 3. INFO-DIA (Passiivinen)
+  // 3. INFO SLIDE (Passive)
   if (activeSlide.type === 'INFO') {
     return (
       <div className="h-full bg-gray-100 flex flex-col items-center justify-center p-8 text-center">
@@ -79,7 +79,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
     );
   }
 
-  // 4. VASTAUSLOMAKE
+  // 4. RESPONSE FORM
   return (
     <div className="h-full bg-white flex flex-col p-4">
       <div className="py-4 border-b mb-4">

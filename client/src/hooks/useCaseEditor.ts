@@ -16,9 +16,9 @@ export const useCaseEditor = () => {
         slides: []
     });
 
-    // Tiedostot muistissa (filename -> File)
+    // Files in memory (filename -> File)
     const [imageFiles, setImageFiles] = useState<Record<string, File>>({});
-    // Esikatselut (filename -> blobUrl)
+    // Previews (filename -> blobUrl)
     const [imagePreviews, setImagePreviews] = useState<Record<string, string>>({});
 
     const [activeSlideIndex, setActiveSlideIndex] = useState<number | null>(null);

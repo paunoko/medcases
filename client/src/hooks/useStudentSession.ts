@@ -32,7 +32,7 @@ export const useStudentSession = () => {
         newSocket.on('SLIDE_UPDATE', (payload: StudentPayload) => {
             setIsWaiting(false);
             setActiveSlide((prev) => {
-                // Nollataan vastaustila vain jos slide vaihtuu oikeasti
+                // Reset answer state only if the slide actually changes
                 if (prev?.slideId !== payload.slideId) {
                     setHasAnswered(false);
                 }

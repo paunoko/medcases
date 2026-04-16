@@ -4,8 +4,8 @@ import { useResizeText } from '../hooks/useResizeText';
 
 interface Props {
     slide: CaseSlide;
-    imageMap?: Record<string, string>; // Tiedostonimi -> Blob URL
-    answers?: any[]; // Opiskelijoiden vastaukset (vain opettajan näkymässä)
+    imageMap?: Record<string, string>; // Filename -> Blob URL
+    answers?: any[]; // Student answers (only in teacher view)
     isRevealed?: boolean;
 }
 
@@ -13,10 +13,10 @@ export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], 
     const contentRef = useRef<HTMLDivElement>(null);
     useResizeText(contentRef, [slide.content, slide.imageFileName]);
 
-    // Kuvan URLin haku
+    // Get image URL
     const imageUrl = slide.imageFileName && imageMap ? imageMap[slide.imageFileName] : null;
 
-    // Lasketaan vastausjakauma (vain jos vastauksia on annettu)
+    // Calculate answer distribution (only if answers provided)
     const getPercentage = (optionId: string) => {
         if (answers.length === 0) return 0;
         const count = answers.filter(a => {
@@ -31,21 +31,21 @@ export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], 
     return (
         <div className="flex flex-col h-full w-full bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200 text-left text-gray-900 p-8 gap-6">
 
-            {/* Otsikko */}
+            {/* Title */}
             {slide.title && (
                 <h2 className="text-5xl font-bold text-gray-800 shrink-0">{slide.title}</h2>
             )}
 
-            {/* Keskiosa: Teksti ja Kuva (50/50) */}
+            {/* Middle part: Text and Image (50/50) */}
             <div className={`flex flex-row gap-6 flex-1 min-h-0 ${(slide.content || imageUrl) ? '' : 'hidden'}`}>
-                {/* Sisältöteksti */}
+                {/* Content text */}
                 {slide.content && (
                     <div ref={contentRef} className="flex-1 min-h-0 overflow-y-auto prose max-w-none text-3xl leading-snug text-gray-700 whitespace-pre-wrap custom-scrollbar pr-4">
                         {slide.content}
                     </div>
                 )}
 
-                {/* Kuva - venyy tilan mukaan */}
+                {/* Image - expands to fit space */}
                 {imageUrl && (
                     <div className="flex-1 min-h-0 flex justify-center items-center bg-black/5 rounded-lg overflow-hidden border border-gray-200">
                         <img
@@ -57,7 +57,7 @@ export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], 
                 )}
             </div>
 
-            {/* Interaktio (Kysymykset) */}
+            {/* Interaction (Questions) */}
             <div className={`shrink-0 flex flex-col gap-6 ${!imageUrl ? 'mt-auto' : ''}`}>
 
                 {(slide.type === 'MULTIPLE_CHOICE' || slide.type === 'TRUE_FALSE' || slide.type === 'OPEN_TEXT') && slide.question && (
@@ -66,7 +66,7 @@ export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], 
                     </h3>
                 )}
 
-                {/* Monivalinta / True-False vaihtoehdot */}
+                {/* Multiple Choice / True-False options */}
                 {(slide.type === 'MULTIPLE_CHOICE' || slide.type === 'TRUE_FALSE') && (
                     <div className="flex flex-wrap gap-4">
                         {(slide.type === 'TRUE_FALSE'
@@ -78,7 +78,7 @@ export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], 
 
                             return (
                                 <div key={opt.id} className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all ${isRevealed && isCorrect ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white'}`}>
-                                    {/* Tulos-palkki taustalla */}
+                                    {/* Result bar in background */}
                                     {isRevealed && (
                                         <div
                                             className="absolute top-0 left-0 h-full bg-blue-100 opacity-30 transition-all duration-1000 rounded-xl"
@@ -96,7 +96,7 @@ export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], 
                     </div>
                 )}
 
-                {/* Vapaa teksti */}
+                {/* Open text */}
                 {slide.type === 'OPEN_TEXT' && (
                     <div className="space-y-4">
                         <div className="flex flex-wrap gap-3 max-h-60 overflow-y-auto p-2">
@@ -108,7 +108,7 @@ export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], 
                             {answers.length === 0 && <div className="text-2xl text-gray-400 italic">Odotetaan vastauksia...</div>}
                         </div>
 
-                        {/* Mallivastaus */}
+                        {/* Model answer */}
                         {isRevealed && (
                             <div className="mt-4 p-6 bg-yellow-50 border-2 border-yellow-300 rounded-2xl">
                                 <h4 className="font-bold text-2xl text-yellow-800 mb-2">Mallivastaus / Huomioita:</h4>

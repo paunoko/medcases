@@ -18,7 +18,7 @@ export const LandingView = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center">
-            {/* Tabs - Piilotetaan jos oppilas on istunnossa */}
+            {/* Tabs - Hidden if student is in session */}
             {!inSession && (
                 <div className="flex space-x-4 mt-8 mb-4 z-10">
                     <button
