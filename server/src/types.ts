@@ -1,17 +1,17 @@
-// Nämä voisivat olla yhteiskäytössä, mutta pidetään erillään selkeyden vuoksi.
+// These could be shared, but kept separate for clarity.
 
 export type RoomStatus = 'WAITING' | 'ANSWERING' | 'LOCKED' | 'REVEALED';
 
-// Opiskelijan vastaus
+// Student's answer
 export interface StudentAnswer {
   socketId: string;
   slideId: string;
-  answer: string | string[]; // Option ID tai tekstivastaus (tai lista ID:itä)
+  answer: string | string[]; // Option ID or text answer (or list of IDs)
   submittedAt: number; // Timestamp
 }
 
-// Payload, jonka serveri välittää opiskelijoille
-// (Tämä on sama kuin clientin StudentPayload, mutta serveri ei välitä sisällöstä)
+// Payload that the server broadcasts to students
+// (This is identical to the client's StudentPayload, but the server does not handle its rendering content)
 export interface BroadcastPayload {
   slideId: string;
   type: string;
@@ -20,17 +20,17 @@ export interface BroadcastPayload {
   state: RoomStatus;
 }
 
-// Huoneen tila palvelimen muistissa
+// Room state in the server memory
 export interface RoomState {
   roomId: string;
   teacherSocketId: string;
 
-  // Nykyinen aktiivinen dia (mitä opiskelijat näkevät)
+  // The current active slide payload (what the students see)
   currentPayload: BroadcastPayload | null;
 
-  // Kaikki tähän diaan tulleet vastaukset
+  // All answers submitted for this slide
   answers: StudentAnswer[];
 
-  // Opiskelijoiden lkm (socket room size)
+  // Number of students (socket room size)
   studentCount: number;
 }

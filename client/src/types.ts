@@ -1,16 +1,16 @@
-// --- YLEISET APUTYYPIT ---
+// --- CORE HELPER TYPES ---
 
 export type SlideType = 'INFO' | 'MULTIPLE_CHOICE' | 'TRUE_FALSE' | 'OPEN_TEXT';
 
-// --- DATA RAKENTEET (Tallennettu JSON) ---
+// --- DATA STRUCTURES (Saved JSON) ---
 
 export interface Option {
   id: string;
   text: string;
-  isCorrect?: boolean; // Opettajan tiedossa, ei lähetetä oppilaalle heti
+  isCorrect?: boolean; // Known by the teacher, not sent to the student immediately
 }
 
-// 1. Info-dia (vain tekstiä/kuvaa)
+// 1. Info slide (text/image only)
 export interface InfoSlide {
   id: string;
   type: 'INFO';
@@ -20,19 +20,19 @@ export interface InfoSlide {
   teacherNotes?: string;
 }
 
-// 2. Monivalinta
+// 2. Multiple Choice
 export interface MultipleChoiceSlide {
   id: string;
   type: 'MULTIPLE_CHOICE';
   title: string;
-  content: string; // Johdantoteksti
+  content: string; // Introduction text
   imageFileName?: string;
   teacherNotes?: string;
-  question: string; // Varsinainen kysymys
+  question: string; // The actual question
   options: Option[];
 }
 
-// 3. Kyllä/Ei (Boolean)
+// 3. True/False (Boolean)
 export interface BooleanSlide {
   id: string;
   type: 'TRUE_FALSE';
@@ -44,7 +44,7 @@ export interface BooleanSlide {
   correctAnswer: boolean;
 }
 
-// 4. Vapaa teksti
+// 4. Open text
 export interface OpenTextSlide {
   id: string;
   type: 'OPEN_TEXT';
@@ -53,17 +53,17 @@ export interface OpenTextSlide {
   imageFileName?: string;
   teacherNotes?: string;
   question: string;
-  modelAnswer?: string; // Mallivastaus opettajalle
+  modelAnswer?: string; // Model answer for the teacher
 }
 
-// Union-tyyppi, joka kokoaa kaikki diat
+// Union type that aggregates all slides
 export type CaseSlide = 
   | InfoSlide 
   | MultipleChoiceSlide 
   | BooleanSlide 
   | OpenTextSlide;
 
-// Juuriobjekti (.medcase tiedoston sisältö)
+// Root object (.medcase file content)
 export interface PatientCase {
   meta: {
     id: string;
@@ -75,13 +75,13 @@ export interface PatientCase {
   slides: CaseSlide[];
 }
 
-// --- SOVELLUSTILA (UI State) ---
+// --- APPLICATION STATE (UI State) ---
 
-// Data, joka lähetetään opiskelijalle (Sanitoitu!)
+// Data sent to the student (Sanitized!)
 export interface StudentPayload {
   slideId: string;
   type: SlideType;
   questionText?: string;
-  options?: { id: string; text: string }[]; // HUOM: ei isCorrect-tietoa
+  options?: { id: string; text: string }[]; // NOTE: no isCorrect info
   state: 'WAITING' | 'ANSWERING' | 'LOCKED' | 'REVEALED';
 }

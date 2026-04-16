@@ -5,7 +5,7 @@ import { Server, Socket } from 'socket.io';
 import cors from 'cors';
 import { RoomState, StudentAnswer, BroadcastPayload } from './types';
 
-// Alustetaan Express ja Socket.io
+// Initialize Express and Socket.io
 const app = express();
 const CLIENT_URL = process.env.CLIENT_URL;
 const ALLOWED_ORIGINS = CLIENT_URL ? [CLIENT_URL] : ["http://localhost:5173", "http://127.0.0.1:5173"];
@@ -27,11 +27,11 @@ const io = new Server(server, {
 });
 
 // --- IN-MEMORY DATABASE ---
-// Koska emme käytä tietokantaa, tallennamme kaiken tähän Map-olioon.
-// Kun palvelin sammuu, tämä tyhjenee.
+// Since we don't use a database, we save everything in this Map.
+// It will be purged when the server restarts.
 const rooms = new Map<string, RoomState>();
 
-// Apufunktio: Luo 4-numeroinen huonekoodi (esim. "3821")
+// Utility: Create a 4-digit room code (e.g., "3821")
 const generateRoomCode = (): string => {
   return Math.floor(1000 + Math.random() * 9000).toString();
 };
@@ -39,16 +39,16 @@ const generateRoomCode = (): string => {
 io.on('connection', (socket: Socket) => {
   console.log(`[Connect] Socket ID: ${socket.id}`);
 
-  // --- 1. OPETTAJAN TOIMINNOT ---
+  // --- 1. TEACHER ACTIONS ---
 
   socket.on('CREATE_ROOM', () => {
     let roomId = generateRoomCode();
-    // Varmistetaan uniikkius (epätodennäköistä että osuu samaan, mutta varman päälle)
+    // Ensure uniqueness (unlikely to hit exactly the same, but safe limits)
     while (rooms.has(roomId)) {
       roomId = generateRoomCode();
     }
 
-    // Alustetaan huoneen tila
+    // Initialize room state
     const newRoom: RoomState = {
       roomId,
       teacherSocketId: socket.id,
@@ -58,7 +58,7 @@ io.on('connection', (socket: Socket) => {
     };
 
     rooms.set(roomId, newRoom);
-    socket.join(roomId); // Socket.io "huone"
+    socket.join(roomId); // Socket.io "room"
 
     console.log(`[Room Created] ID: ${roomId} by Teacher: ${socket.id}`);
     socket.emit('ROOM_CREATED', { roomId });
@@ -70,21 +70,21 @@ io.on('connection', (socket: Socket) => {
 
     console.log(`[End Session] Room: ${roomId}`);
 
-    // Ilmoitetaan kaikille (myös opettajalle itselleen kuittauksena)
+    // Notify everyone (including teacher themselves as an ack)
     io.to(roomId).emit('SESSION_ENDED');
 
-    // Poistetaan huone
+    // Delete room
     rooms.delete(roomId);
 
-    // Socket.io huoneen tyhjennys tapahtuu automaattisesti kun clientit disconnectaa
-    // tai voimme pakottaa leave:n, mutta client-side redirect hoitaa disconnectin.
+    // Socket.io room leaves happens automatically on disconnect,
+    // or we can force a leave, but client-side redirect handles the disconnect.
   });
 
-  // Opettaja lähettää päivityksen (Slide vaihtui tai vastaus paljastettiin)
+  // Teacher pushes an update (Slide changed or answer revealed)
   socket.on('PUSH_UPDATE', ({ roomId, payload }: { roomId: string, payload: BroadcastPayload }) => {
     const room = rooms.get(roomId);
 
-    // Turvatarkistus: Vain huoneen luonut opettaja saa päivittää
+    // Security check: Only the teacher who created the room can update it
     if (!room || room.teacherSocketId !== socket.id) return;
 
     // VALIDATION: Payload structure
@@ -93,24 +93,24 @@ io.on('connection', (socket: Socket) => {
       return;
     }
 
-    // Jos slide on vaihtunut kokonaan uuteen, nollataan vanhat vastaukset
+    // If slide changed completely to a new one, clear old answers
     if (room.currentPayload?.slideId !== payload.slideId) {
       console.log(`[New Slide] Room: ${roomId}, Slide: ${payload.slideId}`);
       room.answers = [];
-      // Kerrotaan opettajalle, että vastaukset nollattiin
+      // Inform compiler/teacher that answers have been wiped
       socket.emit('ANSWERS_UPDATE', []);
     }
 
-    // Päivitetään palvelimen muisti
+    // Update memory representation
     room.currentPayload = payload;
 
-    // LÄHETETÄÄN KAIKILLE OPISKELIJOILLE HUONEESSA
-    // socket.to(roomId) lähettää kaikille muille paitsi lähettäjälle (opettajalle)
+    // BROADCAST EVERYONE IN THE ROOM
+    // socket.to(roomId) targets everyone but the sender (teacher)
     socket.to(roomId).emit('SLIDE_UPDATE', payload);
   });
 
 
-  // --- 2. OPISKELIJAN TOIMINNOT ---
+  // --- 2. STUDENT ACTIONS ---
 
   socket.on('JOIN_ROOM', ({ roomId }: { roomId: string }) => {
     // VALIDATION
@@ -130,10 +130,10 @@ io.on('connection', (socket: Socket) => {
     room.studentCount++;
     console.log(`[Join] Student joined room ${roomId}`);
 
-    // Ilmoitetaan opettajalle uusi osallistujamäärä
+    // Notify teacher of the new count
     io.to(room.teacherSocketId).emit('STUDENT_COUNT', { count: room.studentCount });
 
-    // LATE JOIN: Jos tunti on jo käynnissä, lähetetään opiskelijalle nykytilanne heti!
+    // LATE JOIN: If class is live, send state to the student instantaneously!
     if (room.currentPayload) {
       socket.emit('SLIDE_UPDATE', room.currentPayload);
     } else {
@@ -145,8 +145,8 @@ io.on('connection', (socket: Socket) => {
     const room = rooms.get(roomId);
     if (!room) return;
 
-    // Hyväksytään vastauksia vain jos tila on ANSWERING (varmistus)
-    // (Voi poistaa tämän tarkistuksen jos haluat sallia myöhäiset vastaukset)
+    // Accept answers only if state is ANSWERING 
+    // (Can be stripped if late submissions map correctly)
     if (room.currentPayload?.state !== 'ANSWERING') return;
 
     // VALIDATION
@@ -164,7 +164,7 @@ io.on('connection', (socket: Socket) => {
       return; // Invalid type
     }
 
-    // Tarkistetaan onko opiskelija jo vastannut tähän slideen
+    // Check if the student has already answered this slide
     const existingIndex = room.answers.findIndex(a => a.socketId === socket.id);
 
     const answerEntry: StudentAnswer = {
@@ -175,26 +175,26 @@ io.on('connection', (socket: Socket) => {
     };
 
     if (existingIndex > -1) {
-      // Päivitetään vanha vastaus
+      // Update old answer
       room.answers[existingIndex] = answerEntry;
     } else {
-      // Uusi vastaus
+      // New answer
       room.answers.push(answerEntry);
     }
 
-    // Lähetetään vastaukset reaaliajassa opettajalle
+    // Push real-time answer sync to teacher
     io.to(room.teacherSocketId).emit('ANSWERS_UPDATE', room.answers);
 
-    // Kuittaus oppilaalle
+    // Ack to student
     socket.emit('ANSWER_RECEIVED');
   });
 
-  // --- 3. YLEISET ---
+  // --- 3. COMMON ---
 
   socket.on('disconnect', () => {
-    // Tässä voisi vähentää studentCountia, mutta se vaatisi
-    // käänteisen mapin (socketId -> roomId). 
-    // MVP-versiossa emme tee sitä, jotta koodi pysyy yksinkertaisena.
+    // You could decrease studentCount here, but it would require
+    // an inverse map (socketId -> roomId). 
+    // Out of scope for MVP layout to keep logic extremely clean.
     console.log(`[Disconnect] ${socket.id}`);
   });
 });
@@ -208,7 +208,7 @@ app.get(new RegExp(`^${BASE_PATH}.*`), (req, res) => {
   res.sendFile(path.join(__dirname, '../public/index.html'));
 });
 
-// Käynnistetään porttiin 3000
+// Start port at 3000
 const PORT = 3000;
 server.listen(PORT, () => {
   console.log(`\n--- MEDCASES SERVER ---`);
