@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useStudentSession } from '../hooks/useStudentSession';
+import { Eye, CheckCircle2 } from 'lucide-react';
 
 export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession: boolean) => void }) => {
   const [searchParams] = useSearchParams();
@@ -61,7 +62,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
   if (isWaiting || !activeSlide) {
     return (
       <div className="h-full bg-blue-600 flex flex-col items-center justify-center text-white p-8 text-center">
-        <div className="text-6xl mb-4 animate-bounce">👀</div>
+        <Eye size={64} className="mb-4 animate-bounce mx-auto" />
         <h2 className="text-2xl font-bold">Katso valkokankaalle</h2>
         <p className="opacity-80 mt-2">Odotetaan opettajan toimia...</p>
       </div>
@@ -88,7 +89,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
       <div className="flex-1 flex flex-col justify-center gap-3">
         {hasAnswered ? (
           <div className="bg-green-100 text-green-800 p-8 rounded-xl text-center">
-            <div className="text-4xl mb-2">✅</div>
+            <CheckCircle2 size={40} className="mb-2 mx-auto" />
             <div className="font-bold text-xl">Vastaus lähetetty!</div>
           </div>
         ) : (
@@ -114,7 +115,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
                     >
                       <div className="flex items-center justify-between">
                         <span>{opt.text}</span>
-                        {isSelected && <span>✅</span>}
+                        {isSelected && <CheckCircle2 size={24} className="text-blue-600" />}
                       </div>
                     </button>
                   );

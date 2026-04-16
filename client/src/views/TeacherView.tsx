@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
+import { Home, Stethoscope } from 'lucide-react';
 import { useTeacherSession } from '../hooks/useTeacherSession';
 import { SlideRenderer } from '../components/SlideRenderer';
 import { loadCaseFromZip } from '../utils/fileHelpers';
@@ -21,10 +22,10 @@ export const TeacherView = () => {
                     className="absolute top-4 left-4 bg-white p-2 rounded-full shadow hover:bg-gray-50 text-2xl"
                     title="Takaisin etusivulle"
                 >
-                    🏠
+                    <Home size={24} />
                 </button>
                 <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full text-center">
-                    <h1 className="text-2xl font-bold mb-2">Opettajan näkymä 👨‍⚕️</h1>
+                    <h1 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">Opettajan näkymä <Stethoscope size={24} /></h1>
                     <p className="text-gray-500 mb-6">Aloita lataamalla .medcase tiedosto</p>
 
                     <label className="block w-full border-2 border-dashed border-blue-300 rounded-lg p-8 cursor-pointer hover:bg-blue-50 transition-colors">

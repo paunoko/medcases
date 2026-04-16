@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useCaseEditor } from '../hooks/useCaseEditor';
 import { useResizeText } from '../hooks/useResizeText';
+import { Home, Pencil, FolderOpen, Save, Trash2, X, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
 
 export const EditorView = () => {
   const [searchParams] = useSearchParams();
@@ -55,10 +56,10 @@ export const EditorView = () => {
           className="absolute top-4 left-4 bg-white p-2 rounded-full shadow hover:bg-gray-50 text-2xl"
           title="Takaisin etusivulle"
         >
-          🏠
+          <Home size={24} />
         </button>
         <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full text-center">
-          <h1 className="text-2xl font-bold mb-2">Muokkaa tapausta ✏️</h1>
+          <h1 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">Muokkaa tapausta <Pencil size={24} /></h1>
           <p className="text-gray-500 mb-6">Lataa olemassa oleva .medcase tiedosto</p>
 
           <label className="block w-full border-2 border-dashed border-blue-300 rounded-lg p-8 cursor-pointer hover:bg-blue-50 transition-colors">
@@ -80,16 +81,16 @@ export const EditorView = () => {
       {/* HEADER */}
       <header className="bg-gray-800 border-b border-gray-700 text-white p-4 flex justify-between items-center z-10">
         <div className="flex items-center gap-4">
-          <button onClick={handleHome} className="text-2xl hover:bg-gray-700 p-2 rounded transition-colors" title="Etusivulle">🏠</button>
+          <button onClick={handleHome} className="text-2xl hover:bg-gray-700 p-2 rounded transition-colors" title="Etusivulle"><Home size={24} /></button>
           <h1 className="font-bold text-xl uppercase tracking-wider text-gray-200">MedCases Editor</h1>
         </div>
         <div className="flex gap-4">
           <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded font-bold shadow transition-colors flex items-center gap-2">
-            📂 Avaa
+            <FolderOpen size={20} /> Avaa
             <input type="file" className="hidden" accept=".medcase,.zip" onChange={(e) => e.target.files?.[0] && handleLoad(e.target.files[0])} />
           </label>
           <button onClick={onSave} className="bg-green-600 hover:bg-green-500 px-6 py-2 rounded font-bold shadow-lg transition-colors flex items-center gap-2">
-            💾 Tallenna
+            <Save size={20} /> Tallenna
           </button>
         </div>
       </header>
@@ -154,7 +155,7 @@ export const EditorView = () => {
                         }}
                         title="Poista kuva"
                       >
-                        🗑️
+                        <Trash2 size={24} />
                       </button>
                     )}
                   </div>
@@ -205,7 +206,7 @@ export const EditorView = () => {
                                 updateSlide(activeSlideIndex!, 'options', opts);
                               }}
                             >
-                              ✖
+                              <X size={20} />
                             </button>
                           </div>
                         </div>
@@ -250,7 +251,7 @@ export const EditorView = () => {
               </div>
             ) : (
               <div className="flex h-full flex-col mt-32 items-center justify-start text-gray-500 gap-6">
-                <div className="text-6xl animate-bounce">👉</div>
+                <ArrowRight size={64} className="animate-bounce" />
                 <div className="text-3xl font-bold uppercase tracking-widest text-gray-600">Valitse tai luo dia oikealta</div>
               </div>
             )}
@@ -288,7 +289,7 @@ export const EditorView = () => {
                     className="text-gray-500 hover:text-red-400 p-1 rounded hover:bg-gray-800 transition-colors"
                     title="Poista dia"
                   >
-                    🗑️
+                    <Trash2 size={16} />
                   </button>
                 </div>
                 <div className="truncate font-bold text-gray-100 text-lg">{slide.title || '(Nimetön dia)'}</div>
@@ -299,17 +300,17 @@ export const EditorView = () => {
           <div className="mt-6 pt-6 border-t border-gray-700 relative shrink-0">
             {showAddMenu && (
               <div className="absolute bottom-full left-0 w-full mb-3 bg-gray-700 border border-gray-600 rounded-xl shadow-2xl overflow-hidden z-20">
-                <button onClick={() => { addSlide('INFO'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50">ℹ️ Info-dia</button>
-                <button onClick={() => { addSlide('MULTIPLE_CHOICE'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50">☑️ Monivalinta</button>
-                <button onClick={() => { addSlide('TRUE_FALSE'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50">⚖️ Kyllä/Ei</button>
-                <button onClick={() => { addSlide('OPEN_TEXT'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors">✍️ Avoin tekstivastaus</button>
+                <button onClick={() => { addSlide('INFO'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><Info size={20} className="inline mr-2 -mt-1"/> Info-dia</button>
+                <button onClick={() => { addSlide('MULTIPLE_CHOICE'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><CheckSquare size={20} className="inline mr-2 -mt-1"/> Monivalinta</button>
+                <button onClick={() => { addSlide('TRUE_FALSE'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><Scale size={20} className="inline mr-2 -mt-1"/> Kyllä/Ei</button>
+                <button onClick={() => { addSlide('OPEN_TEXT'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors"><PenTool size={20} className="inline mr-2 -mt-1"/> Avoin tekstivastaus</button>
               </div>
             )}
             <button
               onClick={() => setShowAddMenu(!showAddMenu)}
               className="w-full bg-blue-600 text-white p-4 rounded-xl hover:bg-blue-500 font-bold text-lg flex justify-center items-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
             >
-              <span className="text-2xl">➕</span> Uusi dia
+              <Plus size={28} /> Uusi dia
             </button>
           </div>
         </div>
@@ -320,7 +321,7 @@ export const EditorView = () => {
       {toast?.show && (
         <div className="fixed bottom-8 right-8 bg-gray-900 border border-gray-700 text-white p-6 rounded-2xl shadow-2xl z-50 max-w-md animate-slide-up">
           <div className="flex items-start gap-4">
-            <div className="text-4xl animate-bounce">💾</div>
+            <Save size={40} className="animate-bounce" />
             <div>
               <h3 className="font-bold text-xl mb-1 text-green-400">Tiedosto tallennettu!</h3>
               <p className="text-gray-300 mb-2 break-all font-mono text-sm bg-gray-800 p-2 rounded">{toast.filename}</p>

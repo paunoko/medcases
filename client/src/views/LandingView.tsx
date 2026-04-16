@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { StudentView } from './StudentView';
+import { GraduationCap, Stethoscope, MonitorPlay, Sparkles, Pencil } from 'lucide-react';
 
 export const LandingView = () => {
     const location = useLocation();
@@ -27,7 +28,7 @@ export const LandingView = () => {
                             : 'bg-white text-gray-600 hover:bg-gray-100'
                             }`}
                     >
-                        Olen opiskelija 🎓
+                        <span className="flex items-center gap-2">Olen opiskelija <GraduationCap size={24} /></span>
                     </button>
                     <button
                         onClick={() => setActiveTab('teacher')}
@@ -36,7 +37,7 @@ export const LandingView = () => {
                             : 'bg-white text-gray-600 hover:bg-gray-100'
                             }`}
                     >
-                        Olen opettaja 👨‍⚕️
+                        <span className="flex items-center gap-2">Olen opettaja <Stethoscope size={24} /></span>
                     </button>
                 </div>
             )}
@@ -60,21 +61,21 @@ export const LandingView = () => {
                                 onClick={() => navigate('/teacher')}
                                 className="w-full p-4 bg-green-100 text-green-800 rounded-lg font-bold text-lg hover:bg-green-200 transition-colors text-left flex items-center gap-3"
                             >
-                                <span className="text-2xl">📺</span> Esitä potilastapaus
+                                <MonitorPlay size={28} /> Esitä potilastapaus
                             </button>
 
                             <button
                                 onClick={() => navigate('/editor')}
                                 className="w-full p-4 bg-blue-100 text-blue-800 rounded-lg font-bold text-lg hover:bg-blue-200 transition-colors text-left flex items-center gap-3"
                             >
-                                <span className="text-2xl">✨</span> Luo uusi tapaus
+                                <Sparkles size={28} /> Luo uusi tapaus
                             </button>
 
                             <button
                                 onClick={() => navigate('/editor?mode=edit')}
                                 className="w-full p-4 bg-yellow-100 text-yellow-800 rounded-lg font-bold text-lg hover:bg-yellow-200 transition-colors text-left flex items-center gap-3"
                             >
-                                <span className="text-2xl">✏️</span> Muokkaa tapausta
+                                <Pencil size={28} /> Muokkaa tapausta
                             </button>
                         </div>
                     </div>
