@@ -7,7 +7,7 @@ body {
   font-family: sans-serif;
 }
 
-/* Kiva pikku animaatio odotustilalle */
+/* Nice little animation for waiting state */
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50% { opacity: .5; }
