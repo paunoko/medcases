@@ -165,18 +165,20 @@ export const EditorView = () => {
         </div>
 
         {/* RIGHT: Settings and Slides (TeacherView w-80 panel) */}
-        <div className="w-80 bg-gray-800 flex flex-col border-l border-gray-700 p-6 min-h-0">
-          <div className="mb-6 bg-gray-750 p-4 rounded-xl border border-gray-700 shadow-inner bg-gray-900/50">
-            <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Tapauksen nimi</label>
-            <input
-              className="w-full bg-gray-800 border-2 border-gray-600 text-white font-bold p-3 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-lg"
-              placeholder="Anna nimi..."
-              value={caseData.meta.title}
-              onChange={e => setCaseData({ ...caseData, meta: { ...caseData.meta, title: e.target.value } })}
-            />
+        <div className="w-80 bg-gray-800 flex flex-col border-l border-gray-700 min-h-0">
+          <div className="p-6 pb-2">
+            <div className="bg-gray-750 p-4 rounded-xl border border-gray-700 shadow-inner bg-gray-900/50">
+              <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Tapauksen nimi</label>
+              <input
+                className="w-full bg-gray-800 border-2 border-gray-600 text-white font-bold p-3 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-lg"
+                placeholder="Anna nimi..."
+                value={caseData.meta.title}
+                onChange={e => setCaseData({ ...caseData, meta: { ...caseData.meta, title: e.target.value } })}
+              />
+            </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto overflow-x-visible pr-2 space-y-3 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto px-6 py-2 space-y-3 custom-scrollbar">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -201,7 +203,7 @@ export const EditorView = () => {
             </DndContext>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-gray-700 relative shrink-0">
+          <div className="p-6 pt-2 border-t border-gray-700 relative shrink-0">
             {showAddMenu && (
               <div className="absolute bottom-full left-0 w-full mb-3 bg-gray-700 border border-gray-600 rounded-xl shadow-2xl overflow-hidden z-20">
                 <button onClick={() => { addSlide('INFO'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><Info size={20} className="inline mr-2 -mt-1"/> Info-dia</button>

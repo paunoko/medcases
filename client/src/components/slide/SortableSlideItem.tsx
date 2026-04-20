@@ -33,6 +33,7 @@ export const SortableSlideItem: React.FC<Props> = ({
     transition,
     zIndex: isDragging ? 50 : (isActive ? 10 : 0),
     position: 'relative' as const,
+    transformOrigin: 'center center',
   };
 
   return (
