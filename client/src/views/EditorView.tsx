@@ -1,11 +1,29 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useCaseEditor } from '../hooks/useCaseEditor';
-import { Home, Pencil, FolderOpen, Save, Trash2, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
+import { Home, Pencil, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
 import { SlideContainer } from '../components/slide/SlideContainer';
 import { SlideTitle } from '../components/slide/SlideTitle';
 import { SlideBody } from '../components/slide/SlideBody';
 import { SlideInteraction } from '../components/slide/SlideInteraction';
+
+import { 
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent
+} from '@dnd-kit/core';
+import {
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { restrictToVerticalAxis, restrictToWindowEdges } from '@dnd-kit/modifiers';
+
+import { SortableSlideItem } from '../components/slide/SortableSlideItem';
 
 export const EditorView = () => {
   const [searchParams] = useSearchParams();
@@ -18,7 +36,7 @@ export const EditorView = () => {
 
   const {
     caseData, setCaseData, activeSlideIndex, setActiveSlideIndex, imagePreviews,
-    addSlide, deleteSlide, updateSlide, attachImageToSlide, handleSave, handleLoad
+    addSlide, deleteSlide, updateSlide, reorderSlides, attachImageToSlide, handleSave, handleLoad
   } = useCaseEditor();
 
   const activeSlide = activeSlideIndex !== null ? caseData.slides[activeSlideIndex] : null;
@@ -46,6 +64,20 @@ export const EditorView = () => {
 
   const handleToastDismiss = () => {
     navigate('/', { state: { tab: 'teacher' } });
+  };
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      reorderSlides(active.id as string, over.id as string);
+    }
   };
 
   if (isEditMode && !hasLoaded) {
@@ -133,7 +165,7 @@ export const EditorView = () => {
         </div>
 
         {/* RIGHT: Settings and Slides (TeacherView w-80 panel) */}
-        <div className="w-80 bg-gray-800 flex flex-col border-l border-gray-700 p-6 overflow-hidden">
+        <div className="w-80 bg-gray-800 flex flex-col border-l border-gray-700 p-6 min-h-0">
           <div className="mb-6 bg-gray-750 p-4 rounded-xl border border-gray-700 shadow-inner bg-gray-900/50">
             <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">Tapauksen nimi</label>
             <input
@@ -144,31 +176,29 @@ export const EditorView = () => {
             />
           </div>
 
-          <div className="flex-1 overflow-y-auto pr-2 space-y-3 custom-scrollbar">
-            {caseData.slides.map((slide, idx) => (
-              <div
-                key={slide.id}
-                onClick={() => setActiveSlideIndex(idx)}
-                className={`p-4 rounded-xl cursor-pointer transition-all border-2 ${idx === activeSlideIndex ? 'border-blue-500 bg-gray-700 shadow-lg scale-[1.02]' : 'border-gray-700 bg-gray-800 hover:bg-gray-700/80 hover:border-gray-500'}`}
+          <div className="flex-1 overflow-y-auto overflow-x-visible pr-2 space-y-3 custom-scrollbar">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+              modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
+            >
+              <SortableContext
+                items={caseData.slides.map(s => s.id)}
+                strategy={verticalListSortingStrategy}
               >
-                <div className="text-[10px] text-gray-400 uppercase font-bold tracking-wider flex justify-between items-center mb-2">
-                  <span className={idx === activeSlideIndex ? 'text-blue-300' : ''}>{slide.type.replace('_', ' ')}</span>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (confirm('Haluatko varmasti poistaa dian?')) {
-                        deleteSlide(idx);
-                      }
-                    }}
-                    className="text-gray-500 hover:text-red-400 p-1 rounded hover:bg-gray-800 transition-colors"
-                    title="Poista dia"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-                <div className="truncate font-bold text-gray-100 text-lg">{slide.title || '(Nimetön dia)'}</div>
-              </div>
-            ))}
+                {caseData.slides.map((slide, idx) => (
+                  <SortableSlideItem
+                    key={slide.id}
+                    slide={slide}
+                    index={idx}
+                    isActive={idx === activeSlideIndex}
+                    onSelect={setActiveSlideIndex}
+                    onDelete={deleteSlide}
+                  />
+                ))}
+              </SortableContext>
+            </DndContext>
           </div>
 
           <div className="mt-6 pt-6 border-t border-gray-700 relative shrink-0">

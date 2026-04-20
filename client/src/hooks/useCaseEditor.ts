@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { arrayMove } from '@dnd-kit/sortable';
 import type { PatientCase, CaseSlide } from '../types';
 import { saveCaseToZip, loadCaseFromZip } from '../utils/fileHelpers';
 
@@ -61,6 +62,27 @@ export const useCaseEditor = () => {
         });
     };
 
+    const reorderSlides = (activeId: string, overId: string) => {
+        setCaseData(prev => {
+            const oldIndex = prev.slides.findIndex(s => s.id === activeId);
+            const newIndex = prev.slides.findIndex(s => s.id === overId);
+            
+            if (oldIndex !== -1 && newIndex !== -1) {
+                const newSlides = arrayMove(prev.slides, oldIndex, newIndex);
+                
+                // Update active index if it was affected by reorder
+                if (activeSlideIndex !== null) {
+                    const currentActiveId = prev.slides[activeSlideIndex].id;
+                    const newActiveIndex = newSlides.findIndex(s => s.id === currentActiveId);
+                    setActiveSlideIndex(newActiveIndex);
+                }
+                
+                return { ...prev, slides: newSlides };
+            }
+            return prev;
+        });
+    };
+
     const attachImageToSlide = (index: number, file: File) => {
         setImageFiles(prev => ({ ...prev, [file.name]: file }));
         const previewUrl = URL.createObjectURL(file);
@@ -94,6 +116,7 @@ export const useCaseEditor = () => {
         addSlide,
         deleteSlide,
         updateSlide,
+        reorderSlides,
         attachImageToSlide,
         handleSave,
         handleLoad
