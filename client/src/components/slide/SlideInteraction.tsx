@@ -10,12 +10,12 @@ interface Props {
   onUpdate?: (field: string, value: any) => void;
 }
 
-export const SlideInteraction: React.FC<Props> = ({ 
-  slide, 
-  mode, 
-  answers = [], 
-  isRevealed = false, 
-  onUpdate 
+export const SlideInteraction: React.FC<Props> = ({
+  slide,
+  mode,
+  answers = [],
+  isRevealed = false,
+  onUpdate
 }) => {
   const isEdit = mode === 'edit';
 
@@ -35,7 +35,7 @@ export const SlideInteraction: React.FC<Props> = ({
 
   return (
     <div className={`shrink-0 flex flex-col gap-6 ${(!slide.imageFileName && !isEdit) ? 'mt-auto' : ''}`}>
-      
+
       {/* QUESTION AREA */}
       {slide.type !== 'INFO' && (
         isEdit ? (
@@ -60,9 +60,9 @@ export const SlideInteraction: React.FC<Props> = ({
           {/* Options List */}
           {(slide.type === 'TRUE_FALSE' && !isEdit
             ? [
-                { id: 'true', text: 'Kyllä / Tosi', isCorrect: slide.correctAnswer }, 
-                { id: 'false', text: 'Ei / Epätosi', isCorrect: !slide.correctAnswer }
-              ]
+              { id: 'true', text: 'Kyllä / Tosi', isCorrect: slide.correctAnswer },
+              { id: 'false', text: 'Ei / Epätosi', isCorrect: !slide.correctAnswer }
+            ]
             : (slide.type === 'MULTIPLE_CHOICE' || slide.type === 'TRUE_FALSE' ? (slide as any).options : [])
           )?.map((opt: Option, i: number) => {
             const percent = getPercentage(opt.id);
@@ -72,30 +72,30 @@ export const SlideInteraction: React.FC<Props> = ({
               return (
                 <div key={i} className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all focus-within:border-blue-500 ${opt.isCorrect ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
                   <div className="flex w-full items-start gap-4">
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       className="w-8 h-8 mt-1 rounded shrink-0 accent-green-600 cursor-pointer"
-                      checked={opt.isCorrect} 
+                      checked={opt.isCorrect}
                       onChange={e => {
                         const opts = [...(slide as any).options];
                         opts[i].isCorrect = e.target.checked;
                         onUpdate?.('options', opts);
-                      }} 
+                      }}
                       title="Merkitse oikeaksi vastaukseksi"
                     />
-                    <textarea 
+                    <textarea
                       rows={2}
-                      className="font-bold text-2xl flex-1 bg-transparent focus:outline-none w-full resize-none leading-tight" 
+                      className="font-bold text-2xl flex-1 bg-transparent focus:outline-none w-full resize-none leading-tight"
                       placeholder="Vaihtoehto..."
-                      value={opt.text} 
+                      value={opt.text}
                       onChange={e => {
                         const opts = [...(slide as any).options];
                         opts[i].text = e.target.value;
                         onUpdate?.('options', opts);
-                      }} 
+                      }}
                     />
-                    <button 
-                      className="text-gray-400 hover:text-red-500 shrink-0 p-2" 
+                    <button
+                      className="text-gray-400 hover:text-red-500 shrink-0 p-2"
                       onClick={() => {
                         const opts = (slide as any).options.filter((_: any, idx: number) => idx !== i);
                         onUpdate?.('options', opts);
@@ -128,8 +128,8 @@ export const SlideInteraction: React.FC<Props> = ({
 
           {/* Add Option Button (Edit Only) */}
           {isEdit && slide.type === 'MULTIPLE_CHOICE' && (
-            <button 
-              onClick={() => onUpdate?.('options', [...(slide.options || []), { id: Math.random().toString(), text: '', isCorrect: false }])} 
+            <button
+              onClick={() => onUpdate?.('options', [...(slide.options || []), { id: Math.random().toString(), text: '', isCorrect: false }])}
               className="p-6 border-4 border-dashed border-gray-300 rounded-2xl flex-1 min-w-[250px] text-gray-500 font-bold text-2xl hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center bg-gray-50 hover:bg-blue-50"
             >
               + Lisää vaihtoehto

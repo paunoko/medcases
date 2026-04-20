@@ -33,4 +33,7 @@ export interface RoomState {
 
   // Number of students (socket room size)
   studentCount: number;
+
+  // Internal: For batching updates to teacher
+  throttleTimer?: NodeJS.Timeout | null;
 }

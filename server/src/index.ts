@@ -28,8 +28,10 @@ const io = new Server(server, {
 
 // --- IN-MEMORY DATABASE ---
 // Since we don't use a database, we save everything in this Map.
-// It will be purged when the server restarts.
 const rooms = new Map<string, RoomState>();
+
+// Mapping of socket.id -> roomId for quick lookup on disconnect
+const socketToRoom = new Map<string, string>();
 
 // Utility: Create a 4-digit room code (e.g., "3821")
 const generateRoomCode = (): string => {
@@ -58,6 +60,7 @@ io.on('connection', (socket: Socket) => {
     };
 
     rooms.set(roomId, newRoom);
+    socketToRoom.set(socket.id, roomId);
     socket.join(roomId); // Socket.io "room"
 
     console.log(`[Room Created] ID: ${roomId} by Teacher: ${socket.id}`);
@@ -73,11 +76,10 @@ io.on('connection', (socket: Socket) => {
     // Notify everyone (including teacher themselves as an ack)
     io.to(roomId).emit('SESSION_ENDED');
 
-    // Delete room
+    // Delete room and cleanup socket mapping
+    if (room.throttleTimer) clearTimeout(room.throttleTimer);
     rooms.delete(roomId);
-
-    // Socket.io room leaves happens automatically on disconnect,
-    // or we can force a leave, but client-side redirect handles the disconnect.
+    socketToRoom.delete(socket.id);
   });
 
   // Teacher pushes an update (Slide changed or answer revealed)
@@ -127,6 +129,7 @@ io.on('connection', (socket: Socket) => {
     }
 
     socket.join(roomId);
+    socketToRoom.set(socket.id, roomId);
     room.studentCount++;
     console.log(`[Join] Student joined room ${roomId}`);
 
@@ -182,8 +185,14 @@ io.on('connection', (socket: Socket) => {
       room.answers.push(answerEntry);
     }
 
-    // Push real-time answer sync to teacher
-    io.to(room.teacherSocketId).emit('ANSWERS_UPDATE', room.answers);
+    // --- BATCHED UPDATE TO TEACHER ---
+    // If not already scheduled, schedule a broadcast in 1 second
+    if (!room.throttleTimer) {
+      room.throttleTimer = setTimeout(() => {
+        io.to(room.teacherSocketId).emit('ANSWERS_UPDATE', room.answers);
+        room.throttleTimer = null;
+      }, 1000);
+    }
 
     // Ack to student
     socket.emit('ANSWER_RECEIVED');
@@ -192,10 +201,30 @@ io.on('connection', (socket: Socket) => {
   // --- 3. COMMON ---
 
   socket.on('disconnect', () => {
-    // You could decrease studentCount here, but it would require
-    // an inverse map (socketId -> roomId). 
-    // Out of scope for MVP layout to keep logic extremely clean.
-    console.log(`[Disconnect] ${socket.id}`);
+    const roomId = socketToRoom.get(socket.id);
+    if (!roomId) return;
+
+    const room = rooms.get(roomId);
+    if (!room) {
+      socketToRoom.delete(socket.id);
+      return;
+    }
+
+    if (room.teacherSocketId === socket.id) {
+      // TEACHER DISCONNECTED: Kill the room
+      console.log(`[Disconnect] Teacher left room ${roomId}. Cleaning up.`);
+      io.to(roomId).emit('SESSION_ENDED');
+      
+      if (room.throttleTimer) clearTimeout(room.throttleTimer);
+      rooms.delete(roomId);
+    } else {
+      // STUDENT DISCONNECTED: Update count
+      room.studentCount = Math.max(0, room.studentCount - 1);
+      console.log(`[Disconnect] Student left room ${roomId}. Count: ${room.studentCount}`);
+      io.to(room.teacherSocketId).emit('STUDENT_COUNT', { count: room.studentCount });
+    }
+
+    socketToRoom.delete(socket.id);
   });
 });
 
