@@ -3,6 +3,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Trash2 } from 'lucide-react';
 import type { CaseSlide } from '../../types';
+import { useUI } from '../../context/UIContext';
 
 interface Props {
   slide: CaseSlide;
@@ -19,6 +20,7 @@ export const SortableSlideItem: React.FC<Props> = ({
   onSelect, 
   onDelete 
 }) => {
+  const { showConfirm } = useUI();
   const {
     attributes,
     listeners,
@@ -61,9 +63,15 @@ export const SortableSlideItem: React.FC<Props> = ({
         <div className="text-[10px] text-gray-400 uppercase font-bold tracking-wider flex justify-between items-center mb-1">
           <span className={isActive ? 'text-blue-300' : ''}>{slide.type.replace('_', ' ')}</span>
           <button
-            onClick={(e) => {
+            onClick={async (e) => {
               e.stopPropagation();
-              if (confirm('Haluatko varmasti poistaa dian?')) {
+              const confirmed = await showConfirm({
+                title: 'Poistetaanko dia?',
+                message: 'Haluatko varmasti poistaa tämän dian? Tätä toimintoa ei voi kumota.',
+                confirmText: 'Poista dia',
+                variant: 'destructive',
+              });
+              if (confirmed) {
                 onDelete(index);
               }
             }}

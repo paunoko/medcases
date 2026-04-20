@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useCaseEditor } from '../hooks/useCaseEditor';
 import { Home, Pencil, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
+import { useUI } from '../context/UIContext';
 import { SlideContainer } from '../components/slide/SlideContainer';
 import { SlideTitle } from '../components/slide/SlideTitle';
 import { SlideBody } from '../components/slide/SlideBody';
@@ -28,6 +29,7 @@ import { SortableSlideItem } from '../components/slide/SortableSlideItem';
 export const EditorView = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { showConfirm } = useUI();
   const isEditMode = searchParams.get('mode') === 'edit';
   const [hasLoaded, setHasLoaded] = useState(false);
 
@@ -46,8 +48,14 @@ export const EditorView = () => {
     setHasLoaded(true);
   };
 
-  const handleHome = () => {
-    if (confirm('Haluatko varmasti poistua tallentamatta?')) {
+  const handleHome = async () => {
+    const confirmed = await showConfirm({
+      title: 'Poistu tallentamatta?',
+      message: 'Haluatko varmasti poistua? Menetät tallentamattomat muutokset.',
+      confirmText: 'Lopeta muokkaus',
+      variant: 'destructive',
+    });
+    if (confirmed) {
       navigate('/', { state: { tab: 'teacher' } });
     }
   };

@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { QRCodeSVG } from 'qrcode.react';
 import { Home, Stethoscope } from 'lucide-react';
-import { useTeacherSession } from '../hooks/useTeacherSession';
-import { SlideRenderer } from '../components/SlideRenderer';
+import { QRCodeSVG } from 'qrcode.react';
+import { useUI } from '../context/UIContext';
 import { loadCaseFromZip } from '../utils/fileHelpers';
+import { SlideRenderer } from '../components/SlideRenderer';
+import { useTeacherSession } from '../hooks/useTeacherSession';
 import type { PatientCase } from '../types';
 
 export const TeacherView = () => {
+    const { showAlert } = useUI();
     const navigate = useNavigate();
     // State for loaded data
     const [caseData, setCaseData] = useState<PatientCase | null>(null);
@@ -41,7 +43,11 @@ export const TeacherView = () => {
                                         setImages(result.images);
                                         setCaseData(result.caseData);
                                     } catch (err) {
-                                        alert("Virhe tiedostossa");
+                                        showAlert({
+                                            title: 'Lataus epäonnistui',
+                                            message: 'Tiedoston avaaminen epäonnistui. Varmista, että kyseessä on oikea .medcase tiedosto.',
+                                            variant: 'destructive'
+                                        });
                                     }
                                 }
                             }}
@@ -57,6 +63,7 @@ export const TeacherView = () => {
 
 // Actual session
 const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images: Record<string, string>, onExit: () => void }) => {
+    const { showConfirm } = useUI();
     const session = useTeacherSession(caseData);
 
     if (!session.roomId) {
@@ -151,8 +158,14 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                     </div>
 
                     <button
-                        onClick={() => {
-                            if (confirm('Haluatko varmasti lopettaa istunnon? Kaikki oppilaat poistetaan.')) {
+                        onClick={async () => {
+                            const confirmed = await showConfirm({
+                                title: 'Lopetetaanko istunto?',
+                                message: 'Kaikkien oppilaiden yhteys katkaistaan ja istunto poistetaan käytöstä.',
+                                confirmText: 'Lopeta istunto',
+                                variant: 'destructive'
+                            });
+                            if (confirmed) {
                                 session.endSession();
                                 onExit();
                             }

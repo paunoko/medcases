@@ -1,10 +1,12 @@
 
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { UIProvider } from './context/UIContext';
 import { EditorView, TeacherView, LandingView } from './views';
 
 function App() {
   return (
-    <BrowserRouter basename={import.meta.env.BASE_URL}>
+    <UIProvider>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<LandingView />} />
         <Route path="/teacher" element={<TeacherView />} />
@@ -20,7 +22,8 @@ function App() {
           </div>
         } />
       </Routes>
-    </BrowserRouter>
+      </BrowserRouter>
+    </UIProvider>
   );
 }
 
