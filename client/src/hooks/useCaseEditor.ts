@@ -19,6 +19,8 @@ export const useCaseEditor = () => {
         slides: []
     });
 
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
     // Files in memory (filename -> File)
     const [imageFiles, setImageFiles] = useState<Record<string, File>>({});
     // Previews (filename -> blobUrl)
@@ -41,6 +43,7 @@ export const useCaseEditor = () => {
 
         setCaseData(prev => ({ ...prev, slides: [...prev.slides, newSlide] }));
         setActiveSlideIndex(caseData.slides.length);
+        setHasUnsavedChanges(true);
     };
 
     const deleteSlide = (index: number) => {
@@ -54,6 +57,7 @@ export const useCaseEditor = () => {
         } else if (activeSlideIndex !== null && activeSlideIndex > index) {
             setActiveSlideIndex(activeSlideIndex - 1);
         }
+        setHasUnsavedChanges(true);
     };
 
     const updateSlide = (index: number, field: string, value: any) => {
@@ -62,6 +66,7 @@ export const useCaseEditor = () => {
             newSlides[index] = { ...newSlides[index], [field]: value };
             return { ...prev, slides: newSlides };
         });
+        setHasUnsavedChanges(true);
     };
 
     const reorderSlides = (activeId: string, overId: string) => {
@@ -79,6 +84,7 @@ export const useCaseEditor = () => {
                     setActiveSlideIndex(newActiveIndex);
                 }
                 
+                setHasUnsavedChanges(true);
                 return { ...prev, slides: newSlides };
             }
             return prev;
@@ -90,11 +96,24 @@ export const useCaseEditor = () => {
         const previewUrl = URL.createObjectURL(file);
         setImagePreviews(prev => ({ ...prev, [file.name]: previewUrl }));
         updateSlide(index, 'imageFileName', file.name);
+        setHasUnsavedChanges(true);
+    };
+
+    const updateMeta = (field: keyof PatientCase['meta'], value: string) => {
+        setCaseData(prev => ({
+            ...prev,
+            meta: { ...prev.meta, [field]: value }
+        }));
+        setHasUnsavedChanges(true);
     };
 
     // --- SAVE / LOAD ---
 
-    const handleSave = () => saveCaseToZip(caseData, imageFiles);
+    const handleSave = async () => {
+        const filename = await saveCaseToZip(caseData, imageFiles);
+        setHasUnsavedChanges(false);
+        return filename;
+    };
 
     const handleLoad = async (file: File) => {
         try {
@@ -103,6 +122,7 @@ export const useCaseEditor = () => {
             setImagePreviews(images);
             setImageFiles(loadedFiles);
             setActiveSlideIndex(0);
+            setHasUnsavedChanges(false);
         } catch (e) {
             console.error("Lataus epäonnistui", e);
             showAlert({
@@ -115,7 +135,7 @@ export const useCaseEditor = () => {
 
     return {
         caseData,
-        setCaseData,
+        updateMeta,
         activeSlideIndex,
         setActiveSlideIndex,
         imagePreviews,
@@ -125,6 +145,7 @@ export const useCaseEditor = () => {
         reorderSlides,
         attachImageToSlide,
         handleSave,
-        handleLoad
+        handleLoad,
+        hasUnsavedChanges
     };
 };

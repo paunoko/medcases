@@ -37,8 +37,9 @@ export const EditorView = () => {
   const [showAddMenu, setShowAddMenu] = useState(false);
 
   const {
-    caseData, setCaseData, activeSlideIndex, setActiveSlideIndex, imagePreviews,
-    addSlide, deleteSlide, updateSlide, reorderSlides, attachImageToSlide, handleSave, handleLoad
+    caseData, updateMeta, activeSlideIndex, setActiveSlideIndex, imagePreviews,
+    addSlide, deleteSlide, updateSlide, reorderSlides, attachImageToSlide, handleSave, handleLoad,
+    hasUnsavedChanges
   } = useCaseEditor();
 
   const activeSlide = activeSlideIndex !== null ? caseData.slides[activeSlideIndex] : null;
@@ -49,15 +50,16 @@ export const EditorView = () => {
   };
 
   const handleHome = async () => {
-    const confirmed = await showConfirm({
-      title: 'Poistu tallentamatta?',
-      message: 'Haluatko varmasti poistua? Menetät tallentamattomat muutokset.',
-      confirmText: 'Lopeta muokkaus',
-      variant: 'destructive',
-    });
-    if (confirmed) {
-      navigate('/', { state: { tab: 'teacher' } });
+    if (hasUnsavedChanges) {
+      const confirmed = await showConfirm({
+        title: 'Poistu tallentamatta?',
+        message: 'Haluatko varmasti poistua? Menetät tallentamattomat muutokset.',
+        confirmText: 'Lopeta muokkaus',
+        variant: 'destructive',
+      });
+      if (!confirmed) return;
     }
+    navigate('/', { state: { tab: 'teacher' } });
   };
 
   const onSave = async () => {
@@ -127,7 +129,29 @@ export const EditorView = () => {
         <div className="flex gap-4">
           <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded font-bold shadow transition-colors flex items-center gap-2">
             <FolderOpen size={20} /> Avaa
-            <input type="file" className="hidden" accept=".medcase,.zip" onChange={(e) => e.target.files?.[0] && handleLoad(e.target.files[0])} />
+            <input 
+              type="file" 
+              className="hidden" 
+              accept=".medcase,.zip" 
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                
+                if (hasUnsavedChanges) {
+                  const confirmed = await showConfirm({
+                    title: 'Ladataanko uusi tiedosto?',
+                    message: 'Sinulla on tallentamattomia muutoksia. Ne menetetään, jos lataat uuden tiedoston.',
+                    confirmText: 'Lataa ja hylkää muutokset',
+                    variant: 'destructive'
+                  });
+                  if (!confirmed) {
+                    e.target.value = ''; // Reset input
+                    return;
+                  }
+                }
+                handleLoad(file);
+              }} 
+            />
           </label>
           <button onClick={onSave} className="bg-green-600 hover:bg-green-500 px-6 py-2 rounded font-bold shadow-lg transition-colors flex items-center gap-2">
             <Save size={20} /> Tallenna
@@ -181,7 +205,7 @@ export const EditorView = () => {
                 className="w-full bg-gray-800 border-2 border-gray-600 text-white font-bold p-3 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-lg"
                 placeholder="Anna nimi..."
                 value={caseData.meta.title}
-                onChange={e => setCaseData({ ...caseData, meta: { ...caseData.meta, title: e.target.value } })}
+                onChange={e => updateMeta('title', e.target.value)}
               />
             </div>
           </div>
