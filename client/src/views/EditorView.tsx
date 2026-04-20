@@ -1,8 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useCaseEditor } from '../hooks/useCaseEditor';
-import { useResizeText } from '../hooks/useResizeText';
-import { Home, Pencil, FolderOpen, Save, Trash2, X, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
+import { Home, Pencil, FolderOpen, Save, Trash2, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
+import { SlideContainer } from '../components/slide/SlideContainer';
+import { SlideTitle } from '../components/slide/SlideTitle';
+import { SlideBody } from '../components/slide/SlideBody';
+import { SlideInteraction } from '../components/slide/SlideInteraction';
 
 export const EditorView = () => {
   const [searchParams] = useSearchParams();
@@ -19,9 +22,6 @@ export const EditorView = () => {
   } = useCaseEditor();
 
   const activeSlide = activeSlideIndex !== null ? caseData.slides[activeSlideIndex] : null;
-
-  const contentRef = useRef<HTMLTextAreaElement>(null);
-  useResizeText(contentRef, [activeSlide?.content, activeSlide?.imageFileName]);
 
   const onFileLoad = async (file: File) => {
     await handleLoad(file);
@@ -101,154 +101,28 @@ export const EditorView = () => {
         <div className="flex-1 p-4 flex flex-col bg-gray-900 overflow-hidden min-h-0">
           <div className="flex-1 relative transition-all duration-300 min-h-0">
             {activeSlide ? (
-              <div className="flex flex-col h-full w-full bg-white rounded-lg shadow-2xl overflow-hidden border border-gray-200 text-left text-gray-900 p-8 gap-6 animate-fade-in min-h-0">
-                
-                {/* Title */}
-                <input
-                  className="text-5xl font-bold text-gray-800 shrink-0 w-full bg-transparent border-b-2 border-dashed border-gray-300 hover:border-gray-400 focus:border-blue-500 focus:outline-none transition-colors pb-2"
-                  placeholder="Dian otsikko..."
+              <SlideContainer>
+                <SlideTitle
                   value={activeSlide.title}
-                  onChange={e => updateSlide(activeSlideIndex!, 'title', e.target.value)}
+                  mode="edit"
+                  onChange={val => updateSlide(activeSlideIndex!, 'title', val)}
                 />
 
-                {/* Middle part: Text and Image (50/50) */}
-                <div className="flex flex-row gap-6 flex-1 min-h-0">
-                  {/* Content text */}
-                  <textarea
-                    ref={contentRef}
-                    className="flex-1 min-h-0 overflow-y-auto prose max-w-none text-3xl leading-snug text-gray-700 whitespace-pre-wrap bg-transparent border-2 border-dashed border-transparent hover:border-gray-200 focus:border-blue-500 focus:outline-none resize-none transition-colors rounded-lg p-2 -ml-2 custom-scrollbar"
-                    placeholder="Kirjoita tapauksen tai dian teksti tähän..."
-                    value={activeSlide.content}
-                    onChange={e => updateSlide(activeSlideIndex!, 'content', e.target.value)}
-                  />
+                <SlideBody
+                  content={activeSlide.content}
+                  imageUrl={activeSlide.imageFileName ? imagePreviews[activeSlide.imageFileName] : null}
+                  mode="edit"
+                  onContentChange={val => updateSlide(activeSlideIndex!, 'content', val)}
+                  onImageChange={file => attachImageToSlide(activeSlideIndex!, file)}
+                  onImageRemove={() => updateSlide(activeSlideIndex!, 'imageFileName', undefined)}
+                />
 
-                  {/* Image */}
-                  <div className="flex-1 min-h-0 flex items-center justify-center bg-black/5 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50/50 transition-colors relative group">
-                    {(activeSlide.imageFileName && imagePreviews[activeSlide.imageFileName]) ? (
-                      <>
-                        <img
-                          src={imagePreviews[activeSlide.imageFileName]}
-                          alt="Attachment"
-                          className="w-full h-full object-contain opacity-90 group-hover:opacity-40 transition-opacity"
-                        />
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
-                          <span className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-xl">Vaihda kuva</span>
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex items-center justify-center h-full w-full text-gray-400 font-bold text-2xl group-hover:text-blue-500 transition-colors text-center p-4">
-                        + Lisää kuva (valinnainen)
-                      </div>
-                    )}
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" 
-                      onChange={e => e.target.files?.[0] && attachImageToSlide(activeSlideIndex!, e.target.files[0])} 
-                    />
-                    {activeSlide.imageFileName && (
-                      <button 
-                        className="absolute top-4 right-4 bg-red-500 text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg opacity-0 group-hover:opacity-100 hover:bg-red-600 z-10 transition-all scale-90 hover:scale-100"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          updateSlide(activeSlideIndex!, 'imageFileName', undefined);
-                        }}
-                        title="Poista kuva"
-                      >
-                        <Trash2 size={24} />
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Interaction (Bottom part) */}
-                <div className={`shrink-0 flex flex-col gap-6 ${(!activeSlide.imageFileName || !imagePreviews[activeSlide.imageFileName]) ? 'mt-auto' : ''}`}>
-                  {activeSlide.type !== 'INFO' && (
-                    <input
-                      className="text-4xl font-semibold text-blue-900 w-full bg-transparent border-b-2 border-dashed border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none transition-colors pb-2"
-                      placeholder="Kirjoita kysymys tähän..."
-                      value={activeSlide.question || ''}
-                      onChange={e => updateSlide(activeSlideIndex!, 'question', e.target.value)}
-                    />
-                  )}
-
-                  {activeSlide.type === 'MULTIPLE_CHOICE' && (
-                    <div className="flex flex-wrap gap-4">
-                      {activeSlide.options?.map((opt, i) => (
-                        <div key={i} className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all focus-within:border-blue-500 ${opt.isCorrect ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
-                          <div className="flex w-full items-start gap-4">
-                            <input 
-                              type="checkbox" 
-                              className="w-8 h-8 mt-1 rounded shrink-0 accent-green-600 cursor-pointer"
-                              checked={opt.isCorrect} 
-                              onChange={e => {
-                                const opts = [...activeSlide.options];
-                                opts[i].isCorrect = e.target.checked;
-                                updateSlide(activeSlideIndex!, 'options', opts);
-                              }} 
-                              title="Merkitse oikeaksi vastaukseksi"
-                            />
-                            <textarea 
-                              rows={2}
-                              className="font-bold text-2xl flex-1 bg-transparent focus:outline-none w-full resize-none leading-tight" 
-                              placeholder="Vaihtoehto..."
-                              value={opt.text} 
-                              onChange={e => {
-                                const opts = [...activeSlide.options];
-                                opts[i].text = e.target.value;
-                                updateSlide(activeSlideIndex!, 'options', opts);
-                              }} 
-                            />
-                            <button 
-                              className="text-gray-400 hover:text-red-500 shrink-0 p-2" 
-                              onClick={() => {
-                                const opts = activeSlide.options.filter((_, idx) => idx !== i);
-                                updateSlide(activeSlideIndex!, 'options', opts);
-                              }}
-                            >
-                              <X size={20} />
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                      <button 
-                        onClick={() => updateSlide(activeSlideIndex!, 'options', [...activeSlide.options, { id: Math.random().toString(), text: '', isCorrect: false }])} 
-                        className="p-6 border-4 border-dashed border-gray-300 rounded-2xl flex-1 min-w-[250px] text-gray-500 font-bold text-2xl hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center bg-gray-50 hover:bg-blue-50"
-                      >
-                        + Lisää vaihtoehto
-                      </button>
-                    </div>
-                  )}
-
-                  {activeSlide.type === 'TRUE_FALSE' && (
-                    <div className="flex flex-wrap gap-4">
-                      <div className="flex items-center gap-6 p-6 border-4 border-gray-200 rounded-2xl bg-gray-50 flex-1 hover:border-blue-300 transition-colors">
-                        <span className="font-bold text-2xl text-gray-700 uppercase tracking-wider">Oikea vastaus:</span>
-                        <select
-                          className="flex-1 text-2xl font-bold bg-white border-2 border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:outline-none shadow-sm cursor-pointer"
-                          value={activeSlide.correctAnswer ? 'true' : 'false'}
-                          onChange={e => updateSlide(activeSlideIndex!, 'correctAnswer', e.target.value === 'true')}
-                        >
-                          <option value="true">Kyllä / Tosi</option>
-                          <option value="false">Ei / Epätosi</option>
-                        </select>
-                      </div>
-                    </div>
-                  )}
-
-                  {activeSlide.type === 'OPEN_TEXT' && (
-                    <div className="mt-4 p-6 bg-yellow-50 border-4 border-dashed border-yellow-300 rounded-2xl flex flex-col gap-2 hover:border-yellow-400 transition-colors focus-within:border-yellow-500">
-                      <label className="font-bold text-xl text-yellow-800 uppercase tracking-wider">Opettajan mallivastaus (näytetään oppilaille):</label>
-                      <input
-                        className="w-full bg-transparent text-2xl text-gray-800 focus:outline-none placeholder-yellow-600/50"
-                        placeholder="Kirjoita mallivastaus..."
-                        value={activeSlide.modelAnswer || ''}
-                        onChange={e => updateSlide(activeSlideIndex!, 'modelAnswer', e.target.value)}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
+                <SlideInteraction
+                  slide={activeSlide}
+                  mode="edit"
+                  onUpdate={(field, value) => updateSlide(activeSlideIndex!, field, value)}
+                />
+              </SlideContainer>
             ) : (
               <div className="flex h-full flex-col mt-32 items-center justify-start text-gray-500 gap-6">
                 <ArrowRight size={64} className="animate-bounce" />
