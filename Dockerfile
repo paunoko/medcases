@@ -38,7 +38,6 @@ ENV PORT=3000
 
 # Copy production node_modules from deps stage
 COPY --from=deps /app/node_modules ./node_modules
-COPY --from=deps /app/server/node_modules ./server/node_modules
 
 # Copy built server files
 COPY --from=builder /app/server/dist ./server/dist
