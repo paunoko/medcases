@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useStudentSession } from '../hooks/useStudentSession';
 import { Eye, CheckCircle2 } from 'lucide-react';
 
 export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession: boolean) => void }) => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const {
     isConnected, joinedRoomId, activeSlide, isWaiting, hasAnswered, error,
@@ -36,7 +38,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
           {error && <div className="bg-red-100 text-red-700 p-3 rounded">{error}</div>}
 
           <div>
-            <label className="block text-sm font-bold text-gray-600 mb-1">HUONEKOODI</label>
+            <label className="block text-sm font-bold text-gray-600 mb-1">{t('student.roomCode')}</label>
             <input
               type="tel"
               maxLength={4}
@@ -50,10 +52,10 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
             onClick={() => joinRoom(code)}
             className="w-full bg-blue-600 text-white font-bold py-4 rounded-lg text-xl hover:bg-blue-700 disabled:opacity-50"
           >
-            LIITY
+            {t('student.join')}
           </button>
         </div>
-        {!isConnected && <p className="mt-4 text-gray-400 text-sm">Yhdistetään palvelimeen...</p>}
+        {!isConnected && <p className="mt-4 text-gray-400 text-sm">{t('student.connecting')}</p>}
       </div>
     );
   }
@@ -63,8 +65,8 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
     return (
       <div className="h-full bg-blue-600 flex flex-col items-center justify-center text-white p-8 text-center">
         <Eye size={64} className="mb-4 animate-bounce mx-auto" />
-        <h2 className="text-2xl font-bold">Katso valkokankaalle</h2>
-        <p className="opacity-80 mt-2">Odotetaan opettajan toimia...</p>
+        <h2 className="text-2xl font-bold">{t('student.lookAtProjector')}</h2>
+        <p className="opacity-80 mt-2">{t('student.waitingForTeacher')}</p>
       </div>
     );
   }
@@ -73,8 +75,8 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
   if (activeSlide.type === 'INFO') {
     return (
       <div className="h-full bg-gray-100 flex flex-col items-center justify-center p-8 text-center">
-        <h2 className="text-xl font-bold text-gray-700">Info</h2>
-        <p className="text-gray-500 mt-2">Lue tiedot taululta.</p>
+        <h2 className="text-xl font-bold text-gray-700">{t('student.info')}</h2>
+        <p className="text-gray-500 mt-2">{t('student.readFromScreen')}</p>
       </div>
     );
   }
@@ -90,7 +92,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
         {hasAnswered ? (
           <div className="bg-green-100 text-green-800 p-8 rounded-xl text-center">
             <CheckCircle2 size={40} className="mb-2 mx-auto" />
-            <div className="font-bold text-xl">Vastaus lähetetty!</div>
+            <div className="font-bold text-xl">{t('student.answerSent')}</div>
           </div>
         ) : (
           <>
@@ -125,7 +127,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
                   disabled={selectedOptions.length === 0}
                   className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  LÄHETÄ VASTAUS
+                  {t('student.submitAnswer')}
                 </button>
               </>
             )}
@@ -136,7 +138,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
                 onClick={() => submitAnswer(opt.id)}
                 className="w-full p-6 text-left border-2 border-gray-200 rounded-xl text-lg font-bold hover:bg-blue-50 hover:border-blue-500 active:bg-blue-600 active:text-white transition-all shadow-sm"
               >
-                {opt.text}
+                {opt.id === 'true' ? t('editor.yesTrue') : (opt.id === 'false' ? t('editor.noFalse') : opt.text)}
               </button>
             ))}
 
@@ -144,14 +146,14 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
               <div className="w-full">
                 <textarea
                   className="w-full border-2 border-gray-300 rounded-xl p-4 text-lg h-40 mb-4 focus:border-blue-500"
-                  placeholder="Kirjoita vastaus..."
+                  placeholder={t('student.writeAnswer')}
                   value={textAns} onChange={e => setTextAns(e.target.value)}
                 />
                 <button
                   onClick={() => submitAnswer(textAns)}
                   className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-xl"
                 >
-                  LÄHETÄ
+                  {t('student.send')}
                 </button>
               </div>
             )}

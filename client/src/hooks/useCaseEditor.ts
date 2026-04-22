@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { arrayMove } from '@dnd-kit/sortable';
 import type { PatientCase, CaseSlide } from '../types';
 import { saveCaseToZip, loadCaseFromZip } from '../utils/fileHelpers';
@@ -7,6 +8,7 @@ import { useUI } from '../context/UIContext';
 const uuid = () => Math.random().toString(36).substr(2, 9);
 
 export const useCaseEditor = () => {
+    const { t } = useTranslation();
     const { showAlert } = useUI();
     const [caseData, setCaseData] = useState<PatientCase>({
         meta: {
@@ -124,10 +126,10 @@ export const useCaseEditor = () => {
             setActiveSlideIndex(0);
             setHasUnsavedChanges(false);
         } catch (e) {
-            console.error("Lataus epäonnistui", e);
+            console.error("Load failed", e);
             showAlert({
-                title: 'Lataus epäonnistui',
-                message: 'Varmista, että tiedosto on oikea .medcase-tiedosto.',
+                title: t('editor.uploadFailed'),
+                message: t('editor.uploadFailedMsg'),
                 variant: 'destructive',
             });
         }

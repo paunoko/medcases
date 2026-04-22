@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Home, Stethoscope } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useUI } from '../context/UIContext';
@@ -9,6 +10,7 @@ import { useTeacherSession } from '../hooks/useTeacherSession';
 import type { PatientCase } from '../types';
 
 export const TeacherView = () => {
+    const { t } = useTranslation();
     const { showAlert } = useUI();
     const navigate = useNavigate();
     // State for loaded data
@@ -22,16 +24,16 @@ export const TeacherView = () => {
                 <button
                     onClick={() => navigate('/', { state: { tab: 'teacher' } })}
                     className="absolute top-4 left-4 bg-white p-2 rounded-full shadow hover:bg-gray-50 text-2xl"
-                    title="Takaisin etusivulle"
+                    title={t('common.home')}
                 >
                     <Home size={24} />
                 </button>
                 <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full text-center">
-                    <h1 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">Opettajan näkymä <Stethoscope size={24} /></h1>
-                    <p className="text-gray-500 mb-6">Aloita lataamalla .medcase tiedosto</p>
+                    <h1 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">{t('teacher.viewTitle')} <Stethoscope size={24} /></h1>
+                    <p className="text-gray-500 mb-6">{t('teacher.uploadFile')}</p>
 
                     <label className="block w-full border-2 border-dashed border-blue-300 rounded-lg p-8 cursor-pointer hover:bg-blue-50 transition-colors">
-                        <span className="text-blue-600 font-bold">Valitse tiedosto koneelta</span>
+                        <span className="text-blue-600 font-bold">{t('teacher.selectFile')}</span>
                         <input
                             type="file"
                             className="hidden"
@@ -44,8 +46,8 @@ export const TeacherView = () => {
                                         setCaseData(result.caseData);
                                     } catch (err) {
                                         showAlert({
-                                            title: 'Lataus epäonnistui',
-                                            message: 'Tiedoston avaaminen epäonnistui. Varmista, että kyseessä on oikea .medcase tiedosto.',
+                                            title: t('teacher.uploadFailed'),
+                                            message: t('teacher.uploadFailedMsg'),
                                             variant: 'destructive'
                                         });
                                     }
@@ -63,6 +65,7 @@ export const TeacherView = () => {
 
 // Actual session
 const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images: Record<string, string>, onExit: () => void }) => {
+    const { t } = useTranslation();
     const { showConfirm } = useUI();
     const session = useTeacherSession(caseData);
 
@@ -70,12 +73,12 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 text-white">
                 <h1 className="text-4xl font-bold mb-4">{caseData.meta.title}</h1>
-                <p className="mb-8 text-gray-300">{caseData.slides.length} diaa valmiina.</p>
+                <p className="mb-8 text-gray-300">{t('teacher.slidesReady', { count: caseData.slides.length })}</p>
                 <button
                     onClick={session.createRoom}
                     className="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg transform transition hover:scale-105"
                 >
-                    AVAA LUOKKAHUONE
+                    {t('teacher.openRoom')}
                 </button>
             </div>
         );
@@ -102,14 +105,14 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
             <div className="w-80 bg-gray-800 p-6 flex flex-col border-l border-gray-700">
 
                 <div className="bg-gray-700 p-4 rounded-lg mb-6 text-center">
-                    <div className="text-sm text-gray-400 uppercase font-bold">Huonekoodi</div>
+                    <div className="text-sm text-gray-400 uppercase font-bold">{t('teacher.roomCode')}</div>
                     <div className="text-5xl font-mono font-bold text-white tracking-widest my-2">{session.roomId}</div>
 
                     <div className="flex justify-center my-4 bg-white p-2 rounded w-fit mx-auto">
                         <QRCodeSVG value={`${window.location.origin}${import.meta.env.BASE_URL}?room=${session.roomId}`} size={128} />
                     </div>
 
-                    <div className="text-green-400 font-bold">{session.studentCount} oppilasta linjoilla</div>
+                    <div className="text-green-400 font-bold">{t('teacher.studentsOnline', { count: session.studentCount })}</div>
                 </div>
 
                 <div className="flex-1 overflow-y-auto mb-4">
@@ -121,7 +124,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                     )}
 
                     <div className="text-sm text-gray-400">
-                        Vastauksia: <span className="text-white font-bold">{session.answers.length}</span>
+                        {t('teacher.answersCount', { count: session.answers.length })}
                     </div>
                 </div>
 
@@ -132,11 +135,11 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                             onClick={session.revealAnswer}
                             className="bg-blue-600 hover:bg-blue-500 py-4 rounded font-bold text-lg shadow-lg"
                         >
-                            LUKITSE & PALJASTA
+                            {t('teacher.revealAnswer')}
                         </button>
                     ) : (
                         <div className="bg-gray-700 py-4 rounded text-center text-gray-400 font-bold">
-                            Vastaukset näkyvissä
+                            {t('teacher.answersVisible')}
                         </div>
                     )}
 
@@ -146,23 +149,23 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                             disabled={session.currentIndex === 0}
                             className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded disabled:opacity-50"
                         >
-                            ← Edellinen
+                            {t('teacher.prev')}
                         </button>
                         <button
                             onClick={session.nextSlide}
                             disabled={session.currentIndex === session.totalSlides - 1}
                             className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded disabled:opacity-50"
                         >
-                            Seuraava →
+                            {t('teacher.next')}
                         </button>
                     </div>
 
                     <button
                         onClick={async () => {
                             const confirmed = await showConfirm({
-                                title: 'Lopetetaanko istunto?',
-                                message: 'Kaikkien oppilaiden yhteys katkaistaan ja istunto poistetaan käytöstä.',
-                                confirmText: 'Lopeta istunto',
+                                title: t('teacher.endSessionTitle'),
+                                message: t('teacher.endSessionMsg'),
+                                confirmText: t('teacher.endSession'),
                                 variant: 'destructive'
                             });
                             if (confirmed) {
@@ -172,7 +175,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                         }}
                         className="w-full bg-red-900/50 hover:bg-red-900 text-red-200 py-3 rounded mt-6 text-sm font-bold uppercase tracking-wider transition-colors"
                     >
-                        Lopeta istunto
+                        {t('teacher.endSession')}
                     </button>
                 </div>
             </div>

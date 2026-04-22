@@ -1,3 +1,4 @@
+import i18n from '../i18n';
 import type { CaseSlide, StudentPayload } from '../types';
 
 export const createStudentPayload = (
@@ -28,8 +29,8 @@ export const createStudentPayload = (
         payload.questionText = slide.question;
         // Create artificial options
         payload.options = [
-            { id: 'true', text: 'Kyllä / Tosi' },
-            { id: 'false', text: 'Ei / Epätosi' }
+            { id: 'true', text: i18n.t('editor.yesTrue') },
+            { id: 'false', text: i18n.t('editor.noFalse') }
         ];
     }
 

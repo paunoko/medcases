@@ -1,4 +1,5 @@
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useResizeText } from '../../hooks/useResizeText';
 import { Trash2 } from 'lucide-react';
 
@@ -19,8 +20,10 @@ export const SlideBody: React.FC<Props> = ({
   onContentChange, 
   onImageChange, 
   onImageRemove,
-  placeholder = 'Kirjoita tapauksen tai dian teksti tähän...'
+  placeholder
 }) => {
+  const { t } = useTranslation();
+  const effectivePlaceholder = placeholder || t('editor.slideContentPlaceholder');
   const contentRef = useRef<any>(null); // HTMLDivElement or HTMLTextAreaElement
   useResizeText(contentRef, [content, imageUrl]);
 
@@ -34,7 +37,7 @@ export const SlideBody: React.FC<Props> = ({
         <textarea
           ref={contentRef}
           className="flex-1 min-h-0 overflow-y-auto prose max-w-none text-3xl leading-snug text-gray-700 whitespace-pre-wrap bg-transparent border-2 border-dashed border-transparent hover:border-gray-200 focus:border-blue-500 focus:outline-none resize-none transition-colors rounded-lg p-2 -ml-2 custom-scrollbar"
-          placeholder={placeholder}
+          placeholder={effectivePlaceholder}
           value={content}
           onChange={e => onContentChange?.(e.target.value)}
         />
@@ -63,7 +66,7 @@ export const SlideBody: React.FC<Props> = ({
               {mode === 'edit' && (
                 <>
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
-                    <span className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-xl">Vaihda kuva</span>
+                    <span className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg text-xl">{t('editor.changeImage')}</span>
                   </div>
                   <button 
                     className="absolute top-4 right-4 bg-red-500 text-white w-12 h-12 flex items-center justify-center rounded-full shadow-lg opacity-0 group-hover:opacity-100 hover:bg-red-600 z-10 transition-all scale-90 hover:scale-100"
@@ -71,7 +74,7 @@ export const SlideBody: React.FC<Props> = ({
                       e.preventDefault();
                       onImageRemove?.();
                     }}
-                    title="Poista kuva"
+                    title={t('editor.removeImage')}
                   >
                     <Trash2 size={24} />
                   </button>
@@ -81,7 +84,7 @@ export const SlideBody: React.FC<Props> = ({
           ) : (
             mode === 'edit' && (
               <div className="flex items-center justify-center h-full w-full text-gray-400 font-bold text-2xl group-hover:text-blue-500 transition-colors text-center p-4">
-                + Lisää kuva (valinnainen)
+                {t('editor.addImageOptional')}
               </div>
             )
           )}

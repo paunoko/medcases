@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
+import { useTranslation } from 'react-i18next';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical, Trash2 } from 'lucide-react';
 import type { CaseSlide } from '../../types';
@@ -20,6 +21,7 @@ export const SortableSlideItem: React.FC<Props> = ({
   onSelect, 
   onDelete 
 }) => {
+  const { t } = useTranslation();
   const { showConfirm } = useUI();
   const {
     attributes,
@@ -61,14 +63,14 @@ export const SortableSlideItem: React.FC<Props> = ({
 
       <div className="flex-1 overflow-hidden">
         <div className="text-[10px] text-gray-400 uppercase font-bold tracking-wider flex justify-between items-center mb-1">
-          <span className={isActive ? 'text-blue-300' : ''}>{slide.type.replace('_', ' ')}</span>
+          <span className={isActive ? 'text-blue-300' : ''}>{t(`editor.slideTypes.${slide.type}`)}</span>
           <button
             onClick={async (e) => {
               e.stopPropagation();
               const confirmed = await showConfirm({
-                title: 'Poistetaanko dia?',
-                message: 'Haluatko varmasti poistaa tämän dian? Tätä toimintoa ei voi kumota.',
-                confirmText: 'Poista dia',
+                title: t('editor.deleteSlideTitle'),
+                message: t('editor.deleteSlideMsg'),
+                confirmText: t('editor.deleteSlide'),
                 variant: 'destructive',
               });
               if (confirmed) {
@@ -76,13 +78,13 @@ export const SortableSlideItem: React.FC<Props> = ({
               }
             }}
             className="text-gray-500 hover:text-red-400 p-1 rounded hover:bg-gray-800 transition-colors"
-            title="Poista dia"
+            title={t('editor.deleteSlide')}
           >
             <Trash2 size={16} />
           </button>
         </div>
         <div className="truncate font-bold text-gray-100 text-lg leading-tight">
-          {slide.title || '(Nimetön dia)'}
+          {slide.title || t('editor.unnamedSlide')}
         </div>
       </div>
     </div>

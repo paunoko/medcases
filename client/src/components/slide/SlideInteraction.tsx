@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import type { CaseSlide, Option } from '../../types';
 
@@ -17,6 +18,7 @@ export const SlideInteraction: React.FC<Props> = ({
   isRevealed = false,
   onUpdate
 }) => {
+  const { t } = useTranslation();
   const isEdit = mode === 'edit';
 
   // Calculate answer distribution (only if answers provided)
@@ -41,7 +43,7 @@ export const SlideInteraction: React.FC<Props> = ({
         isEdit ? (
           <input
             className="text-4xl font-semibold text-blue-900 w-full bg-transparent border-b-2 border-dashed border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none transition-colors pb-2"
-            placeholder="Kirjoita kysymys tähän..."
+            placeholder={t('editor.questionPlaceholder')}
             value={slide.question || ''}
             onChange={e => onUpdate?.('question', e.target.value)}
           />
@@ -60,8 +62,8 @@ export const SlideInteraction: React.FC<Props> = ({
           {/* Options List */}
           {(slide.type === 'TRUE_FALSE' && !isEdit
             ? [
-              { id: 'true', text: 'Kyllä / Tosi', isCorrect: slide.correctAnswer },
-              { id: 'false', text: 'Ei / Epätosi', isCorrect: !slide.correctAnswer }
+              { id: 'true', text: t('editor.yesTrue'), isCorrect: slide.correctAnswer },
+              { id: 'false', text: t('editor.noFalse'), isCorrect: !slide.correctAnswer }
             ]
             : (slide.type === 'MULTIPLE_CHOICE' || slide.type === 'TRUE_FALSE' ? (slide as any).options : [])
           )?.map((opt: Option, i: number) => {
@@ -81,12 +83,12 @@ export const SlideInteraction: React.FC<Props> = ({
                         opts[i].isCorrect = e.target.checked;
                         onUpdate?.('options', opts);
                       }}
-                      title="Merkitse oikeaksi vastaukseksi"
+                      title={t('editor.markAsCorrect')}
                     />
                     <textarea
                       rows={2}
                       className="font-bold text-2xl flex-1 bg-transparent focus:outline-none w-full resize-none leading-tight"
-                      placeholder="Vaihtoehto..."
+                      placeholder={t('editor.optionPlaceholder')}
                       value={opt.text}
                       onChange={e => {
                         const opts = [...(slide as any).options];
@@ -132,21 +134,21 @@ export const SlideInteraction: React.FC<Props> = ({
               onClick={() => onUpdate?.('options', [...(slide.options || []), { id: Math.random().toString(), text: '', isCorrect: false }])}
               className="p-6 border-4 border-dashed border-gray-300 rounded-2xl flex-1 min-w-[250px] text-gray-500 font-bold text-2xl hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center bg-gray-50 hover:bg-blue-50"
             >
-              + Lisää vaihtoehto
+              {t('editor.addOption')}
             </button>
           )}
 
           {/* True/False Specific Edit (Correct Answer Toggle) */}
           {isEdit && slide.type === 'TRUE_FALSE' && (
             <div className="flex items-center gap-6 p-6 border-4 border-gray-200 rounded-2xl bg-gray-50 flex-1 hover:border-blue-300 transition-colors">
-              <span className="font-bold text-2xl text-gray-700 uppercase tracking-wider">Oikea vastaus:</span>
+              <span className="font-bold text-2xl text-gray-700 uppercase tracking-wider">{t('editor.correctAnswer')}</span>
               <select
                 className="flex-1 text-2xl font-bold bg-white border-2 border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:outline-none shadow-sm cursor-pointer"
                 value={slide.correctAnswer ? 'true' : 'false'}
                 onChange={e => onUpdate?.('correctAnswer', e.target.value === 'true')}
               >
-                <option value="true">Kyllä / Tosi</option>
-                <option value="false">Ei / Epätosi</option>
+                <option value="true">{t('editor.yesTrue')}</option>
+                <option value="false">{t('editor.noFalse')}</option>
               </select>
             </div>
           )}
@@ -158,10 +160,10 @@ export const SlideInteraction: React.FC<Props> = ({
         <div className="space-y-4">
           {isEdit ? (
             <div className="mt-4 p-6 bg-yellow-50 border-4 border-dashed border-yellow-300 rounded-2xl flex flex-col gap-2 hover:border-yellow-400 transition-colors focus-within:border-yellow-500">
-              <label className="font-bold text-xl text-yellow-800 uppercase tracking-wider">Opettajan mallivastaus (näytetään oppilaille):</label>
+              <label className="font-bold text-xl text-yellow-800 uppercase tracking-wider">{t('editor.modelAnswerLabel')}</label>
               <input
                 className="w-full bg-transparent text-2xl text-gray-800 focus:outline-none placeholder-yellow-600/50"
-                placeholder="Kirjoita mallivastaus..."
+                placeholder={t('editor.modelAnswerPlaceholder')}
                 value={slide.modelAnswer || ''}
                 onChange={e => onUpdate?.('modelAnswer', e.target.value)}
               />
@@ -174,14 +176,14 @@ export const SlideInteraction: React.FC<Props> = ({
                     {Array.isArray(a.answer) ? a.answer.join(', ') : a.answer}
                   </div>
                 ))}
-                {answers.length === 0 && <div className="text-2xl text-gray-400 italic">Odotetaan vastauksia...</div>}
+                {answers.length === 0 && <div className="text-2xl text-gray-400 italic">{t('editor.waitingForAnswers')}</div>}
               </div>
 
               {/* Model answer */}
               {isRevealed && (
                 <div className="mt-4 p-6 bg-yellow-50 border-2 border-yellow-300 rounded-2xl">
-                  <h4 className="font-bold text-2xl text-yellow-800 mb-2">Mallivastaus / Huomioita:</h4>
-                  <p className="text-2xl">{slide.modelAnswer || "Ei mallivastausta määritelty."}</p>
+                  <h4 className="font-bold text-2xl text-yellow-800 mb-2">{t('editor.modelAnswerTitle')}</h4>
+                  <p className="text-2xl">{slide.modelAnswer || t('editor.noModelAnswer')}</p>
                 </div>
               )}
             </>
