@@ -2,24 +2,47 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { StudentView } from './StudentView';
-import { GraduationCap, Stethoscope, MonitorPlay, Sparkles, Pencil, Languages } from 'lucide-react';
+import { GraduationCap, Stethoscope, MonitorPlay, Sparkles, Pencil } from 'lucide-react';
 
-const LanguageSwitcher = () => {
+const LanguageSlider = () => {
     const { i18n } = useTranslation();
+    const languages = [
+        { code: 'fi', label: 'FI', emoji: '🇫🇮' },
+        { code: 'sv', label: 'SV', emoji: '🇸🇪' },
+        { code: 'en', label: 'EN', emoji: '🇬🇧' }
+    ];
 
-    const toggleLanguage = () => {
-        const newLang = i18n.language === 'fi' ? 'en' : 'fi';
-        i18n.changeLanguage(newLang);
-    };
+    // Get current language index, defaulting to FI if not found
+    const currentCode = i18n.language.split('-')[0];
+    const currentIndex = languages.findIndex(l => l.code === currentCode);
+    const safeIndex = currentIndex === -1 ? 0 : currentIndex;
 
     return (
-        <button
-            onClick={toggleLanguage}
-            className="fixed top-4 right-4 bg-white border border-gray-200 p-2 rounded-full shadow-sm hover:shadow-md transition-all flex items-center gap-2 px-4 font-bold text-gray-700 z-[100]"
-        >
-            <Languages size={20} className="text-blue-600" />
-            {i18n.language === 'fi' ? 'In English' : 'Suomeksi'}
-        </button>
+        <div className="fixed top-4 right-4 z-[100] bg-white border border-gray-200 p-1.5 rounded-full shadow-lg flex items-center relative h-12 min-w-[210px] overflow-hidden">
+            {/* Sliding background indicator container */}
+            <div className="absolute inset-1.5 z-0">
+                <div 
+                    className="absolute h-full bg-blue-600 rounded-full transition-all duration-300 ease-out shadow-sm"
+                    style={{ 
+                        width: `${100/languages.length}%`,
+                        left: `${safeIndex * (100/languages.length)}%` 
+                    }}
+                />
+            </div>
+            
+            {languages.map((lang, idx) => (
+                <button
+                    key={lang.code}
+                    onClick={() => i18n.changeLanguage(lang.code)}
+                    className={`flex-1 relative z-10 h-full flex items-center justify-center gap-2 px-2 transition-colors duration-300 rounded-full ${
+                        safeIndex === idx ? 'text-white' : 'text-gray-500 hover:text-gray-800'
+                    }`}
+                >
+                    <span className="text-xl">{lang.emoji}</span>
+                    <span className="font-bold text-sm tracking-tight">{lang.label}</span>
+                </button>
+            ))}
+        </div>
     );
 };
 
@@ -38,7 +61,7 @@ export const LandingView = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center">
-            <LanguageSwitcher />
+            <LanguageSlider />
 
             {/* Tabs - Hidden if student is in session */}
             {!inSession && (
