@@ -23,10 +23,10 @@ RUN npm run build -w client
 RUN npm run build -w server
 
 # --- Stage 2: Production Dependencies ---
-# We do this in a separate step to ensure we only have prod deps in the final image
 FROM node:24-alpine AS deps
 WORKDIR /app
 COPY package*.json ./
+COPY client/package*.json ./client/
 COPY server/package*.json ./server/
 RUN npm ci --omit=dev -w server
 
