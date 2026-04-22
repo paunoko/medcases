@@ -1,42 +1,52 @@
-# --- Stage 1: Build Client ---
-FROM node:current-alpine AS client-build
-WORKDIR /app/client
-COPY client/package*.json ./
-RUN npm ci
-COPY client/ ./
-ARG VITE_BASE_PATH
-ENV VITE_BASE_PATH=$VITE_BASE_PATH
-RUN npm run build
-
-# --- Stage 2: Build Server ---
-FROM node:current-alpine AS server-build
-WORKDIR /app/server
-COPY server/package*.json ./
-RUN npm ci
-COPY server/ ./
-RUN npm run build
-
-# --- Stage 3: Production ---
-FROM node:current-alpine
+# --- Stage 1: Build Environment ---
+FROM node:24-alpine AS builder
 WORKDIR /app
 
-# Copy server built files
-COPY --from=server-build /app/server/dist ./server/dist
-COPY --from=server-build /app/server/package*.json ./server/
-COPY --from=server-build /app/server/node_modules ./server/node_modules
+# Handle build-time environment variables for the client
+ARG VITE_BASE_PATH
+ENV VITE_BASE_PATH=$VITE_BASE_PATH
 
-# Copy client built files to server's public directory
-# Note: The server expects static files in ../public relative to dist/index.js
-# So we place them in /app/server/public
-COPY --from=client-build /app/client/dist ./server/public
+# Copy workspace configuration and package manifests
+COPY package*.json ./
+COPY client/package*.json ./client/
+COPY server/package*.json ./server/
 
-# Set environment variables
+# Install all dependencies (including devDependencies for building)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build client and server using workspaces
+# Vite build for client, TSC for server
+RUN npm run build -w client
+RUN npm run build -w server
+
+# --- Stage 2: Production Dependencies ---
+# We do this in a separate step to ensure we only have prod deps in the final image
+FROM node:24-alpine AS deps
+WORKDIR /app
+COPY package*.json ./
+COPY server/package*.json ./server/
+RUN npm ci --omit=dev -w server
+
+# --- Stage 3: Final Production Image ---
+FROM node:24-alpine AS runner
+WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Expose port
+# Copy production node_modules from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/server/node_modules ./server/node_modules
+
+# Copy built server files
+COPY --from=builder /app/server/dist ./server/dist
+# Copy built client files to server's public directory
+COPY --from=builder /app/client/dist ./server/public
+
+# The server expects to be run from inside the server directory
+WORKDIR /app/server
 EXPOSE 3000
 
-# Start server
-WORKDIR /app/server
 CMD ["node", "dist/index.js"]
