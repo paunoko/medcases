@@ -40,6 +40,27 @@ This project uses a real-time **WebSocket** architecture to synchronize the teac
     -   *Teacher Client*: Emits `PUSH_UPDATE` events when changing slides.
     -   *Student Client*: Listens for `SLIDE_UPDATE` events to render the current view.
 
+## Logging & Docker
+
+The server utilizes structured **Winston logging** instead of raw console outputs.
+
+- **Development (`NODE_ENV=dev`)**: Logs are printed to the console in a friendly, color-coded fashion.
+- **Production (`NODE_ENV=production`)**: Logs are output in raw **JSON format**, making them easy to scrape. 
+- **Log Voluming**: Logs are simultaneously written to rotated files inside the `server/logs/` directory, archiving up to 14 days of history.
+
+### Accessing Logs in Docker
+When deploying via Docker, the recommended 12-factor standard is to access logs directly via standard output rather than entering the container filesystem. The Docker engine will capture the raw JSON lines.
+
+To read live logs:
+```bash
+docker logs -f <your-container-name>
+```
+
+If you prefer to browse the rolling daily flat files, ensure you map a volume to `/app/server/logs/` when running the container, e.g.:
+```bash
+docker run -v /your/host/path/logs:/app/server/logs -p 3000:3000 medcases-server
+```
+
 ## Documentation
 
 For more detailed technical information, check the following docs:

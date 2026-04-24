@@ -28,10 +28,18 @@ Run the container using `docker run`. You must map the port and can optionally s
 
 ```bash
 # Basic run (accessible at http://localhost:3000)
+# Logs will be natively captured by Docker (view with `docker logs -f <container_id>`)
 docker run -p 3000:3000 medcases
 
 # Run with custom base path (must match build-arg!)
 docker run -p 3000:3000 -e BASE_PATH=/medcases medcases
+```
+
+#### Persisting File Logs (Volume Mapping)
+If you prefer to browse flat rotating file logs instead of relying on the Docker engine logs, the server caches up to 14 days of logs inside the `/app/server/logs/` directory. You can mount a host directory to extract them:
+
+```bash
+docker run -p 3000:3000 -v /var/log/medcases:/app/server/logs medcases
 ```
 
 ## Environment Variables

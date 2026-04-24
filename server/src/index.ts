@@ -4,6 +4,7 @@ import path from 'path';
 import { Server, Socket } from 'socket.io';
 import cors from 'cors';
 import { RoomState, StudentAnswer, BroadcastPayload } from './types';
+import { logger } from './utils/logger';
 
 // Initialize Express and Socket.io
 const app = express();
@@ -39,7 +40,7 @@ const generateRoomCode = (): string => {
 };
 
 io.on('connection', (socket: Socket) => {
-  console.log(`[Connect] Socket ID: ${socket.id}`);
+  logger.info(`[Connect] Socket ID: ${socket.id}`);
 
   // --- 1. TEACHER ACTIONS ---
 
@@ -66,7 +67,7 @@ io.on('connection', (socket: Socket) => {
     socketToRoom.set(socket.id, roomId);
     socket.join(roomId); // Socket.io "room"
 
-    console.log(`[Room Created] ID: ${roomId} by Teacher: ${socket.id}`);
+    logger.info(`[Room Created] ID: ${roomId} by Teacher: ${socket.id}`);
     socket.emit('ROOM_CREATED', { roomId, teacherSecret });
   });
 
@@ -77,7 +78,7 @@ io.on('connection', (socket: Socket) => {
       return;
     }
     
-    console.log(`[Reconnect] Teacher safely reconnected for room ${roomId}`);
+    logger.info(`[Reconnect] Teacher safely reconnected for room ${roomId}`);
     if (room.disconnectTimer) {
       clearTimeout(room.disconnectTimer);
       room.disconnectTimer = null;
@@ -97,7 +98,7 @@ io.on('connection', (socket: Socket) => {
     const room = rooms.get(roomId);
     if (!room || room.teacherSocketId !== socket.id) return;
 
-    console.log(`[End Session] Room: ${roomId}`);
+    logger.info(`[End Session] Room: ${roomId}`);
 
     // Notify everyone (including teacher themselves as an ack)
     io.to(roomId).emit('SESSION_ENDED');
@@ -117,13 +118,13 @@ io.on('connection', (socket: Socket) => {
 
     // VALIDATION: Payload structure
     if (!payload || typeof payload !== 'object' || !payload.slideId) {
-      console.warn(`[Invalid Payload] Room: ${roomId}`);
+      logger.warn(`[Invalid Payload] Room: ${roomId}`);
       return;
     }
 
     // If slide changed completely to a new one, clear old answers
     if (room.currentPayload?.slideId !== payload.slideId) {
-      console.log(`[New Slide] Room: ${roomId}, Slide: ${payload.slideId}`);
+      logger.info(`[New Slide] Room: ${roomId}, Slide: ${payload.slideId}`);
       room.answers = [];
       // Inform compiler/teacher that answers have been wiped
       socket.emit('ANSWERS_UPDATE', []);
@@ -157,7 +158,7 @@ io.on('connection', (socket: Socket) => {
     socket.join(roomId);
     socketToRoom.set(socket.id, roomId);
     room.studentCount++;
-    console.log(`[Join] Student joined room ${roomId}`);
+    logger.info(`[Join] Student joined room ${roomId}`);
 
     // Notify teacher of the new count
     io.to(room.teacherSocketId).emit('STUDENT_COUNT', { count: room.studentCount });
@@ -238,9 +239,9 @@ io.on('connection', (socket: Socket) => {
 
     if (room.teacherSocketId === socket.id) {
       // TEACHER DISCONNECTED: Start Grace Period
-      console.log(`[Disconnect] Teacher left room ${roomId}. Waiting 60s for reconnect.`);
+      logger.info(`[Disconnect] Teacher left room ${roomId}. Waiting 60s for reconnect.`);
       room.disconnectTimer = setTimeout(() => {
-        console.log(`[Timeout] Teacher did not reconnect. Cleaning up room ${roomId}.`);
+        logger.info(`[Timeout] Teacher did not reconnect. Cleaning up room ${roomId}.`);
         io.to(roomId).emit('SESSION_ENDED');
         
         if (room.throttleTimer) clearTimeout(room.throttleTimer);
@@ -249,7 +250,7 @@ io.on('connection', (socket: Socket) => {
     } else {
       // STUDENT DISCONNECTED: Update count
       room.studentCount = Math.max(0, room.studentCount - 1);
-      console.log(`[Disconnect] Student left room ${roomId}. Count: ${room.studentCount}`);
+      logger.info(`[Disconnect] Student left room ${roomId}. Count: ${room.studentCount}`);
       io.to(room.teacherSocketId).emit('STUDENT_COUNT', { count: room.studentCount });
     }
 
@@ -269,7 +270,7 @@ app.get(new RegExp(`^${BASE_PATH}.*`), (req, res) => {
 // Start port at 3000
 const PORT = 3000;
 server.listen(PORT, () => {
-  console.log(`\n--- MEDCASES SERVER ---`);
-  console.log(`Listening on port ${PORT}`);
-  console.log(`Ready for connections...\n`);
+  logger.info(`\n--- MEDCASES SERVER ---`);
+  logger.info(`Listening on port ${PORT}`);
+  logger.info(`Ready for connections...\n`);
 });
