@@ -16,6 +16,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
     const [answers, setAnswers] = useState<any[]>([]);
 
     const socketRef = useRef<Socket | null>(null);
+    const roomInfoRef = useRef<{ roomId: string, teacherSecret: string } | null>(null);
 
     // Connection
     useEffect(() => {
@@ -25,7 +26,17 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         socketRef.current = newSocket;
         setSocket(newSocket);
 
-        newSocket.on('ROOM_CREATED', ({ roomId }) => setRoomId(roomId));
+        newSocket.on('connect', () => {
+             // If we already have a room info, we are likely reconnecting.
+             if (roomInfoRef.current) {
+                 newSocket.emit('RECONNECT_TEACHER', roomInfoRef.current);
+             }
+        });
+
+        newSocket.on('ROOM_CREATED', ({ roomId, teacherSecret }) => {
+             setRoomId(roomId);
+             roomInfoRef.current = { roomId, teacherSecret };
+        });
         newSocket.on('STUDENT_COUNT', ({ count }) => setStudentCount(count));
         newSocket.on('ANSWERS_UPDATE', (updatedAnswers) => setAnswers(updatedAnswers));
 

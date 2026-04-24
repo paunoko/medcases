@@ -36,4 +36,8 @@ export interface RoomState {
 
   // Internal: For batching updates to teacher
   throttleTimer?: NodeJS.Timeout | null;
+  
+  // For graceful teacher reconnection
+  teacherSecret: string;
+  disconnectTimer?: NodeJS.Timeout | null;
 }

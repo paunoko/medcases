@@ -50,10 +50,13 @@ io.on('connection', (socket: Socket) => {
       roomId = generateRoomCode();
     }
 
+    const teacherSecret = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
     // Initialize room state
     const newRoom: RoomState = {
       roomId,
       teacherSocketId: socket.id,
+      teacherSecret,
       currentPayload: null,
       answers: [],
       studentCount: 0
@@ -64,7 +67,30 @@ io.on('connection', (socket: Socket) => {
     socket.join(roomId); // Socket.io "room"
 
     console.log(`[Room Created] ID: ${roomId} by Teacher: ${socket.id}`);
-    socket.emit('ROOM_CREATED', { roomId });
+    socket.emit('ROOM_CREATED', { roomId, teacherSecret });
+  });
+
+  socket.on('RECONNECT_TEACHER', ({ roomId, teacherSecret }: { roomId: string, teacherSecret: string }) => {
+    const room = rooms.get(roomId);
+    if (!room || room.teacherSecret !== teacherSecret) {
+      socket.emit('ERROR', { message: 'Invalid reconnect credentials.' });
+      return;
+    }
+    
+    console.log(`[Reconnect] Teacher safely reconnected for room ${roomId}`);
+    if (room.disconnectTimer) {
+      clearTimeout(room.disconnectTimer);
+      room.disconnectTimer = null;
+    }
+    
+    // Update active socket
+    room.teacherSocketId = socket.id;
+    socketToRoom.set(socket.id, roomId);
+    socket.join(roomId);
+
+    // Send latest student count in case it changed
+    socket.emit('STUDENT_COUNT', { count: room.studentCount });
+    socket.emit('ANSWERS_UPDATE', room.answers);
   });
 
   socket.on('END_SESSION', ({ roomId }: { roomId: string }) => {
@@ -211,12 +237,15 @@ io.on('connection', (socket: Socket) => {
     }
 
     if (room.teacherSocketId === socket.id) {
-      // TEACHER DISCONNECTED: Kill the room
-      console.log(`[Disconnect] Teacher left room ${roomId}. Cleaning up.`);
-      io.to(roomId).emit('SESSION_ENDED');
-      
-      if (room.throttleTimer) clearTimeout(room.throttleTimer);
-      rooms.delete(roomId);
+      // TEACHER DISCONNECTED: Start Grace Period
+      console.log(`[Disconnect] Teacher left room ${roomId}. Waiting 60s for reconnect.`);
+      room.disconnectTimer = setTimeout(() => {
+        console.log(`[Timeout] Teacher did not reconnect. Cleaning up room ${roomId}.`);
+        io.to(roomId).emit('SESSION_ENDED');
+        
+        if (room.throttleTimer) clearTimeout(room.throttleTimer);
+        rooms.delete(roomId);
+      }, 60000); // 60 seconds grace period
     } else {
       // STUDENT DISCONNECTED: Update count
       room.studentCount = Math.max(0, room.studentCount - 1);
