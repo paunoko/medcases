@@ -174,9 +174,11 @@ export const SlideInteraction: React.FC<Props> = ({
                 {answers.map((a, idx) => (
                   <div 
                     key={idx} 
-                    className={`px-6 py-3 bg-gray-100 rounded-full border border-gray-300 text-2xl font-medium animate-pulse-once transition-all duration-500 ${!isRevealed ? 'filter blur-md select-none opacity-50' : ''}`}
+                    className="px-6 py-3 bg-gray-100 rounded-full border border-gray-300 text-2xl font-medium animate-pulse-once flex items-center"
                   >
-                    {Array.isArray(a.answer) ? a.answer.join(', ') : a.answer}
+                    <span className={`transition-all duration-500 pointer-events-none ${!isRevealed ? 'filter blur-[6px] select-none opacity-80' : ''}`}>
+                      {Array.isArray(a.answer) ? a.answer.join(', ') : a.answer}
+                    </span>
                   </div>
                 ))}
                 {answers.length === 0 && <div className="text-2xl text-gray-400 italic">{t('editor.waitingForAnswers')}</div>}
