@@ -122,12 +122,11 @@ io.on('connection', (socket: Socket) => {
       return;
     }
 
-    // If slide changed completely to a new one, clear old answers
+    // If slide changed completely to a new one, send current answers for that slide
     if (room.currentPayload?.slideId !== payload.slideId) {
       logger.info(`[New Slide] Room: ${roomId}, Slide: ${payload.slideId}`);
-      room.answers = [];
-      // Inform compiler/teacher that answers have been wiped
-      socket.emit('ANSWERS_UPDATE', []);
+      const slideAnswers = room.answers.filter(a => a.slideId === payload.slideId);
+      socket.emit('ANSWERS_UPDATE', slideAnswers);
     }
 
     // Update memory representation
@@ -194,8 +193,8 @@ io.on('connection', (socket: Socket) => {
       return; // Invalid type
     }
 
-    // Check if the student has already answered this slide
-    const existingIndex = room.answers.findIndex(a => a.socketId === socket.id);
+    // Check if the student has already answered this specific slide
+    const existingIndex = room.answers.findIndex(a => a.socketId === socket.id && a.slideId === slideId);
 
     const answerEntry: StudentAnswer = {
       socketId: socket.id,
@@ -216,7 +215,8 @@ io.on('connection', (socket: Socket) => {
     // If not already scheduled, schedule a broadcast in 1 second
     if (!room.throttleTimer) {
       room.throttleTimer = setTimeout(() => {
-        io.to(room.teacherSocketId).emit('ANSWERS_UPDATE', room.answers);
+        const slideAnswers = room.answers.filter(a => a.slideId === room.currentPayload?.slideId);
+        io.to(room.teacherSocketId).emit('ANSWERS_UPDATE', slideAnswers);
         room.throttleTimer = null;
       }, 1000);
     }
