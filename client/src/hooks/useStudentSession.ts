@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import type { StudentPayload } from '../types';
 
@@ -9,6 +9,7 @@ export const useStudentSession = () => {
     const [isConnected, setIsConnected] = useState(false);
 
     const [joinedRoomId, setJoinedRoomId] = useState<string | null>(null);
+    const joinedRoomIdRef = useRef<string | null>(null);
     const [activeSlide, setActiveSlide] = useState<StudentPayload | null>(null);
     const [isWaiting, setIsWaiting] = useState(false);
 
@@ -21,12 +22,20 @@ export const useStudentSession = () => {
         });
         setSocket(newSocket);
 
-        newSocket.on('connect', () => { setIsConnected(true); setError(null); });
+        newSocket.on('connect', () => { 
+            setIsConnected(true); 
+            setError(null); 
+            // If the socket disconnected, it left the room. Rejoin if we have an active room.
+            if (joinedRoomIdRef.current) {
+                newSocket.emit('JOIN_ROOM', { roomId: joinedRoomIdRef.current });
+            }
+        });
         newSocket.on('disconnect', () => setIsConnected(false));
 
         newSocket.on('ERROR', ({ message }) => {
             setError(message);
             setJoinedRoomId(null);
+            joinedRoomIdRef.current = null;
         });
 
         newSocket.on('SLIDE_UPDATE', (payload: StudentPayload) => {
@@ -49,6 +58,7 @@ export const useStudentSession = () => {
 
         newSocket.on('SESSION_ENDED', () => {
             setJoinedRoomId(null);
+            joinedRoomIdRef.current = null;
             setActiveSlide(null);
             setIsWaiting(false);
             setHasAnswered(false);
@@ -61,6 +71,7 @@ export const useStudentSession = () => {
         if (!socket) return;
         socket.emit('JOIN_ROOM', { roomId });
         setJoinedRoomId(roomId);
+        joinedRoomIdRef.current = roomId;
     };
 
     const submitAnswer = (answer: string | string[]) => {

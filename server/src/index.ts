@@ -110,11 +110,23 @@ io.on('connection', (socket: Socket) => {
   });
 
   // Teacher pushes an update (Slide changed or answer revealed)
-  socket.on('PUSH_UPDATE', ({ roomId, payload }: { roomId: string, payload: BroadcastPayload }) => {
+  socket.on('PUSH_UPDATE', ({ roomId, teacherSecret, payload }: { roomId: string, teacherSecret?: string, payload: BroadcastPayload }) => {
     const room = rooms.get(roomId);
 
     // Security check: Only the teacher who created the room can update it
-    if (!room || room.teacherSocketId !== socket.id) return;
+    if (!room) return;
+    
+    if (room.teacherSocketId !== socket.id) {
+      if (teacherSecret && room.teacherSecret === teacherSecret) {
+        // Teacher reconnected and buffered packets arrived before RECONNECT_TEACHER.
+        // Auto-heal the socket association.
+        room.teacherSocketId = socket.id;
+        socketToRoom.set(socket.id, roomId);
+        socket.join(roomId);
+      } else {
+        return;
+      }
+    }
 
     // VALIDATION: Payload structure
     if (!payload || typeof payload !== 'object' || !payload.slideId) {

@@ -53,7 +53,11 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         const currentSlide = patientCase.slides[currentIndex];
         const payload: StudentPayload = createStudentPayload(currentSlide, slideState);
 
-        socketRef.current.emit('PUSH_UPDATE', { roomId, payload });
+        socketRef.current.emit('PUSH_UPDATE', { 
+            roomId, 
+            teacherSecret: roomInfoRef.current?.teacherSecret,
+            payload 
+        });
     }, [currentIndex, slideState, roomId, patientCase]);
 
     // React to state changes
