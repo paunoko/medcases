@@ -94,6 +94,10 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
             <CheckCircle2 size={40} className="mb-2 mx-auto" />
             <div className="font-bold text-xl">{t('student.answerSent')}</div>
           </div>
+        ) : (activeSlide.state === 'REVEALED' || activeSlide.state === 'LOCKED') && activeSlide.type !== 'OPEN_TEXT' ? (
+          <div className="bg-gray-100 text-gray-500 p-8 rounded-xl text-center border-2 border-dashed border-gray-300">
+            <div className="font-bold text-xl">{t('student.answeringLocked')}</div>
+          </div>
         ) : (
           <>
             {activeSlide.type === 'MULTIPLE_CHOICE' && (

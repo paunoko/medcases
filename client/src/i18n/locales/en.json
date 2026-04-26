@@ -31,6 +31,7 @@
     "readFromScreen": "Read information from the screen.",
     "answerSent": "Answer sent!",
     "submitAnswer": "SUBMIT ANSWER",
+    "answeringLocked": "Answering has ended.",
     "writeAnswer": "Write your answer...",
     "send": "SEND"
   },
@@ -46,6 +47,7 @@
     "studentsOnline": "{{count}} students online",
     "answersCount": "Answers: {{count}}",
     "revealAnswer": "LOCK & REVEAL",
+    "revealAnswersOnly": "REVEAL ANSWERS",
     "answersVisible": "Answers visible",
     "prev": "← Previous",
     "next": "Next →",

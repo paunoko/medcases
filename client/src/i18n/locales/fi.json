@@ -31,6 +31,7 @@
     "readFromScreen": "Lue tiedot taululta.",
     "answerSent": "Vastaus lähetetty!",
     "submitAnswer": "LÄHETÄ VASTAUS",
+    "answeringLocked": "Vastaaminen on päättynyt.",
     "writeAnswer": "Kirjoita vastaus...",
     "send": "LÄHETÄ"
   },
@@ -46,6 +47,7 @@
     "studentsOnline": "{{count}} oppilasta linjoilla",
     "answersCount": "Vastauksia: {{count}}",
     "revealAnswer": "LUKITSE & PALJASTA",
+    "revealAnswersOnly": "PALJASTA VASTAUKSET",
     "answersVisible": "Vastaukset näkyvissä",
     "prev": "← Edellinen",
     "next": "Seuraava →",

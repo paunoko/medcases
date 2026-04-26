@@ -172,7 +172,10 @@ export const SlideInteraction: React.FC<Props> = ({
             <>
               <div className="flex flex-wrap gap-3 max-h-60 overflow-y-auto p-2">
                 {answers.map((a, idx) => (
-                  <div key={idx} className="px-6 py-3 bg-gray-100 rounded-full border border-gray-300 text-2xl font-medium animate-pulse-once">
+                  <div 
+                    key={idx} 
+                    className={`px-6 py-3 bg-gray-100 rounded-full border border-gray-300 text-2xl font-medium animate-pulse-once transition-all duration-500 ${!isRevealed ? 'filter blur-md select-none opacity-50' : ''}`}
+                  >
                     {Array.isArray(a.answer) ? a.answer.join(', ') : a.answer}
                   </div>
                 ))}

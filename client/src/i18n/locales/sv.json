@@ -31,6 +31,7 @@
     "readFromScreen": "Läs informationen på tavlan.",
     "answerSent": "Svaret har skickats!",
     "submitAnswer": "SKICKA SVAR",
+    "answeringLocked": "Svarstiden har gått ut.",
     "writeAnswer": "Skriv svar...",
     "send": "SKICKA"
   },
@@ -46,6 +47,7 @@
     "studentsOnline": "{{count}} studenter online",
     "answersCount": "Svar: {{count}}",
     "revealAnswer": "LÅS & VISA",
+    "revealAnswersOnly": "VISA SVAR",
     "answersVisible": "Svar visas",
     "prev": "← Föregående",
     "next": "Nästa →",

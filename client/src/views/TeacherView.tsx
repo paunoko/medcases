@@ -135,13 +135,13 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                             onClick={session.revealAnswer}
                             className="bg-blue-600 hover:bg-blue-500 py-4 rounded font-bold text-lg shadow-lg"
                         >
-                            {t('teacher.revealAnswer')}
+                            {session.currentSlide?.type === 'OPEN_TEXT' ? t('teacher.revealAnswersOnly') : t('teacher.revealAnswer')}
                         </button>
-                    ) : (
+                    ) : session.currentSlide?.type !== 'INFO' ? (
                         <div className="bg-gray-700 py-4 rounded text-center text-gray-400 font-bold">
                             {t('teacher.answersVisible')}
                         </div>
-                    )}
+                    ) : null}
 
                     <div className="flex gap-2 mt-4">
                         <button
