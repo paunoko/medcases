@@ -5,6 +5,9 @@ import type { PatientCase } from '../types';
 // Type for extracted images: filename -> browser internal URL
 export type ImageMap = Record<string, string>;
 
+const CASE_FILENAME = 'case.json';
+const IMAGES_FOLDER = 'images';
+
 export const saveCaseToZip = async (
     caseData: PatientCase,
     imageFiles: Record<string, File>
@@ -12,10 +15,10 @@ export const saveCaseToZip = async (
     const zip = new JSZip();
 
     // 1. Add JSON
-    zip.file("data.json", JSON.stringify(caseData, null, 2));
+    zip.file(CASE_FILENAME, JSON.stringify(caseData, null, 2));
 
     // 2. Add images to images-folder
-    const imgFolder = zip.folder("images");
+    const imgFolder = zip.folder(IMAGES_FOLDER);
     if (imgFolder) {
         // Process only images that are actually used in data
         caseData.slides.forEach(slide => {
@@ -47,8 +50,8 @@ export const loadCaseFromZip = async (file: File) => {
     const loadedZip = await zip.loadAsync(file);
 
     // 1. Read JSON
-    const jsonFile = loadedZip.file("data.json");
-    if (!jsonFile) throw new Error("Virheellinen tiedosto: data.json puuttuu");
+    const jsonFile = loadedZip.file(CASE_FILENAME);
+    if (!jsonFile) throw new Error(`Virheellinen tiedosto: ${CASE_FILENAME} puuttuu`);
 
     const jsonStr = await jsonFile.async("string");
     const caseData = JSON.parse(jsonStr) as PatientCase;
@@ -57,7 +60,7 @@ export const loadCaseFromZip = async (file: File) => {
     const images: ImageMap = {};
     const imageFiles: Record<string, File> = {}; // Required for the editor
 
-    const imageFolder = loadedZip.folder("images");
+    const imageFolder = loadedZip.folder(IMAGES_FOLDER);
 
     if (imageFolder) {
         const filePaths = Object.keys(imageFolder.files);

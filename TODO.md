@@ -6,13 +6,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
 
 ## 1. Datarakenne ja tiedostomuoto (.medcase)
 
-- [ ] **1.1 Standardoi ZIP-paketin JSON-tiedostonimi (`case.json`)**
+- [x] **1.1 Standardoi ZIP-paketin JSON-tiedostonimi (`case.json`)**
   - **Prioriteetti:** Korkea (yhteensopivuusbugi)
   - **Tiedostot:** `client/src/utils/fileHelpers.ts`, `data-description.md`
-  - **Ongelma:** Dokumentaatio (`data-description.md`) määrittelee nimeksi `case.json`, mutta `fileHelpers.ts` kirjoittaa ja lukee kovakoodattua `data.json`-nimeä. Dokumentaation mukaan käsin luodut tiedostot eivät avaudu sovelluksessa.
+  - **Ongelma:** Dokumentaatio (`data-description.md`) määrittelee nimeksi `case.json`, mutta `fileHelpers.ts` kirjoitti ja luki kovakoodattua `data.json`-nimeä.
   - **Toimenpiteet:**
-    - Muuta `saveCaseToZip` kirjoittamaan tiedosto nimellä `case.json`.
-    - Muuta `loadCaseFromZip` lukemaan `case.json`. Lisää taaksepäin yhteensopivuuden vuoksi fallback: jos `case.json` ei löydy, yritä lukea `data.json`.
+    - `saveCaseToZip` kirjoittaa tiedoston aina nimellä `case.json`.
+    - `loadCaseFromZip` lukee tiedoston `case.json`. Jos tiedostoa ei löydy, heitetään virheilmoitus.
 
 - [ ] **1.2 Poista tai ota käyttöön toteuttamaton data (Dead Schema Fields)**
   - **Prioriteetti:** Keskitaso (koodin selkeys)
@@ -104,26 +104,36 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
 
 ## 4. Backendin arkkitehtuuri, tietoturva ja vikasietoisuus
 
-- [ ] **4.1 Korjaa palvelimen jumiutuminen ikuiseen silmukkaan (Kriittinen DoS)**
+- [ ] **4.1 Korjaa palvelimen jumiutuminen ikuiseen silmukkaan (Kriittinen DoS) & vakioi rajat**
   - **Prioriteetti:** Kriittinen (palvelimen vakaus)
   - **Tiedostot:** `server/src/index.ts`
-  - **Ongelma:** Huonekoodin arvonnassa `while (rooms.has(roomId))` pyörii ilman yrityskertalaskuria tai aktiivisten huoneiden maksimimäärää. Huoneiden kertyessä palvelimen prosessi jumiutuu 100 % CPU:lle ja kaatuu.
+  - **Ongelma:** Huonekoodin arvonnassa `while (rooms.has(roomId))` pyörii ilman yrityskertalaskuria tai aktiivisten huoneiden maksimimäärää. Huoneiden kertyessä palvelimen prosessi jumiutuu 100 % CPU:lle ja kaatuu. Koodissa on myös useita nimeämättömiä taikalukuja (magic numbers).
   - **Toimenpiteet:**
-    - Aseta palvelimelle maksimimäärä aktiivisille huoneille (esim. `MAX_ROOMS = 100`). Jos raja ylittyy, palauta virhe.
-    - Rajoita `while`-silmukka enintään 20 yrityskertaan. Jos vapaata 4-numeroista koodia ei löydy, hylkää pyyntö virheellä.
+    - Määrittele selkeät nimetyt vakiot:
+      - `MAX_ACTIVE_ROOMS = 100`
+      - `MAX_ROOM_ATTEMPTS = 20`
+      - `ROOM_CODE_MIN = 1000` ja `ROOM_CODE_RANGE = 9000`
+      - `TEACHER_THROTTLE_MS = 1000`
+    - Tarkista huonemaksimi `CREATE_ROOM`-kutsussa: jos raja ylittyy, palauta virhe.
+    - Rajoita `while`-silmukka `MAX_ROOM_ATTEMPTS`-yrityskertaan. Jos vapaata 4-numeroista koodia ei löydy, hylkää pyyntö virheellä.
 
 - [ ] **4.2 Tallenna opettajan Reconnection Token selaimeen (F5- ja selauspäivitystuki)**
   - **Prioriteetti:** Korkea (opetustilanteen vikasietoisuus)
   - **Tiedostot:** `client/src/hooks/useTeacherSession.ts`
   - **Ongelma:** Palvelimella on `teacherSecret`- ja `RECONNECT_TEACHER`-tuki, mutta asiakaspuolella tunnistetta säilytetään vain Reactin `useRef`-muuttujassa. Jos opettaja päivittää sivun (F5) tai avaa välilehden uudelleen, tila nollautuu ja opettaja menettää huoneensa hallinnan lopullisesti.
   - **Toimenpiteet:**
-    - Tallenna `roomId` ja `teacherSecret` selaimen `sessionStorage`-muistiin `ROOM_CREATED`-tapahtumassa.
+    - Määrittele vakio `TEACHER_SESSION_KEY = 'medcases_teacher_session'` tallennusavaimelle.
+    - Tallenna `roomId` ja `teacherSecret` selaimen `sessionStorage`-muistiin `ROOM_CREATED`-tapahtumassa avaimella `TEACHER_SESSION_KEY`.
     - Sivun latautuessa tarkista `sessionStorage` ja lähetä automaattisesti `RECONNECT_TEACHER`, jos aktiivinen istunto löytyy.
     - Siivoa `sessionStorage` kun opettaja päättää istunnon (`endSession`).
 
-- [ ] **4.3 Yleinen huoneiden inaktiivisuusaikakatkaisu**
-  - **Prioriteetti:** Matala / Ylläpito
+- [ ] **4.3 Huoneiden elinkaari ja inaktiivisuusaikakatkaisu**
+  - **Prioriteetti:** Keskitaso / Ylläpito
   - **Tiedostot:** `server/src/index.ts`
-  - **Ongelma:** Palvelimella on 60 sekunnin `disconnectTimer` opettajan katkeamiselle, mutta auki jätetyt ja unohdetut istunnot, joissa yhteys säilyy auki, voivat roikkua muistissa pitkään.
+  - **Ongelma:** Palvelimella on kovakoodattu 60 sekunnin `disconnectTimer` (`60000`), mutta auki jätetyt ja unohdetut istunnot, joissa yhteys säilyy auki, voivat roikkua muistissa loputtomiin.
   - **Toimenpiteet:**
-    - Lisää huoneelle inaktiivisuusaikakatkaisu (esim. 30–60 min ilman opettajan tai opiskelijoiden toimia), joka vapauttaa huoneen resurssit.
+    - Määrittele selkeät aikarajavakiot:
+      - `TEACHER_DISCONNECT_GRACE_MS = 60_000` (60 s toipumisaika yhteyden katketessa)
+      - `ROOM_INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000` (30 min inaktiivisuusaika)
+    - Korvaa kovakoodattu `60000` vakiolla `TEACHER_DISCONNECT_GRACE_MS`.
+    - Lisää huoneelle inaktiivisuusaikakatkaisu (`ROOM_INACTIVITY_TIMEOUT_MS`), joka nollautuu aina kun huoneessa tapahtuu toimintaa (opettajan siirtymät, opiskelijoiden vastaukset) ja siivoaa hylätyt huoneet.
