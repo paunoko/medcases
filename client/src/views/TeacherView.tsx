@@ -94,6 +94,11 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
             <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 text-white">
                 <h1 className="text-4xl font-bold mb-4">{caseData.meta.title}</h1>
                 <p className="mb-8 text-gray-300">{t('teacher.slidesReady', { count: caseData.slides.length })}</p>
+                {session.error && (
+                    <div className="mb-6 bg-red-500/20 border border-red-500 text-red-200 px-6 py-3 rounded-xl max-w-md text-center">
+                        {session.error}
+                    </div>
+                )}
                 <button
                     onClick={session.createRoom}
                     className="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg transform transition hover:scale-105"

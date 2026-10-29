@@ -27,6 +27,15 @@ const io = new Server(server, {
   }
 });
 
+// --- CONSTANTS & LIMITS ---
+const MAX_ACTIVE_ROOMS = 100;
+const MAX_ROOM_CREATION_ATTEMPTS = 50;
+const MAX_OPTIONS_COUNT = 20;
+const MAX_OPTION_TEXT_LENGTH = 100;
+const MAX_ANSWER_TEXT_LENGTH = 1000;
+const ANSWERS_BATCH_INTERVAL_MS = 1000;
+const TEACHER_RECONNECT_GRACE_PERIOD_MS = 60000;
+
 // --- IN-MEMORY DATABASE ---
 // Since we don't use a database, we save everything in this Map.
 const rooms = new Map<string, RoomState>();
@@ -45,10 +54,23 @@ io.on('connection', (socket: Socket) => {
   // --- 1. TEACHER ACTIONS ---
 
   socket.on('CREATE_ROOM', () => {
+    if (rooms.size >= MAX_ACTIVE_ROOMS) {
+      logger.warn(`[Create Room Rejected] Max active rooms (${MAX_ACTIVE_ROOMS}) reached.`);
+      socket.emit('ERROR', { message: 'Palvelin on varattu: huoneiden enimmäismäärä saavutettu.' });
+      return;
+    }
+
     let roomId = generateRoomCode();
-    // Ensure uniqueness (unlikely to hit exactly the same, but safe limits)
-    while (rooms.has(roomId)) {
+    let attempts = 0;
+    while (rooms.has(roomId) && attempts < MAX_ROOM_CREATION_ATTEMPTS) {
       roomId = generateRoomCode();
+      attempts++;
+    }
+
+    if (rooms.has(roomId)) {
+      logger.error(`[Create Room Failed] Could not find unique room code after ${MAX_ROOM_CREATION_ATTEMPTS} attempts.`);
+      socket.emit('ERROR', { message: 'Huonekoodin luominen epäonnistui. Yritä uudelleen.' });
+      return;
     }
 
     const teacherSecret = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -196,14 +218,14 @@ io.on('connection', (socket: Socket) => {
     let safeAnswer: string | string[];
 
     if (Array.isArray(answer)) {
-      if (answer.length > 20) return; // Max options
-      safeAnswer = answer.map(a => typeof a === 'string' ? a.slice(0, 100) : '').filter(Boolean);
+      if (answer.length > MAX_OPTIONS_COUNT) return; // Max options
+      safeAnswer = answer.map(a => typeof a === 'string' ? a.slice(0, MAX_OPTION_TEXT_LENGTH) : '').filter(Boolean);
       // For single-choice multiple choice questions, restrict to at most 1 selection
       if (room.currentPayload?.type === 'MULTIPLE_CHOICE' && !room.currentPayload?.allowMultiple) {
         safeAnswer = safeAnswer.slice(0, 1);
       }
     } else if (typeof answer === 'string') {
-      if (answer.length > 1000) return; // Max length
+      if (answer.length > MAX_ANSWER_TEXT_LENGTH) return; // Max length
       safeAnswer = answer.replace(/[<>]/g, "").trim();
     } else {
       return; // Invalid type
@@ -228,13 +250,13 @@ io.on('connection', (socket: Socket) => {
     }
 
     // --- BATCHED UPDATE TO TEACHER ---
-    // If not already scheduled, schedule a broadcast in 1 second
+    // If not already scheduled, schedule a broadcast
     if (!room.throttleTimer) {
       room.throttleTimer = setTimeout(() => {
         const slideAnswers = room.answers.filter(a => a.slideId === room.currentPayload?.slideId);
         io.to(room.teacherSocketId).emit('ANSWERS_UPDATE', slideAnswers);
         room.throttleTimer = null;
-      }, 1000);
+      }, ANSWERS_BATCH_INTERVAL_MS);
     }
 
     // Ack to student
@@ -262,7 +284,7 @@ io.on('connection', (socket: Socket) => {
         
         if (room.throttleTimer) clearTimeout(room.throttleTimer);
         rooms.delete(roomId);
-      }, 60000); // 60 seconds grace period
+      }, TEACHER_RECONNECT_GRACE_PERIOD_MS);
     } else {
       // STUDENT DISCONNECTED: Update count
       room.studentCount = Math.max(0, room.studentCount - 1);

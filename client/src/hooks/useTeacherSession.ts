@@ -10,6 +10,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [roomId, setRoomId] = useState<string | null>(null);
     const [studentCount, setStudentCount] = useState(0);
+    const [error, setError] = useState<string | null>(null);
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slideStates, setSlideStates] = useState<Record<string, 'ANSWERING' | 'REVEALED'>>({});
@@ -42,11 +43,13 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         });
 
         newSocket.on('ROOM_CREATED', ({ roomId, teacherSecret }) => {
+             setError(null);
              setRoomId(roomId);
              roomInfoRef.current = { roomId, teacherSecret };
         });
         newSocket.on('STUDENT_COUNT', ({ count }) => setStudentCount(count));
         newSocket.on('ANSWERS_UPDATE', (updatedAnswers) => setAnswers(updatedAnswers));
+        newSocket.on('ERROR', ({ message }: { message: string }) => setError(message));
 
         return () => { newSocket.disconnect(); };
     }, []);
@@ -71,7 +74,10 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
     }, [currentIndex, slideState, roomId, broadcastCurrentSlide]);
 
     // Actions
-    const createRoom = () => socketRef.current?.emit('CREATE_ROOM');
+    const createRoom = () => {
+        setError(null);
+        socketRef.current?.emit('CREATE_ROOM');
+    };
 
     const nextSlide = () => {
         if (!patientCase) return;
@@ -108,6 +114,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         socket,
         roomId,
         studentCount,
+        error,
         currentSlide,
         currentIndex,
         totalSlides: patientCase?.slides.length || 0,

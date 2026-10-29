@@ -109,18 +109,15 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
 
 ## 4. Backendin arkkitehtuuri, tietoturva ja vikasietoisuus
 
-- [ ] **4.1 Korjaa palvelimen jumiutuminen ikuiseen silmukkaan (Kriittinen DoS) & vakioi rajat**
+- [x] **4.1 Korjaa palvelimen jumiutuminen ikuiseen silmukkaan (Kriittinen DoS) & vakioi rajat**
   - **Prioriteetti:** Kriittinen (palvelimen vakaus)
-  - **Tiedostot:** `server/src/index.ts`
-  - **Ongelma:** Huonekoodin arvonnassa `while (rooms.has(roomId))` pyörii ilman yrityskertalaskuria tai aktiivisten huoneiden maksimimäärää. Huoneiden kertyessä palvelimen prosessi jumiutuu 100 % CPU:lle ja kaatuu. Koodissa on myös useita nimeämättömiä taikalukuja (magic numbers).
+  - **Tiedostot:** `server/src/index.ts`, `client/src/hooks/useTeacherSession.ts`, `client/src/views/TeacherView.tsx`
+  - **Ongelma:** Huonekoodin arvonnassa `while (rooms.has(roomId))` pyöri ilman yrityskertalaskuria tai aktiivisten huoneiden maksimimäärää. Huoneiden kertyessä palvelimen prosessi jumiutui 100 % CPU:lle ja kaatui. Koodissa oli useita nimeämättömiä taikalukuja.
   - **Toimenpiteet:**
-    - Määrittele selkeät nimetyt vakiot:
-      - `MAX_ACTIVE_ROOMS = 100`
-      - `MAX_ROOM_ATTEMPTS = 20`
-      - `ROOM_CODE_MIN = 1000` ja `ROOM_CODE_RANGE = 9000`
-      - `TEACHER_THROTTLE_MS = 1000`
-    - Tarkista huonemaksimi `CREATE_ROOM`-kutsussa: jos raja ylittyy, palauta virhe.
-    - Rajoita `while`-silmukka `MAX_ROOM_ATTEMPTS`-yrityskertaan. Jos vapaata 4-numeroista koodia ei löydy, hylkää pyyntö virheellä.
+    - Määritelty nimetyt vakiot: `MAX_ACTIVE_ROOMS`, `MAX_ROOM_CREATION_ATTEMPTS`, `MAX_OPTIONS_COUNT`, `MAX_OPTION_TEXT_LENGTH`, `MAX_ANSWER_TEXT_LENGTH`, `ANSWERS_BATCH_INTERVAL_MS`, `TEACHER_RECONNECT_GRACE_PERIOD_MS`.
+    - Tarkistetaan huonemaksimi `CREATE_ROOM`-kutsussa: jos raja ylittyy, palautetaan virhe eikä luoda uutta huonetta.
+    - Rajoitettu `while`-silmukka yrityskertoihin. Jos vapaata 4-numeroista koodia ei löydy, hylätään pyyntö virheellä.
+    - Välitetään ja näytetään virheilmoitus opettajalle käyttöliittymässä.
 
 - [ ] **4.2 Tallenna opettajan Reconnection Token selaimeen (F5- ja selauspäivitystuki)**
   - **Prioriteetti:** Korkea (opetustilanteen vikasietoisuus)
