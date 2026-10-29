@@ -1,5 +1,5 @@
 # --- Stage 1: Build Environment ---
-FROM node:24-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 
 # Handle build-time environment variables for the client
@@ -22,22 +22,17 @@ COPY . .
 RUN npm run build -w client
 RUN npm run build -w server
 
-# --- Stage 2: Production Dependencies ---
-FROM node:24-alpine AS deps
-WORKDIR /app
-COPY package*.json ./
-COPY client/package*.json ./client/
-COPY server/package*.json ./server/
-RUN npm ci --omit=dev -w server
+# Prune devDependencies to keep only production packages
+RUN npm prune --omit=dev
 
-# --- Stage 3: Final Production Image ---
-FROM node:24-alpine AS runner
+# --- Stage 2: Final Production Image ---
+FROM node:22-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Copy production node_modules from deps stage
-COPY --from=deps /app/node_modules ./node_modules
+# Copy production node_modules from builder
+COPY --from=builder /app/node_modules ./node_modules
 
 # Copy built server files
 COPY --from=builder /app/server/dist ./server/dist
