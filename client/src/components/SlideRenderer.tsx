@@ -10,9 +10,10 @@ interface Props {
     imageMap?: Record<string, string>; // Filename -> Blob URL
     answers?: any[]; // Student answers (only in teacher view)
     isRevealed?: boolean;
+    onToggleReveal?: () => void;
 }
 
-export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], isRevealed = false }) => {
+export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], isRevealed = false, onToggleReveal }) => {
     // Get image URL
     const imageUrl = slide.imageFileName && imageMap ? imageMap[slide.imageFileName] : null;
 
@@ -34,6 +35,7 @@ export const SlideRenderer: React.FC<Props> = ({ slide, imageMap, answers = [], 
                 mode="view" 
                 answers={answers} 
                 isRevealed={isRevealed} 
+                onToggleReveal={onToggleReveal}
             />
         </SlideContainer>
     );

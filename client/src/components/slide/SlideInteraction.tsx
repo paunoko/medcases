@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { X } from 'lucide-react';
+import { X, Eye, EyeOff } from 'lucide-react';
 import type { CaseSlide, Option } from '../../types';
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
   answers?: any[];
   isRevealed?: boolean;
   onUpdate?: (field: string, value: any) => void;
+  onToggleReveal?: () => void;
 }
 
 export const SlideInteraction: React.FC<Props> = ({
@@ -16,7 +17,8 @@ export const SlideInteraction: React.FC<Props> = ({
   mode,
   answers = [],
   isRevealed = false,
-  onUpdate
+  onUpdate,
+  onToggleReveal
 }) => {
   const { t } = useTranslation();
   const isEdit = mode === 'edit';
@@ -225,6 +227,22 @@ export const SlideInteraction: React.FC<Props> = ({
             </div>
           ) : (
             <>
+              {onToggleReveal && (
+                <div className="flex items-center justify-between mb-1">
+                  <div className="text-xl font-bold text-gray-400">
+                    {answers.length > 0 ? t('teacher.answersCount', { count: answers.length }) : ''}
+                  </div>
+                  <button
+                    onClick={onToggleReveal}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition-colors cursor-pointer shadow-sm border border-gray-300"
+                    title={isRevealed ? t('teacher.hideAnswers') : t('teacher.revealAnswers')}
+                  >
+                    {isRevealed ? <EyeOff size={22} className="text-gray-600" /> : <Eye size={22} className="text-blue-600" />}
+                    <span className="text-lg">{isRevealed ? t('teacher.hideAnswers') : t('teacher.revealAnswers')}</span>
+                  </button>
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-3 max-h-60 overflow-y-auto p-2">
                 {answers.map((a, idx) => (
                   <div 

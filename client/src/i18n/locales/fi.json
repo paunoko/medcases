@@ -50,6 +50,8 @@
     "answersCount": "Vastauksia: {{count}}",
     "revealAnswer": "LUKITSE & PALJASTA",
     "revealAnswersOnly": "PALJASTA VASTAUKSET",
+    "hideAnswers": "PIILOTA VASTAUKSET",
+    "revealAnswers": "Paljasta vastaukset",
     "answersVisible": "Vastaukset näkyvissä",
     "prev": "← Edellinen",
     "next": "Seuraava →",

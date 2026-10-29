@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Home, Stethoscope } from 'lucide-react';
+import { Home, Stethoscope, Eye, EyeOff } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useUI } from '../context/UIContext';
 import { loadCaseFromZip } from '../utils/fileHelpers';
@@ -95,7 +95,8 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                             slide={session.currentSlide}
                             imageMap={images}
                             answers={session.answers}
-                            isRevealed={session.slideState === 'REVEALED'}
+                            isRevealed={session.isCurrentSlideRevealed}
+                            onToggleReveal={session.toggleOpenTextReveal}
                         />
                     )}
                 </div>
@@ -123,12 +124,33 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
 
                 <div className="flex flex-col gap-3 mt-auto">
                     {/* MAIN BUTTON */}
-                    {session.slideState !== 'REVEALED' && session.currentSlide?.type !== 'INFO' ? (
+                    {session.currentSlide?.type === 'OPEN_TEXT' ? (
+                        <button
+                            onClick={session.toggleOpenTextReveal}
+                            className={`py-4 rounded font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-colors ${
+                                session.isOpenTextRevealed
+                                    ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                                    : 'bg-blue-600 hover:bg-blue-500 text-white'
+                            }`}
+                        >
+                            {session.isOpenTextRevealed ? (
+                                <>
+                                    <EyeOff size={22} />
+                                    {t('teacher.hideAnswers')}
+                                </>
+                            ) : (
+                                <>
+                                    <Eye size={22} />
+                                    {t('teacher.revealAnswersOnly')}
+                                </>
+                            )}
+                        </button>
+                    ) : session.slideState !== 'REVEALED' && session.currentSlide?.type !== 'INFO' ? (
                         <button
                             onClick={session.revealAnswer}
                             className="bg-blue-600 hover:bg-blue-500 py-4 rounded font-bold text-lg shadow-lg"
                         >
-                            {session.currentSlide?.type === 'OPEN_TEXT' ? t('teacher.revealAnswersOnly') : t('teacher.revealAnswer')}
+                            {t('teacher.revealAnswer')}
                         </button>
                     ) : session.currentSlide?.type !== 'INFO' ? (
                         <div className="bg-gray-700 py-4 rounded text-center text-gray-400 font-bold">

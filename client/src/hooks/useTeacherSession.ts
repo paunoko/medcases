@@ -13,10 +13,15 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slideStates, setSlideStates] = useState<Record<string, 'ANSWERING' | 'REVEALED'>>({});
+    const [openTextRevealed, setOpenTextRevealed] = useState<Record<string, boolean>>({});
     const [answers, setAnswers] = useState<any[]>([]);
 
     const currentSlide = patientCase?.slides[currentIndex];
     const slideState = currentSlide ? (slideStates[currentSlide.id] || 'ANSWERING') : 'ANSWERING';
+    const isOpenTextRevealed = currentSlide ? !!openTextRevealed[currentSlide.id] : false;
+    const isCurrentSlideRevealed = currentSlide?.type === 'OPEN_TEXT'
+        ? isOpenTextRevealed
+        : slideState === 'REVEALED';
 
     const socketRef = useRef<Socket | null>(null);
     const roomInfoRef = useRef<{ roomId: string, teacherSecret: string } | null>(null);
@@ -86,6 +91,14 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         setSlideStates(prev => ({ ...prev, [currentSlide.id]: 'REVEALED' }));
     };
 
+    const toggleOpenTextReveal = () => {
+        if (!currentSlide) return;
+        setOpenTextRevealed(prev => ({
+            ...prev,
+            [currentSlide.id]: !prev[currentSlide.id]
+        }));
+    };
+
     const endSession = () => {
         if (!socketRef.current || !roomId) return;
         socketRef.current.emit('END_SESSION', { roomId });
@@ -99,6 +112,9 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         currentIndex,
         totalSlides: patientCase?.slides.length || 0,
         slideState,
+        isOpenTextRevealed,
+        isCurrentSlideRevealed,
+        toggleOpenTextReveal,
         answers,
         createRoom,
         nextSlide,

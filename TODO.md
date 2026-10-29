@@ -58,14 +58,15 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
       - Opiskelija voi valita useita, ja ohjeena lukee *"Monivalinta – valitse kaikki sopivat"*.
       - Tulokset esitetään prosentteina vastaajien kokonaismäärästä.
 
-- [ ] **2.2 Suojaa avoimen tekstin vastaukset salissa ja lisää moderointi (OPEN_TEXT)**
+- [x] **2.2 Suojaa avoimen tekstin vastaukset salissa ja lisää moderointi (OPEN_TEXT)**
   - **Prioriteetti:** Korkea (luokkatilanteen turvallisuus & vilpinesto)
-  - **Tiedostot:** `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/TeacherView.tsx`, `server/src/index.ts`
-  - **Ongelma:** Vapaat tekstivastaukset tulevat valkokankaalle reaaliajassa. Nykyinen CSS-blurraus (`blur-[6px]`) jättää tekstit DOM-puuhun ja lyhyet sanat ovat luettavissa sumennuksen läpi. Asiattomia kommentteja ei voi moderoida.
+  - **Tiedostot:** `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/TeacherView.tsx`, `client/src/hooks/useTeacherSession.ts`, `client/src/components/SlideRenderer.tsx`
+  - **Ongelma:** Avoimen tekstin vastausten paljastus oli aiemmin peruuttamaton ja sidottu kiinteästi tilakoneeseen ilman mahdollisuutta sumettaa vastauksia takaisin peittoon.
   - **Toimenpiteet:**
-    - Vastausvaiheessa (`!isRevealed`) valkokankaalla näytetään ainoastaan määrälaskuri (esim. *"💬 Vastauksia vastaanotetaan... 14 vastausta saapunut"*). Tekstejä ei renderöidä näkyville.
-    - Vastaukset paljastetaan vasta kun opettaja klikkaa *"LUKITSE & PALJASTA"*.
-    - Lisätään opettajalle kunkin vastauksen kohdalle `Piilota ✕` -painike asiattomien vastausten poistamiseksi kankaalta.
+    - Toteutettu reversiibeli esitystilan silmäkytkin (`Eye` / `EyeOff`), joka kytkee sumennuksen päälle tai pois kankaalla.
+    - Lisätty silmäkytkin sekä vastausalueen kulmaan valkokankaalla (`SlideInteraction.tsx`) että opettajan sivupalkin toimintopainikkeeseen (`TeacherView.tsx`).
+    - Pidetään vastaukset oletuksena sumennettuina vastausten saapuessa (antaa visuaalisen palautteen aktiivisuudesta).
+    - Tilaa hallitaan diakohtaisesti (`openTextRevealed`), joten diojen välillä liikkuminen muistaa kunkin dian tilan.
 
 - [ ] **2.3 Korjaa mobiilivastaamisen vahinkopainallukset & tyhjät vastaukset**
   - **Prioriteetti:** Keskitaso (mobiili-UX)

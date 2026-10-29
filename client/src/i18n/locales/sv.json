@@ -50,6 +50,8 @@
     "answersCount": "Svar: {{count}}",
     "revealAnswer": "LÅS & VISA",
     "revealAnswersOnly": "VISA SVAR",
+    "hideAnswers": "DÖLJ SVAR",
+    "revealAnswers": "Visa svar",
     "answersVisible": "Svar visas",
     "prev": "← Föregående",
     "next": "Nästa →",

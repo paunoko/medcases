@@ -50,6 +50,8 @@
     "answersCount": "Answers: {{count}}",
     "revealAnswer": "LOCK & REVEAL",
     "revealAnswersOnly": "REVEAL ANSWERS",
+    "hideAnswers": "HIDE ANSWERS",
+    "revealAnswers": "Reveal answers",
     "answersVisible": "Answers visible",
     "prev": "← Previous",
     "next": "Next →",
