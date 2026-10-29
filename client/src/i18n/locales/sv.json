@@ -61,7 +61,9 @@
     "hideSidebar": "Dölj kontrollpanelen",
     "showSidebar": "Visa kontrollpanelen",
     "controls": "Kontrollpanel",
-    "correctAnswerBadge": "Rätt svar"
+    "correctAnswerBadge": "Rätt svar",
+    "enlargeImage": "Förstora bild",
+    "closeImageHint": "Klicka var som helst eller tryck på Esc för att stänga"
   },
   "editor": {
     "hideSidebar": "Dölj sidopanel",

@@ -61,7 +61,9 @@
     "hideSidebar": "Hide control panel",
     "showSidebar": "Show control panel",
     "controls": "Controls",
-    "correctAnswerBadge": "Correct answer"
+    "correctAnswerBadge": "Correct answer",
+    "enlargeImage": "Enlarge image",
+    "closeImageHint": "Click anywhere or press Esc to close"
   },
   "editor": {
     "hideSidebar": "Hide sidebar",

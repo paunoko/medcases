@@ -176,12 +176,15 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Oikealle vastaukselle lisätty eksplisiittinen `CheckCircle2` -kuvake ja `OIKEA VASTAUS` -tekstitunnusmerkki (WCAG 1.4.1 -saavutettava).
     - Myös avoimen tekstin vastaukset ja mallivastaus päivitetty korkeakontrastisiksi.
 
-- [ ] **5.4 Lääketieteellisten kuvien Lightbox-suurennus (koko valkokankaan esitys)**
+- [x] **5.4 Lääketieteellisten kuvien Lightbox-suurennus (koko valkokankaan esitys)**
   - **Prioriteetti:** Keskitaso (kliininen pedagogiikka)
-  - **Tiedostot:** `client/src/components/slide/SlideBody.tsx`, `client/src/components/SlideRenderer.tsx`
+  - **Tiedostot:** `client/src/components/slide/SlideBody.tsx`, `client/src/i18n/locales/`
   - **Ongelma:** Röntgen- tai EKG-kuva vie vain pienen osan diasta eikä sitä voi zoomata, mikä tekee pienten yksityiskohtien havaitsemisesta takarivistä vaikeaa.
   - **Toimenpiteet:**
-    - Lisätään kuvalle klikattava täysikokoinen Lightbox-suurennustila esityksessä, jolloin kuvaa voidaan tarkastella koko kankaan laajuisena.
+    - Toteutettu kuvalle klikattava täysikokoinen Lightbox-suurennustila esityksessä (`isLightboxOpen`), jolloin kuvaa voidaan tarkastella koko kankaan laajuisena (`max-w-[95vw] max-h-[92vh] object-contain`).
+    - Lisätty leijuva suurennusvinkki ja zoom-kuvake kuvan päälle hover-tilassa esitystilassa.
+    - Lisätty sulkemisnappi ja sulkeminen `Escape`-näppäimellä tai taustaa klikkaamalla.
+    - Lisätty monikieliset käännökset (fi, en, sv).
 
 - [ ] **5.5 Mobiilivastaamisen (StudentView) ja komponenttityylien viimeistely**
   - **Prioriteetti:** Keskitaso (mobiili-UX)

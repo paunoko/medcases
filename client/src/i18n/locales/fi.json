@@ -61,7 +61,9 @@
     "hideSidebar": "Piilota ohjauspaneeli",
     "showSidebar": "Näytä ohjauspaneeli",
     "controls": "Ohjauspaneeli",
-    "correctAnswerBadge": "Oikea vastaus"
+    "correctAnswerBadge": "Oikea vastaus",
+    "enlargeImage": "Suurenna kuva",
+    "closeImageHint": "Klikkaa mitä tahansa tai paina Esc sulkeaksesi"
   },
   "editor": {
     "hideSidebar": "Piilota sivupalkki",
