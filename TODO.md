@@ -162,18 +162,19 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korjattu `SlideBody`: ilman kuvaa leipäteksti täyttää 100 % leveyden myös editorissa (+ Lisää kuva -painike yläkulmassa). Kuvan kanssa näkymä jakautuu automaattisesti 50/50 -tilaan molemmissa.
     - Yhdenmukaistettu `SlideTitle` ja `SlideInteraction` marginaalit ja tyhjän tilan käsittely.
     - Toteutettu taitettava sivupalkki (Collapse/Expand) ja täyden valkokankaan esitystila sekä `TeacherView`:ssa että `EditorView`:ssa.
-    - Esitystilassa piilotetun sivupalkin korvaa yläkulman huomaamaton huonekoodi- ja QR-modaalinappi sekä alareunan leijuva ohjauspalkki.
+    - Esitystilassa piilotetun sivupalkin korvaa yläoikean kulman leijuva ohjauspalkki (huonekoodi, opiskelijamäärä, QR-modaali, dianvaihtonapit vakiopaikoilla ja vastausten paljastus).
     - Lisätty esitykseen laiteohjaintuki / esitysklikkeri (nuolinäppäimet `←`/`→`, `PageUp`/`PageDown`, `Tab` sivupalkille).
     - Lisätty editoriin reaaliaikainen "Esikatselu / Muokkaa" -kytkin (`SlideRenderer`).
 
-- [ ] **5.3 Vastauspylväiden, tulosten ja oikean vastauksen korkeakontrastinen visualisointi**
+- [x] **5.3 Vastauspylväiden, tulosten ja oikean vastauksen korkeakontrastinen visualisointi**
   - **Prioriteetti:** Korkea (luentosalin näkyvyys & esteettömyys WCAG AA)
-  - **Tiedostot:** `client/src/components/slide/SlideInteraction.tsx`
-  - **Ongelma:** Monivalinnan vastauspylväs (`bg-blue-100 opacity-30`) on videotykin valokeilassa lähes näkymätön. Oikean vastauksen erottelu pelkällä vihreällä ohuella reunuksella rikkoo WCAG 1.4.1 -kriteeriä (ei toimi värisokeille).
+  - **Tiedostot:** `client/src/components/slide/SlideInteraction.tsx`, `client/src/i18n/locales/`
+  - **Ongelma:** Monivalinnan vastauspylväs (`bg-blue-100 opacity-30`) oli videotykin valokeilassa lähes näkymätön. Oikean vastauksen erottelu pelkällä vihreällä ohuella reunuksella rikkoi WCAG 1.4.1 -kriteeriä (ei toiminut värisokeille).
   - **Toimenpiteet:**
-    - Tehdään tulospalkeista selkeät, kylläiset ja erottuvat.
-    - Kasvatetaan prosenttilukujen kokoa ja parannetaan niiden luettavuutta.
-    - Lisätään oikealle vastaukselle selkeä visuaalinen tunnusmerkki (teksti/kuvake) pelkän värillisen reunuksen sijaan.
+    - Tulospalkit päivitetty erottuviksi ja teräväreunaisiksi (`border-r-4 border-blue-500` / `border-r-4 border-emerald-600` ja pehmeä `duration-1000 ease-out` -kasvuanimaatio).
+    - Vastausprosenttimerkintä kasvatettu huomattavasti (`text-2xl lg:text-3xl font-black font-mono`) selkeällä kontrastilaatikolla.
+    - Oikealle vastaukselle lisätty eksplisiittinen `CheckCircle2` -kuvake ja `OIKEA VASTAUS` -tekstitunnusmerkki (WCAG 1.4.1 -saavutettava).
+    - Myös avoimen tekstin vastaukset ja mallivastaus päivitetty korkeakontrastisiksi.
 
 - [ ] **5.4 Lääketieteellisten kuvien Lightbox-suurennus (koko valkokankaan esitys)**
   - **Prioriteetti:** Keskitaso (kliininen pedagogiikka)

@@ -60,7 +60,8 @@
     "endSessionMsg": "Kaikkien oppilaiden yhteys katkaistaan ja istunto poistetaan käytöstä.",
     "hideSidebar": "Piilota ohjauspaneeli",
     "showSidebar": "Näytä ohjauspaneeli",
-    "controls": "Ohjauspaneeli"
+    "controls": "Ohjauspaneeli",
+    "correctAnswerBadge": "Oikea vastaus"
   },
   "editor": {
     "hideSidebar": "Piilota sivupalkki",

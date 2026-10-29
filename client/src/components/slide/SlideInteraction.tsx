@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Eye, EyeOff } from 'lucide-react';
+import { X, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import type { CaseSlide, Option } from '../../types';
 
 interface Props {
@@ -109,13 +109,13 @@ export const SlideInteraction: React.FC<Props> = ({
 
             if (isEdit) {
               return (
-                <div key={i} className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all focus-within:border-blue-500 ${opt.isCorrect ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                <div key={i} className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all focus-within:border-blue-500 ${opt.isCorrect ? 'border-emerald-500 bg-emerald-50/70' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
                   <div className="flex w-full items-start gap-4">
                     {!(slide as any).allowMultiple && slide.type === 'MULTIPLE_CHOICE' ? (
                       <input
                         type="radio"
                         name={`correct-opt-${slide.id}`}
-                        className="w-8 h-8 mt-1 shrink-0 accent-green-600 cursor-pointer"
+                        className="w-8 h-8 mt-1 shrink-0 accent-emerald-600 cursor-pointer"
                         checked={!!opt.isCorrect}
                         onChange={() => {
                           const opts = (slide as any).options.map((o: Option, idx: number) => ({
@@ -129,7 +129,7 @@ export const SlideInteraction: React.FC<Props> = ({
                     ) : (
                       <input
                         type="checkbox"
-                        className="w-8 h-8 mt-1 rounded shrink-0 accent-green-600 cursor-pointer"
+                        className="w-8 h-8 mt-1 rounded shrink-0 accent-emerald-600 cursor-pointer"
                         checked={opt.isCorrect}
                         onChange={e => {
                           const opts = [...(slide as any).options];
@@ -141,7 +141,7 @@ export const SlideInteraction: React.FC<Props> = ({
                     )}
                     <textarea
                       rows={2}
-                      className="font-bold text-2xl flex-1 bg-transparent focus:outline-none w-full resize-none leading-tight"
+                      className="font-bold text-2xl flex-1 bg-transparent focus:outline-none w-full resize-none leading-tight text-gray-900"
                       placeholder={t('editor.optionPlaceholder')}
                       value={opt.text}
                       onChange={e => {
@@ -150,8 +150,14 @@ export const SlideInteraction: React.FC<Props> = ({
                         onUpdate?.('options', opts);
                       }}
                     />
+                    {opt.isCorrect && (
+                      <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-md border border-emerald-300 uppercase tracking-wider shrink-0 mt-1">
+                        <CheckCircle2 size={14} className="stroke-[2.5]" />
+                        {t('teacher.correctAnswerBadge')}
+                      </span>
+                    )}
                     <button
-                      className="text-gray-400 hover:text-red-500 shrink-0 p-2"
+                      className="text-gray-400 hover:text-red-500 shrink-0 p-2 cursor-pointer transition-colors"
                       onClick={() => {
                         const opts = (slide as any).options.filter((_: any, idx: number) => idx !== i);
                         onUpdate?.('options', opts);
@@ -165,18 +171,52 @@ export const SlideInteraction: React.FC<Props> = ({
             }
 
             return (
-              <div key={opt.id} className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all ${isRevealed && isCorrect ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white'}`}>
-                {/* Result bar in background */}
+              <div 
+                key={opt.id} 
+                className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm overflow-hidden transition-all duration-300 ${
+                  isRevealed && isCorrect 
+                    ? 'border-emerald-600 bg-emerald-50/90 ring-4 ring-emerald-500/20 shadow-md' 
+                    : isRevealed 
+                      ? 'border-gray-200 bg-gray-50/60' 
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                }`}
+              >
+                {/* Result bar in background with crisp border edge */}
                 {isRevealed && (
                   <div
-                    className="absolute top-0 left-0 h-full bg-blue-100 opacity-30 transition-all duration-1000 rounded-xl"
+                    className={`absolute top-0 left-0 h-full transition-all duration-1000 ease-out rounded-xl ${
+                      isCorrect 
+                        ? 'bg-emerald-200/80 border-r-4 border-emerald-600' 
+                        : 'bg-blue-100/90 border-r-4 border-blue-500'
+                    }`}
                     style={{ width: `${percent}%` }}
                   />
                 )}
 
                 <div className="relative z-10 flex w-full justify-between items-center gap-4">
-                  <span className="font-bold text-2xl flex-1 break-words whitespace-pre-wrap leading-tight">{opt.text}</span>
-                  {isRevealed && <span className="text-xl shrink-0 font-bold bg-white text-blue-900 px-3 py-1 rounded-lg border border-blue-200 shadow-sm">{percent}%</span>}
+                  <span className={`text-2xl lg:text-3xl flex-1 break-words whitespace-pre-wrap leading-tight tracking-tight ${
+                    isRevealed && isCorrect ? 'font-extrabold text-emerald-950' : 'font-bold text-gray-900'
+                  }`}>
+                    {opt.text}
+                  </span>
+
+                  {isRevealed && (
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      {isCorrect && (
+                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white font-extrabold text-sm uppercase tracking-wider shadow-sm">
+                          <CheckCircle2 size={16} className="stroke-[3]" />
+                          <span>{t('teacher.correctAnswerBadge')}</span>
+                        </div>
+                      )}
+                      <span className={`text-2xl lg:text-3xl shrink-0 font-black px-4 py-1.5 rounded-xl border-2 shadow-sm font-mono ${
+                        isCorrect
+                          ? 'bg-emerald-600 text-white border-emerald-700'
+                          : 'bg-white text-blue-950 border-blue-200'
+                      }`}>
+                        {percent}%
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -245,21 +285,21 @@ export const SlideInteraction: React.FC<Props> = ({
                 {answers.map((a, idx) => (
                   <div 
                     key={idx} 
-                    className="px-6 py-3 bg-gray-100 rounded-full border border-gray-300 text-2xl font-medium animate-pulse-once flex items-center"
+                    className="px-6 py-3 bg-white rounded-full border-2 border-gray-300 text-2xl font-bold text-gray-900 shadow-sm animate-pulse-once flex items-center"
                   >
                     <span className={`transition-all duration-500 pointer-events-none ${!isRevealed ? 'filter blur-[6px] select-none opacity-80' : ''}`}>
                       {Array.isArray(a.answer) ? a.answer.join(', ') : a.answer}
                     </span>
                   </div>
                 ))}
-                {answers.length === 0 && <div className="text-2xl text-gray-400 italic">{t('editor.waitingForAnswers')}</div>}
+                {answers.length === 0 && <div className="text-2xl text-gray-400 italic py-2">{t('editor.waitingForAnswers')}</div>}
               </div>
 
               {/* Model answer */}
               {isRevealed && (
-                <div className="mt-4 p-6 bg-yellow-50 border-2 border-yellow-300 rounded-2xl">
-                  <h4 className="font-bold text-2xl text-yellow-800 mb-2">{t('editor.modelAnswerTitle')}</h4>
-                  <p className="text-2xl whitespace-pre-wrap">{slide.modelAnswer || t('editor.noModelAnswer')}</p>
+                <div className="mt-4 p-6 bg-amber-50/90 border-2 border-amber-400 rounded-2xl shadow-sm">
+                  <h4 className="font-extrabold text-2xl text-amber-950 mb-2">{t('editor.modelAnswerTitle')}</h4>
+                  <p className="text-2xl text-gray-900 font-medium leading-relaxed whitespace-pre-wrap">{slide.modelAnswer || t('editor.noModelAnswer')}</p>
                 </div>
               )}
             </>

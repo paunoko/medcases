@@ -60,7 +60,8 @@
     "endSessionMsg": "All students will be disconnected and the session will be closed.",
     "hideSidebar": "Hide control panel",
     "showSidebar": "Show control panel",
-    "controls": "Controls"
+    "controls": "Controls",
+    "correctAnswerBadge": "Correct answer"
   },
   "editor": {
     "hideSidebar": "Hide sidebar",

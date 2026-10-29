@@ -60,7 +60,8 @@
     "endSessionMsg": "Alla studenter kommer att kopplas ifrån och sessionen stängs.",
     "hideSidebar": "Dölj kontrollpanelen",
     "showSidebar": "Visa kontrollpanelen",
-    "controls": "Kontrollpanel"
+    "controls": "Kontrollpanel",
+    "correctAnswerBadge": "Rätt svar"
   },
   "editor": {
     "hideSidebar": "Dölj sidopanel",
