@@ -155,7 +155,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
         <div className="flex h-screen bg-gray-900 text-white overflow-hidden relative">
 
             {/* LEFT: Projector (This is what students see) */}
-            <div className="flex-1 p-4 flex flex-col min-h-0 relative">
+            <div className="flex-1 min-w-0 p-4 flex flex-col min-h-0 relative overflow-hidden">
                 <div className="flex-1 relative min-h-0">
                     {session.currentSlide && (
                         <SlideRenderer
@@ -169,43 +169,16 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                 </div>
             </div>
 
-            {/* Top-right floating pills when sidebar is hidden */}
+            {/* Top-right floating controls when sidebar is hidden */}
             {!isSidebarOpen && (
-                <div className="absolute top-4 right-4 z-20 flex items-center gap-3">
-                    <button
-                        onClick={() => setShowQrModal(true)}
-                        className="flex items-center gap-2.5 bg-gray-800/90 hover:bg-gray-800 backdrop-blur-md border border-gray-700/80 px-4 py-2 rounded-xl text-white shadow-xl transition-all group cursor-pointer"
-                        title={t('teacher.roomCode')}
-                    >
-                        <QrCode size={18} className="text-blue-400 group-hover:scale-110 transition-transform" />
-                        <span className="font-mono font-bold tracking-widest text-lg">{session.roomId}</span>
-                        <span className="flex items-center gap-1.5 text-xs bg-green-500/20 text-green-300 font-semibold px-2 py-0.5 rounded-full border border-green-500/30">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                            {session.studentCount}
-                        </span>
-                    </button>
-
-                    <button
-                        onClick={() => setIsSidebarOpen(true)}
-                        className="flex items-center gap-2 bg-gray-800/90 hover:bg-gray-800 backdrop-blur-md border border-gray-700/80 px-4 py-2 rounded-xl text-white shadow-xl transition-all cursor-pointer"
-                        title={t('teacher.showSidebar')}
-                    >
-                        <PanelRightOpen size={18} />
-                        <span className="text-sm font-semibold">{t('teacher.controls')}</span>
-                    </button>
-                </div>
-            )}
-
-            {/* Bottom floating control bar when sidebar is hidden */}
-            {!isSidebarOpen && (
-                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 bg-gray-900/90 backdrop-blur-md border border-gray-700/80 px-5 py-3 rounded-2xl shadow-2xl">
+                <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-gray-900/90 backdrop-blur-md border border-gray-700/80 p-2 rounded-2xl shadow-2xl">
                     <button
                         onClick={session.prevSlide}
                         disabled={session.currentIndex === 0}
-                        className="p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-40 text-white transition-colors cursor-pointer"
+                        className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-30 text-white transition-colors cursor-pointer"
                         title={t('teacher.prev')}
                     >
-                        <ChevronLeft size={22} />
+                        <ChevronLeft size={20} />
                     </button>
 
                     <span className="text-sm font-bold text-gray-300 px-2 select-none font-mono">
@@ -215,48 +188,73 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                     <button
                         onClick={session.nextSlide}
                         disabled={session.currentIndex === session.totalSlides - 1}
-                        className="p-2.5 rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-40 text-white transition-colors cursor-pointer"
+                        className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-30 text-white transition-colors cursor-pointer"
                         title={t('teacher.next')}
                     >
-                        <ChevronRight size={22} />
+                        <ChevronRight size={20} />
                     </button>
+
+                    <div className="w-px h-6 bg-gray-700 mx-1" />
 
                     {session.currentSlide?.type === 'OPEN_TEXT' ? (
                         <button
                             onClick={session.toggleOpenTextReveal}
-                            className={`px-4 py-2 rounded-xl font-bold text-sm shadow-md flex items-center gap-2 transition-colors cursor-pointer ${
+                            className={`px-3 py-1.5 rounded-xl font-bold text-xs shadow-md flex items-center gap-1.5 transition-colors cursor-pointer ${
                                 session.isOpenTextRevealed
                                     ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
                                     : 'bg-blue-600 hover:bg-blue-500 text-white'
                             }`}
                         >
-                            {session.isOpenTextRevealed ? <EyeOff size={18} /> : <Eye size={18} />}
+                            {session.isOpenTextRevealed ? <EyeOff size={16} /> : <Eye size={16} />}
                             <span>{session.isOpenTextRevealed ? t('teacher.hideAnswers') : t('teacher.revealAnswersOnly')}</span>
                         </button>
                     ) : session.slideState !== 'REVEALED' && session.currentSlide?.type !== 'INFO' ? (
                         <button
                             onClick={session.revealAnswer}
-                            className="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-xl font-bold text-sm text-white shadow-md transition-colors cursor-pointer"
+                            className="bg-blue-600 hover:bg-blue-500 px-3.5 py-1.5 rounded-xl font-bold text-xs text-white shadow-md transition-colors cursor-pointer"
                         >
                             {t('teacher.revealAnswer')}
                         </button>
                     ) : session.currentSlide?.type !== 'INFO' ? (
-                        <span className="text-xs font-bold text-gray-400 bg-gray-800 px-3 py-1.5 rounded-lg border border-gray-700">
+                        <span className="text-xs font-bold text-gray-400 bg-gray-800 px-2.5 py-1 rounded-lg border border-gray-700">
                             {t('teacher.answersVisible')}
                         </span>
                     ) : null}
 
                     {session.answers.length > 0 && (
-                        <span className="text-xs bg-gray-800 border border-gray-700 text-gray-300 font-semibold px-3 py-1.5 rounded-xl">
+                        <span className="text-xs bg-gray-800 border border-gray-700 text-gray-300 font-semibold px-2.5 py-1 rounded-lg">
                             {t('teacher.answersCount', { count: session.answers.length })}
                         </span>
                     )}
+
+                    <div className="w-px h-6 bg-gray-700 mx-1" />
+
+                    <button
+                        onClick={() => setShowQrModal(true)}
+                        className="flex items-center gap-2 bg-gray-800 hover:bg-gray-750 border border-gray-700 px-3 py-1.5 rounded-xl text-white transition-all group cursor-pointer"
+                        title={t('teacher.roomCode')}
+                    >
+                        <QrCode size={16} className="text-blue-400 group-hover:scale-110 transition-transform" />
+                        <span className="font-mono font-bold tracking-wider text-sm">{session.roomId}</span>
+                        <span className="flex items-center gap-1 text-[11px] bg-green-500/20 text-green-300 font-semibold px-1.5 py-0.5 rounded-full border border-green-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                            {session.studentCount}
+                        </span>
+                    </button>
+
+                    <button
+                        onClick={() => setIsSidebarOpen(true)}
+                        className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors cursor-pointer"
+                        title={t('teacher.showSidebar')}
+                    >
+                        <PanelRightOpen size={18} />
+                    </button>
                 </div>
             )}
 
             {/* RIGHT: Control Panel (Teacher only) */}
             {isSidebarOpen && (
-                <div className="w-80 bg-gray-800 p-6 flex flex-col border-l border-gray-700 z-10 transition-all">
+                <div className="w-80 shrink-0 bg-gray-800 p-6 flex flex-col border-l border-gray-700 z-10 transition-all">
 
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-xs uppercase font-extrabold tracking-widest text-gray-400">{t('teacher.controls')}</span>

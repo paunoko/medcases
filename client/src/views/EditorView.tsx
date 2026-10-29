@@ -190,7 +190,7 @@ export const EditorView = () => {
       <div className="flex flex-1 overflow-hidden">
 
         {/* LEFT: WYSIWYG Preview / Editor */}
-        <div className="flex-1 p-4 flex flex-col bg-gray-900 overflow-hidden min-h-0">
+        <div className="flex-1 min-w-0 p-4 flex flex-col bg-gray-900 overflow-hidden min-h-0">
           <div className="flex-1 relative transition-all duration-300 min-h-0">
             {activeSlide ? (
               isPreview ? (
@@ -244,7 +244,7 @@ export const EditorView = () => {
 
         {/* RIGHT: Settings and Slides (TeacherView w-80 panel) */}
         {isSidebarOpen && (
-          <div className="w-80 bg-gray-800 flex flex-col border-l border-gray-700 min-h-0 transition-all">
+          <div className="w-80 shrink-0 bg-gray-800 flex flex-col border-l border-gray-700 min-h-0 transition-all">
             <div className="p-6 pb-2">
               <div className="bg-gray-750 p-4 rounded-xl border border-gray-700 shadow-inner bg-gray-900/50">
                 <div className="flex items-center justify-between mb-2">

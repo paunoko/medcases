@@ -40,7 +40,7 @@ export const SlideContainer: React.FC<Props> = ({ children, className = '' }) =>
   return (
     <div ref={containerRef} className="w-full h-full flex items-center justify-center min-h-0 min-w-0 overflow-hidden">
       <div
-        style={dimensions ? { width: `${dimensions.width}px`, height: `${dimensions.height}px` } : { width: '100%', height: '100%', aspectRatio: '16/9' }}
+        style={dimensions ? { width: `${dimensions.width}px`, height: `${dimensions.height}px`, maxWidth: '100%', maxHeight: '100%' } : { width: '100%', height: '100%', aspectRatio: '16/9', maxWidth: '100%', maxHeight: '100%' }}
         className={`flex flex-col bg-white rounded-xl shadow-2xl overflow-hidden border border-gray-200/90 text-left text-gray-900 p-8 gap-6 shrink-0 transition-all ${className}`}
       >
         {children}
