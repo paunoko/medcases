@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Home, Stethoscope, Eye, EyeOff } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useUI } from '../context/UIContext';
-import { loadCaseFromZip } from '../utils/fileHelpers';
+import { loadCaseFromZip, revokeImageUrls } from '../utils/fileHelpers';
 import { SlideRenderer } from '../components/SlideRenderer';
 import { useTeacherSession } from '../hooks/useTeacherSession';
 import type { PatientCase } from '../types';
@@ -16,6 +16,24 @@ export const TeacherView = () => {
     // State for loaded data
     const [caseData, setCaseData] = useState<PatientCase | null>(null);
     const [images, setImages] = useState<Record<string, string>>({});
+
+    const imagesRef = useRef<Record<string, string>>({});
+    useEffect(() => {
+        imagesRef.current = images;
+    }, [images]);
+
+    // Clean up all object URLs when teacher view unmounts
+    useEffect(() => {
+        return () => {
+            revokeImageUrls(imagesRef.current);
+        };
+    }, []);
+
+    const handleExit = () => {
+        revokeImageUrls(imagesRef.current);
+        setImages({});
+        setCaseData(null);
+    };
 
     // If no data, show upload screen
     if (!caseData) {
@@ -41,10 +59,12 @@ export const TeacherView = () => {
                             onChange={async (e) => {
                                 if (e.target.files?.[0]) {
                                     try {
+                                        revokeImageUrls(imagesRef.current);
                                         const result = await loadCaseFromZip(e.target.files[0]);
                                         setImages(result.images);
                                         setCaseData(result.caseData);
-                                    } catch (err) {
+                                    } catch (e) {
+                                        console.error("Load failed", e);
                                         showAlert({
                                             title: t('teacher.uploadFailed'),
                                             message: t('teacher.uploadFailedMsg'),
@@ -60,7 +80,7 @@ export const TeacherView = () => {
         );
     }
 
-    return <Dashboard caseData={caseData} images={images} onExit={() => setCaseData(null)} />;
+    return <Dashboard caseData={caseData} images={images} onExit={handleExit} />;
 };
 
 // Actual session

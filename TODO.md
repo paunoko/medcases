@@ -88,12 +88,14 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Tallennusvaiheessa (`saveCaseToZip`) kuvat normalisoidaan ja tallennetaan suoraan dian mukaan (`slide1.png`, `slide2.jpg` jne.) sekä `case.json`:iin että zipin `images/`-hakemistoon.
     - Muokkausistunnossa kuvat erotellaan turvallisesti diakohtaisesti (`attachImageToSlide`), vanhat kuvat poistetaan korvattaessa, ja lisätty `removeImageFromSlide` sekä `deleteSlide`-siivous.
 
-- [ ] **3.2 Selaimen Object URL -muistivuotojen korjaus**
+- [x] **3.2 Selaimen Object URL -muistivuotojen korjaus**
   - **Prioriteetti:** Keskitaso (muistinhallinta)
   - **Tiedostot:** `client/src/hooks/useCaseEditor.ts`, `client/src/utils/fileHelpers.ts`, `client/src/views/TeacherView.tsx`
-  - **Ongelma:** `URL.createObjectURL()`-metodilla luotuja osoitteita ei vapauteta koskaan `URL.revokeObjectURL()`-kutsulla.
+  - **Ongelma:** `URL.createObjectURL()`-metodilla luotuja osoitteita ei vapautettu koskaan `URL.revokeObjectURL()`-kutsulla.
   - **Toimenpiteet:**
-    - Lisää purkufunktiot (`useEffect` cleanup), jotka vapauttavat Blob URL -osoitteet komponentin poistuessa tai kuvan korvautuessa.
+    - Lisätty apufunktio `revokeImageUrls` tiedostoon `fileHelpers.ts`.
+    - Lisätty purkufunktiot (`useEffect` cleanup on unmount) sekä `useCaseEditor.ts`- että `TeacherView.tsx`-komponentteihin.
+    - Vapautetaan vanhat osoitteet uutta tiedostoa ladattaessa, kuvaa poistettaessa tai korvattaessa ja esityksestä poistuttaessa.
 
 - [ ] **3.3 Tiedoston skeeman validointi ladattaessa**
   - **Prioriteetti:** Keskitaso (virheensieto)

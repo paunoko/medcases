@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { arrayMove } from '@dnd-kit/sortable';
 import type { PatientCase, CaseSlide } from '../types';
-import { saveCaseToZip, loadCaseFromZip } from '../utils/fileHelpers';
+import { saveCaseToZip, loadCaseFromZip, revokeImageUrls } from '../utils/fileHelpers';
 import { useUI } from '../context/UIContext';
 
 const uuid = () => Math.random().toString(36).substr(2, 9);
@@ -25,6 +25,18 @@ export const useCaseEditor = () => {
     const [imageFiles, setImageFiles] = useState<Record<string, File>>({});
     // Previews (filename -> blobUrl)
     const [imagePreviews, setImagePreviews] = useState<Record<string, string>>({});
+
+    const imagePreviewsRef = useRef<Record<string, string>>({});
+    useEffect(() => {
+        imagePreviewsRef.current = imagePreviews;
+    }, [imagePreviews]);
+
+    // Clean up all object URLs when editor unmounts
+    useEffect(() => {
+        return () => {
+            revokeImageUrls(imagePreviewsRef.current);
+        };
+    }, []);
 
     const [activeSlideIndex, setActiveSlideIndex] = useState<number | null>(null);
 
@@ -185,6 +197,7 @@ export const useCaseEditor = () => {
     const handleLoad = async (file: File) => {
         try {
             const { caseData: loadedData, images, imageFiles: loadedFiles } = await loadCaseFromZip(file);
+            revokeImageUrls(imagePreviewsRef.current);
             setCaseData(loadedData);
             setImagePreviews(images);
             setImageFiles(loadedFiles);

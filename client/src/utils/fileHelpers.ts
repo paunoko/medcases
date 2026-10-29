@@ -5,6 +5,19 @@ import type { PatientCase } from '../types';
 // Type for extracted images: filename -> browser internal URL
 export type ImageMap = Record<string, string>;
 
+export const revokeImageUrls = (imageMap?: ImageMap | null) => {
+    if (!imageMap) return;
+    Object.values(imageMap).forEach(url => {
+        if (url && typeof url === 'string' && url.startsWith('blob:')) {
+            try {
+                URL.revokeObjectURL(url);
+            } catch (e) {
+                console.error("Failed to revoke object URL", e);
+            }
+        }
+    });
+};
+
 const CASE_FILENAME = 'case.json';
 const IMAGES_FOLDER = 'images';
 
