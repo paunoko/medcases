@@ -68,13 +68,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Pidetään vastaukset oletuksena sumennettuina vastausten saapuessa (antaa visuaalisen palautteen aktiivisuudesta).
     - Tilaa hallitaan diakohtaisesti (`openTextRevealed`), joten diojen välillä liikkuminen muistaa kunkin dian tilan.
 
-- [ ] **2.3 Korjaa mobiilivastaamisen vahinkopainallukset & tyhjät vastaukset**
+- [x] **2.3 Korjaa mobiilivastaamisen vahinkopainallukset & tyhjät vastaukset**
   - **Prioriteetti:** Keskitaso (mobiili-UX)
   - **Tiedostot:** `client/src/views/StudentView.tsx`
   - **Ongelma:** Kyllä/Ei -vaihtoehdon hipaisu mobiilissa lähettää vastauksen heti ilman peruutusmahdollisuutta. Avoimessa tekstissä voi lähettää tyhjän vastauksen.
   - **Toimenpiteet:**
-    - TRUE_FALSE: Napin painallus korostaa valinnan, ja lähetys vaatii erillisen *"LÄHETÄ VASTAUS"* -painikkeen painalluksen.
-    - OPEN_TEXT: Estä tyhjän vastauksen lähettäminen (`disabled={!textAns.trim()}`).
+    - TRUE_FALSE: Valinta korostaa Kyllä/Ei -vaihtoehdon radiotyylisesti, ja vastaus lähetetään erillisestä *"LÄHETÄ VASTAUS"* -painikkeesta.
+    - OPEN_TEXT: Estetty tyhjien ja pelkkiä välilyöntejä sisältävien vastausten lähettäminen (`disabled={!textAns.trim()}`) ja vastaus trimmataan lähetettäessä.
 
 ---
 

@@ -149,15 +149,39 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
               </>
             )}
 
-            {activeSlide.type === 'TRUE_FALSE' && activeSlide.options?.map(opt => (
-              <button
-                key={opt.id}
-                onClick={() => submitAnswer(opt.id)}
-                className="w-full p-6 text-left border-2 border-gray-200 rounded-xl text-lg font-bold hover:bg-blue-50 hover:border-blue-500 active:bg-blue-600 active:text-white transition-all shadow-sm"
-              >
-                {opt.id === 'true' ? t('editor.yesTrue') : (opt.id === 'false' ? t('editor.noFalse') : opt.text)}
-              </button>
-            ))}
+            {activeSlide.type === 'TRUE_FALSE' && (
+              <>
+                {activeSlide.options?.map(opt => {
+                  const isSelected = selectedOptions.includes(opt.id);
+                  return (
+                    <button
+                      key={opt.id}
+                      onClick={() => setSelectedOptions([opt.id])}
+                      className={`w-full p-6 text-left border-2 rounded-xl text-lg font-bold transition-all shadow-sm ${isSelected
+                        ? 'border-blue-500 bg-blue-50 text-blue-900'
+                        : 'border-gray-200 hover:bg-gray-50'
+                        }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span>{opt.id === 'true' ? t('editor.yesTrue') : (opt.id === 'false' ? t('editor.noFalse') : opt.text)}</span>
+                        {isSelected ? (
+                          <CheckCircle2 size={24} className="text-blue-600" />
+                        ) : (
+                          <div className="w-6 h-6 border-2 border-gray-300 rounded-full" />
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => selectedOptions[0] && submitAnswer(selectedOptions[0])}
+                  disabled={selectedOptions.length === 0}
+                  className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {t('student.submitAnswer')}
+                </button>
+              </>
+            )}
 
             {activeSlide.type === 'OPEN_TEXT' && (
               <div className="w-full">
@@ -167,8 +191,9 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
                   value={textAns} onChange={e => setTextAns(e.target.value)}
                 />
                 <button
-                  onClick={() => submitAnswer(textAns)}
-                  className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-xl"
+                  onClick={() => textAns.trim() && submitAnswer(textAns.trim())}
+                  disabled={!textAns.trim()}
+                  className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-xl disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('student.send')}
                 </button>
