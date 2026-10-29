@@ -109,7 +109,7 @@ export const SlideInteraction: React.FC<Props> = ({
 
             if (isEdit) {
               return (
-                <div key={i} className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all focus-within:border-blue-500 ${opt.isCorrect ? 'border-emerald-500 bg-emerald-50/70' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
+                <div key={i} className={`relative p-6 border-4 flex-1 min-w-[200px] min-h-[96px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all focus-within:border-blue-500 ${opt.isCorrect ? 'border-emerald-500 bg-emerald-50/70' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
                   <div className="flex w-full items-start gap-4">
                     {!(slide as any).allowMultiple && slide.type === 'MULTIPLE_CHOICE' ? (
                       <input
@@ -173,7 +173,7 @@ export const SlideInteraction: React.FC<Props> = ({
             return (
               <div 
                 key={opt.id} 
-                className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm overflow-hidden transition-all duration-300 ${
+                className={`relative p-6 border-4 flex-1 min-w-[200px] min-h-[96px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm overflow-visible transition-colors duration-300 ${
                   isRevealed && isCorrect 
                     ? 'border-emerald-600 bg-emerald-50/90 ring-4 ring-emerald-500/20 shadow-md' 
                     : isRevealed 
@@ -181,42 +181,46 @@ export const SlideInteraction: React.FC<Props> = ({
                       : 'border-gray-200 bg-white hover:border-gray-300'
                 }`}
               >
-                {/* Result bar in background with crisp border edge */}
-                {isRevealed && (
-                  <div
-                    className={`absolute top-0 left-0 h-full transition-all duration-1000 ease-out rounded-xl ${
-                      isCorrect 
-                        ? 'bg-emerald-200/80 border-r-4 border-emerald-600' 
-                        : 'bg-blue-100/90 border-r-4 border-blue-500'
-                    }`}
-                    style={{ width: `${percent}%` }}
-                  />
+                {/* Result bar in background with smooth animated width and crisp edge */}
+                <div
+                  className={`absolute inset-0 h-full transition-all duration-1000 ease-out rounded-xl overflow-hidden pointer-events-none ${
+                    isRevealed && isCorrect 
+                      ? 'bg-emerald-200/80 border-r-4 border-emerald-600' 
+                      : isRevealed 
+                        ? 'bg-blue-100/90 border-r-4 border-blue-500' 
+                        : 'w-0'
+                  }`}
+                  style={{ width: isRevealed ? `${percent}%` : '0%' }}
+                />
+
+                {/* Floating "Oikea vastaus" ribbon badge on top border (does not shift text width or card height) */}
+                {isRevealed && isCorrect && (
+                  <div className="absolute -top-3.5 left-6 z-20 flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-600 text-white font-black text-xs uppercase tracking-wider shadow-md">
+                    <CheckCircle2 size={14} className="stroke-[3]" />
+                    <span>{t('teacher.correctAnswerBadge')}</span>
+                  </div>
                 )}
 
                 <div className="relative z-10 flex w-full justify-between items-center gap-4">
-                  <span className={`text-2xl lg:text-3xl flex-1 break-words whitespace-pre-wrap leading-tight tracking-tight ${
-                    isRevealed && isCorrect ? 'font-extrabold text-emerald-950' : 'font-bold text-gray-900'
+                  {/* Option text: constant font-bold and width so text NEVER re-wraps when revealed */}
+                  <span className={`text-2xl lg:text-3xl flex-1 break-words whitespace-pre-wrap leading-snug tracking-tight font-bold ${
+                    isRevealed && isCorrect ? 'text-emerald-950' : 'text-gray-900'
                   }`}>
                     {opt.text}
                   </span>
 
-                  {isRevealed && (
-                    <div className="flex items-center gap-2.5 shrink-0">
-                      {isCorrect && (
-                        <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-600 text-white font-extrabold text-sm uppercase tracking-wider shadow-sm">
-                          <CheckCircle2 size={16} className="stroke-[3]" />
-                          <span>{t('teacher.correctAnswerBadge')}</span>
-                        </div>
-                      )}
-                      <span className={`text-2xl lg:text-3xl shrink-0 font-black px-4 py-1.5 rounded-xl border-2 shadow-sm font-mono ${
-                        isCorrect
-                          ? 'bg-emerald-600 text-white border-emerald-700'
-                          : 'bg-white text-blue-950 border-blue-200'
-                      }`}>
-                        {percent}%
-                      </span>
-                    </div>
-                  )}
+                  {/* Dedicated percentage badge slot: reserved fixed width so text column width NEVER changes */}
+                  <div className="w-24 lg:w-28 shrink-0 flex items-center justify-end">
+                    <span className={`text-2xl lg:text-3xl font-black px-3.5 py-1.5 rounded-xl border-2 shadow-sm font-mono transition-opacity duration-500 ${
+                      !isRevealed 
+                        ? 'opacity-0 select-none pointer-events-none' 
+                        : isCorrect
+                          ? 'opacity-100 bg-emerald-600 text-white border-emerald-700'
+                          : 'opacity-100 bg-white text-blue-950 border-blue-200'
+                    }`}>
+                      {percent}%
+                    </span>
+                  </div>
                 </div>
               </div>
             );
