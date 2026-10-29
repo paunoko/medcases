@@ -6,7 +6,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useUI } from '../context/UIContext';
 import { loadCaseFromZip, revokeImageUrls } from '../utils/fileHelpers';
 import { SlideRenderer } from '../components/SlideRenderer';
-import { useTeacherSession } from '../hooks/useTeacherSession';
+import { useTeacherSession, TEACHER_SESSION_KEY } from '../hooks/useTeacherSession';
 import type { PatientCase } from '../types';
 
 export const TeacherView = () => {
@@ -30,6 +30,9 @@ export const TeacherView = () => {
     }, []);
 
     const handleExit = () => {
+        try {
+            sessionStorage.removeItem(TEACHER_SESSION_KEY);
+        } catch {}
         revokeImageUrls(imagesRef.current);
         setImages({});
         setCaseData(null);

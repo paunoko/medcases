@@ -111,6 +111,12 @@ io.on('connection', (socket: Socket) => {
     socketToRoom.set(socket.id, roomId);
     socket.join(roomId);
 
+    // Confirm successful reconnection and send current state
+    socket.emit('TEACHER_RECONNECTED', {
+      roomId,
+      currentSlideId: room.currentPayload?.slideId
+    });
+
     // Send latest student count in case it changed
     socket.emit('STUDENT_COUNT', { count: room.studentCount });
     socket.emit('ANSWERS_UPDATE', room.answers);

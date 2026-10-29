@@ -119,15 +119,16 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Rajoitettu `while`-silmukka yrityskertoihin. Jos vapaata 4-numeroista koodia ei löydy, hylätään pyyntö virheellä.
     - Välitetään ja näytetään virheilmoitus opettajalle käyttöliittymässä.
 
-- [ ] **4.2 Tallenna opettajan Reconnection Token selaimeen (F5- ja selauspäivitystuki)**
+- [x] **4.2 Tallenna opettajan Reconnection Token selaimeen (F5- ja selauspäivitystuki)**
   - **Prioriteetti:** Korkea (opetustilanteen vikasietoisuus)
-  - **Tiedostot:** `client/src/hooks/useTeacherSession.ts`
-  - **Ongelma:** Palvelimella on `teacherSecret`- ja `RECONNECT_TEACHER`-tuki, mutta asiakaspuolella tunnistetta säilytetään vain Reactin `useRef`-muuttujassa. Jos opettaja päivittää sivun (F5) tai avaa välilehden uudelleen, tila nollautuu ja opettaja menettää huoneensa hallinnan lopullisesti.
+  - **Tiedostot:** `client/src/hooks/useTeacherSession.ts`, `server/src/index.ts`, `client/src/views/TeacherView.tsx`
+  - **Ongelma:** Palvelimella oli `teacherSecret`- ja `RECONNECT_TEACHER`-tuki, mutta asiakaspuolella tunnistetta säilytettiin vain väliaikaisessa `useRef`-muuttujassa. Sivun päivitys (F5) nollasi tilan ja huoneen hallinta menetettiin.
   - **Toimenpiteet:**
-    - Määrittele vakio `TEACHER_SESSION_KEY = 'medcases_teacher_session'` tallennusavaimelle.
-    - Tallenna `roomId` ja `teacherSecret` selaimen `sessionStorage`-muistiin `ROOM_CREATED`-tapahtumassa avaimella `TEACHER_SESSION_KEY`.
-    - Sivun latautuessa tarkista `sessionStorage` ja lähetä automaattisesti `RECONNECT_TEACHER`, jos aktiivinen istunto löytyy.
-    - Siivoa `sessionStorage` kun opettaja päättää istunnon (`endSession`).
+    - Määritelty vakio `TEACHER_SESSION_KEY = 'medcases_teacher_session'`.
+    - Tallennettu `{ roomId, teacherSecret, caseId }` selaimen `sessionStorage`-muistiin huoneen luonnissa.
+    - Sivun latautuessa tarkistetaan `sessionStorage`: jos avattuun tapaukseen liittyy aktiivinen huone, kytkeydytään automaattisesti takaisin (`RECONNECT_TEACHER`).
+    - Palvelin kuittaa onnistuneen palautumisen (`TEACHER_RECONNECTED`) ja synkronoi aktiivisen dian.
+    - Siivotaan `sessionStorage` kun opettaja päättää istunnon (`endSession`) tai poistuu esityksestä.
 
 - [ ] **4.3 Huoneiden elinkaari ja inaktiivisuusaikakatkaisu**
   - **Prioriteetti:** Keskitaso / Ylläpito

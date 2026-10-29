@@ -6,9 +6,34 @@ import { createStudentPayload } from '../utils/sanitizer';
 // Use relative path in production, localhost in dev
 const SOCKET_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_SERVER_URL || 'http://localhost:3000');
 
+export const TEACHER_SESSION_KEY = 'medcases_teacher_session';
+
+interface StoredTeacherSession {
+    roomId: string;
+    teacherSecret: string;
+    caseId: string;
+}
+
 export const useTeacherSession = (patientCase: PatientCase | null) => {
+    const getInitialSavedSession = (): StoredTeacherSession | null => {
+        if (!patientCase?.meta.id) return null;
+        try {
+            const raw = sessionStorage.getItem(TEACHER_SESSION_KEY);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            if (parsed && parsed.roomId && parsed.teacherSecret && parsed.caseId === patientCase.meta.id) {
+                return parsed as StoredTeacherSession;
+            }
+        } catch {
+            return null;
+        }
+        return null;
+    };
+
+    const savedSession = getInitialSavedSession();
+
     const [socket, setSocket] = useState<Socket | null>(null);
-    const [roomId, setRoomId] = useState<string | null>(null);
+    const [roomId, setRoomId] = useState<string | null>(savedSession?.roomId || null);
     const [studentCount, setStudentCount] = useState(0);
     const [error, setError] = useState<string | null>(null);
 
@@ -25,7 +50,9 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         : slideState === 'REVEALED';
 
     const socketRef = useRef<Socket | null>(null);
-    const roomInfoRef = useRef<{ roomId: string, teacherSecret: string } | null>(null);
+    const roomInfoRef = useRef<{ roomId: string, teacherSecret: string } | null>(
+        savedSession ? { roomId: savedSession.roomId, teacherSecret: savedSession.teacherSecret } : null
+    );
 
     // Connection
     useEffect(() => {
@@ -46,13 +73,43 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
              setError(null);
              setRoomId(roomId);
              roomInfoRef.current = { roomId, teacherSecret };
+             if (patientCase?.meta.id) {
+                 try {
+                     sessionStorage.setItem(TEACHER_SESSION_KEY, JSON.stringify({
+                         roomId,
+                         teacherSecret,
+                         caseId: patientCase.meta.id
+                     }));
+                 } catch (e) {
+                     console.error("Failed to persist teacher session", e);
+                 }
+             }
         });
+
+        newSocket.on('TEACHER_RECONNECTED', ({ roomId, currentSlideId }: { roomId: string, currentSlideId?: string }) => {
+             setError(null);
+             setRoomId(roomId);
+             if (currentSlideId && patientCase) {
+                 const targetIdx = patientCase.slides.findIndex(s => s.id === currentSlideId);
+                 if (targetIdx !== -1) {
+                     setCurrentIndex(targetIdx);
+                 }
+             }
+        });
+
         newSocket.on('STUDENT_COUNT', ({ count }) => setStudentCount(count));
         newSocket.on('ANSWERS_UPDATE', (updatedAnswers) => setAnswers(updatedAnswers));
-        newSocket.on('ERROR', ({ message }: { message: string }) => setError(message));
+        newSocket.on('ERROR', ({ message }: { message: string }) => {
+             setError(message);
+             try {
+                 sessionStorage.removeItem(TEACHER_SESSION_KEY);
+             } catch {}
+             setRoomId(null);
+             roomInfoRef.current = null;
+        });
 
         return () => { newSocket.disconnect(); };
-    }, []);
+    }, [patientCase]);
 
     // Broadcast logic
     const broadcastCurrentSlide = useCallback(() => {
@@ -106,8 +163,13 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
     };
 
     const endSession = () => {
+        try {
+            sessionStorage.removeItem(TEACHER_SESSION_KEY);
+        } catch {}
         if (!socketRef.current || !roomId) return;
         socketRef.current.emit('END_SESSION', { roomId });
+        setRoomId(null);
+        roomInfoRef.current = null;
     };
 
     return {
