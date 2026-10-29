@@ -161,8 +161,9 @@ export const SlideInteraction: React.FC<Props> = ({
           {isEdit ? (
             <div className="mt-4 p-6 bg-yellow-50 border-4 border-dashed border-yellow-300 rounded-2xl flex flex-col gap-2 hover:border-yellow-400 transition-colors focus-within:border-yellow-500">
               <label className="font-bold text-xl text-yellow-800 uppercase tracking-wider">{t('editor.modelAnswerLabel')}</label>
-              <input
-                className="w-full bg-transparent text-2xl text-gray-800 focus:outline-none placeholder-yellow-600/50"
+              <textarea
+                rows={3}
+                className="w-full bg-transparent text-2xl text-gray-800 focus:outline-none placeholder-yellow-600/50 resize-y"
                 placeholder={t('editor.modelAnswerPlaceholder')}
                 value={slide.modelAnswer || ''}
                 onChange={e => onUpdate?.('modelAnswer', e.target.value)}
@@ -188,7 +189,7 @@ export const SlideInteraction: React.FC<Props> = ({
               {isRevealed && (
                 <div className="mt-4 p-6 bg-yellow-50 border-2 border-yellow-300 rounded-2xl">
                   <h4 className="font-bold text-2xl text-yellow-800 mb-2">{t('editor.modelAnswerTitle')}</h4>
-                  <p className="text-2xl">{slide.modelAnswer || t('editor.noModelAnswer')}</p>
+                  <p className="text-2xl whitespace-pre-wrap">{slide.modelAnswer || t('editor.noModelAnswer')}</p>
                 </div>
               )}
             </>

@@ -38,7 +38,8 @@ export const useCaseEditor = () => {
             content: '',
             question: type !== 'INFO' ? '' : undefined,
             options: type === 'MULTIPLE_CHOICE' ? [] : undefined,
-            correctAnswer: type === 'TRUE_FALSE' ? true : undefined
+            correctAnswer: type === 'TRUE_FALSE' ? true : undefined,
+            modelAnswer: type === 'OPEN_TEXT' ? '' : undefined
         };
 
         setCaseData(prev => ({ ...prev, slides: [...prev.slides, newSlide] }));

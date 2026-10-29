@@ -23,13 +23,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Poistettu `meta.description` ja `meta.author` tyypeistä, `useCaseEditor.ts`:sta ja `data-description.md`:stä.
     - Poistettu käyttämätön `LOCKED`-tila palvelimen ja asiakkaan tilatyypeistä ja komponenteista.
 
-- [ ] **1.3 Paranna mallivastauksen (`modelAnswer`) editorikokemusta**
+- [x] **1.3 Paranna mallivastauksen (`modelAnswer`) editorikokemusta**
   - **Prioriteetti:** Keskitaso
   - **Tiedostot:** `client/src/components/slide/SlideInteraction.tsx`, `client/src/hooks/useCaseEditor.ts`
-  - **Ongelma:** Mallivastauksen syöttökenttä editorissa on yksirivinen `<input>`, johon on vaikea kirjoittaa pitkiä lääketieteellisiä perusteluja tai vastauksia. Lisäksi kenttää ei alusteta `useCaseEditor.ts`-hookissa.
+  - **Ongelma:** Mallivastauksen syöttökenttä editorissa oli yksirivinen `<input>`, johon oli vaikea kirjoittaa monirivisiä vastauksia.
   - **Toimenpiteet:**
-    - Vaihda `SlideInteraction.tsx`:n syöttökenttä `<textarea>`-elementiksi.
-    - Alusta `modelAnswer: ''` `useCaseEditor.ts`:n `addSlide('OPEN_TEXT')`-haarassa.
+    - Vaihdettu `SlideInteraction.tsx`:n syöttökenttä `<textarea>`-elementiksi ja lisätty esitykseen `whitespace-pre-wrap`.
+    - Alustettu `modelAnswer: ''` `useCaseEditor.ts`:n `addSlide('OPEN_TEXT')`-haarassa.
 
 - [ ] **1.4 Yhtenäistä Kyllä/Ei -sanamuodot**
   - **Prioriteetti:** Matala / Käytettävyys
