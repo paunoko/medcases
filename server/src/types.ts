@@ -1,6 +1,6 @@
 // These could be shared, but kept separate for clarity.
 
-export type RoomStatus = 'WAITING' | 'ANSWERING' | 'LOCKED' | 'REVEALED';
+export type RoomStatus = 'WAITING' | 'ANSWERING' | 'REVEALED';
 
 // Student's answer
 export interface StudentAnswer {

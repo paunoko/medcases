@@ -12,7 +12,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
     const [studentCount, setStudentCount] = useState(0);
 
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [slideStates, setSlideStates] = useState<Record<string, 'ANSWERING' | 'LOCKED' | 'REVEALED'>>({});
+    const [slideStates, setSlideStates] = useState<Record<string, 'ANSWERING' | 'REVEALED'>>({});
     const [answers, setAnswers] = useState<any[]>([]);
 
     const currentSlide = patientCase?.slides[currentIndex];

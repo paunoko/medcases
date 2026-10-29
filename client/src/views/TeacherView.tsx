@@ -116,13 +116,6 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                 </div>
 
                 <div className="flex-1 overflow-y-auto mb-4">
-                    {/* Teacher notes */}
-                    {session.currentSlide?.teacherNotes && (
-                        <div className="bg-yellow-900/50 border border-yellow-600 p-3 rounded text-yellow-100 text-sm mb-4">
-                            <strong>Note:</strong> {session.currentSlide.teacherNotes}
-                        </div>
-                    )}
-
                     <div className="text-sm text-gray-400">
                         {t('teacher.answersCount', { count: session.answers.length })}
                     </div>

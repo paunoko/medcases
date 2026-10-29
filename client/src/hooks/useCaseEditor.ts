@@ -14,8 +14,6 @@ export const useCaseEditor = () => {
         meta: {
             id: uuid(),
             title: '',
-            description: '',
-            author: '',
             created: new Date().toISOString(),
         },
         slides: []

@@ -25,8 +25,6 @@ The root of `case.json` consists of two main sections: `meta` and `slides`.
 ### `meta` Object Fields
 - `id` (String, Required): A unique identifier for the case (e.g., `"case-101"`).
 - `title` (String, Required): The display title of the case.
-- `description` (String, Required): A brief summary or description of the case.
-- `author` (String, Required): The creator's name.
 - `created` (String, Required): ISO 8601 formatted date string (e.g., `"2023-10-27T10:00:00Z"`).
 
 ## Slide Types and Fields
@@ -39,7 +37,6 @@ Every slide object in the `slides` array shares a set of common base fields, but
 - `title` (String, Required): The title of the slide.
 - `content` (String, Required): The main descriptive text or introduction for the slide context.
 - `imageFileName` (String, Optional): The exact filename of an image stored in the `images/` directory. If provided, the app will display this graphic.
-- `teacherNotes` (String, Optional): Private notes visible only to the teacher/presenter.
 
 ---
 
@@ -89,8 +86,6 @@ Here is a fully functioning example incorporating all slide types. Save this as 
   "meta": {
     "id": "case-cardio-1",
     "title": "Rintakipupotilas päivystyksessä",
-    "description": "55-vuotias mies, äkillinen rintakipu.",
-    "author": "Dr. Meikäläinen",
     "created": "2023-10-27T10:00:00Z"
   },
   "slides": [
@@ -99,8 +94,7 @@ Here is a fully functioning example incorporating all slide types. Save this as 
       "type": "INFO",
       "title": "Esitiedot",
       "content": "Potilas saapuu ambulanssilla. Kertoo, että rintaa puristaa voimakkaasti. Kipu säteilee vasempaan käteen.",
-      "imageFileName": "patient_arrival.jpg",
-      "teacherNotes": "Muista kysyä opiskelijoilta riskitekijöistä (tupakointi, verenpaine) ennen seuraavaa diaa."
+      "imageFileName": "patient_arrival.jpg"
     },
     {
       "id": "slide-2-mcq",
@@ -121,8 +115,7 @@ Here is a fully functioning example incorporating all slide types. Save this as 
       "title": "Lääkitys",
       "content": "Potilaan kivut jatkuvat 8/10 NRS-asteikolla.",
       "question": "Annetaanko tälle potilaalle välittömästi asetyylisalisyylihappoa (ASA) pureskeltavaksi?",
-      "correctAnswer": true,
-      "teacherNotes": "Annetaan 250 mg ASA pureskeltuna, ellei ole vasta-aiheita."
+      "correctAnswer": true
     },
     {
       "id": "slide-4-open",

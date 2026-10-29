@@ -17,7 +17,6 @@ export interface InfoSlide {
   title: string;
   content: string;
   imageFileName?: string;
-  teacherNotes?: string;
 }
 
 // 2. Multiple Choice
@@ -27,7 +26,6 @@ export interface MultipleChoiceSlide {
   title: string;
   content: string; // Introduction text
   imageFileName?: string;
-  teacherNotes?: string;
   question: string; // The actual question
   options: Option[];
 }
@@ -39,7 +37,6 @@ export interface BooleanSlide {
   title: string;
   content: string;
   imageFileName?: string;
-  teacherNotes?: string;
   question: string;
   correctAnswer: boolean;
 }
@@ -51,7 +48,6 @@ export interface OpenTextSlide {
   title: string;
   content: string;
   imageFileName?: string;
-  teacherNotes?: string;
   question: string;
   modelAnswer?: string; // Model answer for the teacher
 }
@@ -68,8 +64,6 @@ export interface PatientCase {
   meta: {
     id: string;
     title: string;
-    description: string;
-    author: string;
     created: string;
   };
   slides: CaseSlide[];
@@ -83,5 +77,5 @@ export interface StudentPayload {
   type: SlideType;
   questionText?: string;
   options?: { id: string; text: string }[]; // NOTE: no isCorrect info
-  state: 'WAITING' | 'ANSWERING' | 'LOCKED' | 'REVEALED';
+  state: 'WAITING' | 'ANSWERING' | 'REVEALED';
 }

@@ -3,7 +3,7 @@ import type { CaseSlide, StudentPayload } from '../types';
 
 export const createStudentPayload = (
     slide: CaseSlide,
-    state: 'WAITING' | 'ANSWERING' | 'LOCKED' | 'REVEALED'
+    state: 'WAITING' | 'ANSWERING' | 'REVEALED'
 ): StudentPayload => {
 
     // Base structure
@@ -18,7 +18,7 @@ export const createStudentPayload = (
 
     if (slide.type === 'MULTIPLE_CHOICE') {
         payload.questionText = slide.question;
-        // IMPORTANT: Map to a new object to exclude 'isCorrect' and 'teacherNotes'
+        // IMPORTANT: Map to a new object to exclude 'isCorrect'
         payload.options = slide.options.map(opt => ({
             id: opt.id,
             text: opt.text

@@ -14,14 +14,14 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - `saveCaseToZip` kirjoittaa tiedoston aina nimellä `case.json`.
     - `loadCaseFromZip` lukee tiedoston `case.json`. Jos tiedostoa ei löydy, heitetään virheilmoitus.
 
-- [ ] **1.2 Poista tai ota käyttöön toteuttamaton data (Dead Schema Fields)**
+- [x] **1.2 Poista tai ota käyttöön toteuttamaton data (Dead Schema Fields)**
   - **Prioriteetti:** Keskitaso (koodin selkeys)
-  - **Tiedostot:** `client/src/types.ts`, `server/src/types.ts`, `client/src/hooks/useCaseEditor.ts`, `client/src/views/TeacherView.tsx`, `client/src/views/EditorView.tsx`
-  - **Ongelma:** Tyypeissä ja skeemassa roikkuu kenttiä, joita ei käytetä tai joita ei voi syöttää editorissa.
+  - **Tiedostot:** `client/src/types.ts`, `server/src/types.ts`, `client/src/hooks/useCaseEditor.ts`, `client/src/views/TeacherView.tsx`, `client/src/utils/sanitizer.ts`, `client/src/views/StudentView.tsx`, `data-description.md`
+  - **Ongelma:** Tyypeissä ja skeemassa roikkui kenttiä ja tiloja, joita ei käytetty tai joita ei voitu syöttää editorissa.
   - **Toimenpiteet:**
-    - **`teacherNotes`:** Joko lisätään editoriin (`EditorView.tsx` / `SlideInteraction.tsx`) syöttökenttä opettajan muistiinpanoille, tai poistetaan kenttä kokonaan tyypeistä ja `TeacherView.tsx`-esitysnäkymästä.
-    - **`meta.description` ja `meta.author`:** Poistetaan tyypeistä ja alustuksista, ellei niille luoda syöttökenttiä editoriin.
-    - **`RoomStatus = 'LOCKED'`:** Poistetaan käyttämätön tila palvelimen ja asiakkaan tyypeistä, ellei diaan haluta erillistä vastaamisen lukitsemistoimintoa ennen paljastusta.
+    - Poistettu `teacherNotes` tyypeistä, `TeacherView.tsx`:stä, `sanitizer.ts`:sta ja `data-description.md`:stä.
+    - Poistettu `meta.description` ja `meta.author` tyypeistä, `useCaseEditor.ts`:sta ja `data-description.md`:stä.
+    - Poistettu käyttämätön `LOCKED`-tila palvelimen ja asiakkaan tilatyypeistä ja komponenteista.
 
 - [ ] **1.3 Paranna mallivastauksen (`modelAnswer`) editorikokemusta**
   - **Prioriteetti:** Keskitaso
