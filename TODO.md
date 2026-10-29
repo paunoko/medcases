@@ -139,3 +139,47 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Päivitetään aktiivisuus huoneen luonnissa, dian vaihdossa, opiskelijan liittyessä ja vastauksissa.
     - Lisätty taustasiivous (`cleanupInactiveRooms`), joka tarkistaa 5 minuutin välein huoneet ja poistaa yli 60 minuuttia inaktiivisena olleet huoneet muistista.
     - Tyhjennetään `disconnectTimer` aina hallitusti myös `END_SESSION`-kutsussa.
+
+---
+
+## 5. Visuaalinen ilme, saavutettavuus ja luentosalikäytettävyys (WYSIWYG)
+
+- [ ] **5.1 Moderni typografia ja valkokankaan takariviluettavuus**
+  - **Prioriteetti:** Korkea (luentosalin saavutettavuus)
+  - **Tiedostot:** `client/src/index.css`, `client/index.html`, `client/src/hooks/useResizeText.ts`, `client/src/components/slide/SlideBody.tsx`
+  - **Ongelma:** Käytössä on oletusjärjestelmäfontti (`sans-serif`). `useResizeText` kutistaa leipätekstin jopa `14px` kokoon, mikä on luentosalin takariviltä täysin lukukelvoton.
+  - **Toimenpiteet:**
+    - Otetaan käyttöön moderni, erinomaisen x-korkeuden omaava kirjasinperhe (Inter).
+    - Korjataan `useResizeText` asettamalla selkeä luentosalin minimikoko (vähintään 24–28 px leipätekstille) ja parannetaan suuren tekstin skaalautuvuutta.
+
+- [ ] **5.2 Esitysnäkymän ja editorin 1:1 visuaalinen vastaavuus (WYSIWYG-kangas)**
+  - **Prioriteetti:** Korkea (opettajan valmistelukokemus)
+  - **Tiedostot:** `client/src/components/slide/SlideContainer.tsx`, `client/src/views/TeacherView.tsx`, `client/src/views/EditorView.tsx`
+  - **Ongelma:** Editorin yläpalkki ja näytön joustava venyminen aiheuttavat sen, että teksti rivittyy ja asettuu eri tavalla editorissa kuin valkokankaalla.
+  - **Toimenpiteet:**
+    - Yhtenäistetään `SlideContainer` toimimaan identtisellä kuvasuhteella (16:9 -esityskangas) ja marginaaleilla sekä editorissa että esityksessä.
+    - Varmistetaan, että opettajan työtila ja esitystila vastaavat toisiaan suoraan ilman yllättäviä rivitys- tai asettelumuutoksia.
+
+- [ ] **5.3 Vastauspylväiden, tulosten ja oikean vastauksen korkeakontrastinen visualisointi**
+  - **Prioriteetti:** Korkea (luentosalin näkyvyys & esteettömyys WCAG AA)
+  - **Tiedostot:** `client/src/components/slide/SlideInteraction.tsx`
+  - **Ongelma:** Monivalinnan vastauspylväs (`bg-blue-100 opacity-30`) on videotykin valokeilassa lähes näkymätön. Oikean vastauksen erottelu pelkällä vihreällä ohuella reunuksella rikkoo WCAG 1.4.1 -kriteeriä (ei toimi värisokeille).
+  - **Toimenpiteet:**
+    - Tehdään tulospalkeista selkeät, kylläiset ja erottuvat.
+    - Kasvatetaan prosenttilukujen kokoa ja parannetaan niiden luettavuutta.
+    - Lisätään oikealle vastaukselle selkeä visuaalinen tunnusmerkki (teksti/kuvake) pelkän värillisen reunuksen sijaan.
+
+- [ ] **5.4 Lääketieteellisten kuvien Lightbox-suurennus (koko valkokankaan esitys)**
+  - **Prioriteetti:** Keskitaso (kliininen pedagogiikka)
+  - **Tiedostot:** `client/src/components/slide/SlideBody.tsx`, `client/src/components/SlideRenderer.tsx`
+  - **Ongelma:** Röntgen- tai EKG-kuva vie vain pienen osan diasta eikä sitä voi zoomata, mikä tekee pienten yksityiskohtien havaitsemisesta takarivistä vaikeaa.
+  - **Toimenpiteet:**
+    - Lisätään kuvalle klikattava täysikokoinen Lightbox-suurennustila esityksessä, jolloin kuvaa voidaan tarkastella koko kankaan laajuisena.
+
+- [ ] **5.5 Mobiilivastaamisen (StudentView) ja komponenttityylien viimeistely**
+  - **Prioriteetti:** Keskitaso (mobiili-UX)
+  - **Tiedostot:** `client/src/views/StudentView.tsx`, `client/src/components/ui/`
+  - **Ongelma:** Mobiilinäkymän kysymysteksti on pientä (`text-lg`) ja visuaalinen ilme kaipaa modernisointia yhtenäisen design-järjestelmän mukaiseksi.
+  - **Toimenpiteet:**
+    - Kasvatetaan mobiilikysymysten kokoa ja vahvistetaan kontrastia.
+    - Yhtenäistetään painikkeet, kortit ja varjot modernin kliinisen teeman mukaiseksi.
