@@ -67,7 +67,7 @@ export const TeacherView = () => {
                                         console.error("Load failed", e);
                                         showAlert({
                                             title: t('teacher.uploadFailed'),
-                                            message: t('teacher.uploadFailedMsg'),
+                                            message: e instanceof Error ? e.message : t('teacher.uploadFailedMsg'),
                                             variant: 'destructive'
                                         });
                                     }

@@ -207,7 +207,7 @@ export const useCaseEditor = () => {
             console.error("Load failed", e);
             showAlert({
                 title: t('editor.uploadFailed'),
-                message: t('editor.uploadFailedMsg'),
+                message: e instanceof Error ? e.message : t('editor.uploadFailedMsg'),
                 variant: 'destructive',
             });
         }

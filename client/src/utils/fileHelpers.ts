@@ -1,6 +1,6 @@
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
-import type { PatientCase } from '../types';
+import type { PatientCase, SlideType } from '../types';
 
 // Type for extracted images: filename -> browser internal URL
 export type ImageMap = Record<string, string>;
@@ -78,16 +78,67 @@ export const saveCaseToZip = async (
     return filename;
 };
 
+export const validatePatientCase = (data: unknown): PatientCase => {
+    if (!data || typeof data !== 'object') {
+        throw new Error('Tiedosto ei sisällä kelvollista tapausta (virheellinen JSON).');
+    }
+
+    const c = data as Record<string, unknown>;
+
+    if (!c.meta || typeof c.meta !== 'object') {
+        throw new Error('Tapauksen metatiedot (meta) puuttuvat.');
+    }
+
+    const meta = c.meta as Record<string, unknown>;
+    if (typeof meta.title !== 'string') {
+        throw new Error('Tapauksen otsikko (meta.title) puuttuu tai on virheellinen.');
+    }
+
+    if (!Array.isArray(c.slides)) {
+        throw new Error('Tapauksen diat (slides) puuttuvat tai eivät ole taulukko.');
+    }
+
+    const validTypes: SlideType[] = ['INFO', 'MULTIPLE_CHOICE', 'TRUE_FALSE', 'OPEN_TEXT'];
+
+    c.slides.forEach((slide: unknown, idx: number) => {
+        if (!slide || typeof slide !== 'object') {
+            throw new Error(`Dia #${idx + 1} on virheellinen.`);
+        }
+        const s = slide as Record<string, unknown>;
+        if (typeof s.id !== 'string' || !s.id) {
+            throw new Error(`Dian #${idx + 1} tunniste (id) puuttuu.`);
+        }
+        if (!validTypes.includes(s.type as SlideType)) {
+            throw new Error(`Dian #${idx + 1} tyyppi '${s.type}' on tuntematon.`);
+        }
+        if (typeof s.title !== 'string') {
+            throw new Error(`Dian #${idx + 1} otsikko (title) puuttuu tai on virheellinen.`);
+        }
+        if (s.type === 'MULTIPLE_CHOICE' && !Array.isArray(s.options)) {
+            throw new Error(`Monivalintadian #${idx + 1} vastausvaihtoehdot (options) puuttuvat.`);
+        }
+    });
+
+    return data as PatientCase;
+};
+
 export const loadCaseFromZip = async (file: File) => {
     const zip = new JSZip();
     const loadedZip = await zip.loadAsync(file);
 
-    // 1. Read JSON
+    // 1. Read and validate JSON
     const jsonFile = loadedZip.file(CASE_FILENAME);
     if (!jsonFile) throw new Error(`Virheellinen tiedosto: ${CASE_FILENAME} puuttuu`);
 
     const jsonStr = await jsonFile.async("string");
-    const caseData = JSON.parse(jsonStr) as PatientCase;
+    let parsed: unknown;
+    try {
+        parsed = JSON.parse(jsonStr);
+    } catch {
+        throw new Error(`Tiedosto ${CASE_FILENAME} ei sisällä kelvollista JSON-dataa.`);
+    }
+
+    const caseData = validatePatientCase(parsed);
 
     // 2. Read images and create Object URLs
     const images: ImageMap = {};

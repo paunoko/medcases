@@ -97,12 +97,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Lisätty purkufunktiot (`useEffect` cleanup on unmount) sekä `useCaseEditor.ts`- että `TeacherView.tsx`-komponentteihin.
     - Vapautetaan vanhat osoitteet uutta tiedostoa ladattaessa, kuvaa poistettaessa tai korvattaessa ja esityksestä poistuttaessa.
 
-- [ ] **3.3 Tiedoston skeeman validointi ladattaessa**
+- [x] **3.3 Tiedoston skeeman validointi ladattaessa**
   - **Prioriteetti:** Keskitaso (virheensieto)
-  - **Tiedostot:** `client/src/utils/fileHelpers.ts`
-  - **Ongelma:** `loadCaseFromZip` ajaa `JSON.parse` suoraan tyyppipakotuksella. Korruptoitunut tiedosto kaataa sovelluksen.
+  - **Tiedostot:** `client/src/utils/fileHelpers.ts`, `client/src/views/TeacherView.tsx`, `client/src/hooks/useCaseEditor.ts`
+  - **Ongelma:** `loadCaseFromZip` ajoi `JSON.parse` suoraan tyyppipakotuksella. Korruptoitunut tiedosto kaatoi sovelluksen ilman selitystä.
   - **Toimenpiteet:**
-    - Lisää kevyt runtime-skeematarkistus ladattaessa (tarkista vähintään `meta.title` ja että `slides` on taulukko: `Array.isArray(caseData.slides)`). Heitä selkeä käyttäjälle näkyvä virheilmoitus puutteellisesta tiedostosta.
+    - Lisätty `validatePatientCase`-funktio, joka tarkistaa tapauksen metatiedot, dian tyypit, pakolliset kentät ja rakenteen.
+    - Heitetään ja näytetään käyttäjälle selkeät virheilmoitukset puutteellisista tai epäkelvoista tiedostoista.
 
 ---
 
