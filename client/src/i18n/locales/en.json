@@ -31,6 +31,8 @@
     "readFromScreen": "Read information from the screen.",
     "answerSent": "Answer sent!",
     "submitAnswer": "SUBMIT ANSWER",
+    "singleChoiceHint": "Single choice (select one)",
+    "multipleChoiceHint": "Multiple choice – select all that apply",
     "answeringLocked": "Answering has ended.",
     "writeAnswer": "Write your answer...",
     "send": "SEND"
@@ -89,6 +91,7 @@
     "markAsCorrect": "Mark as correct answer",
     "optionPlaceholder": "Option...",
     "addOption": "+ Add option",
+    "allowMultiple": "Allow multiple choices",
     "correctAnswer": "Correct answer:",
     "yesTrue": "Yes",
     "noFalse": "No",

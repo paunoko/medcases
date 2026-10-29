@@ -28,6 +28,7 @@ export interface MultipleChoiceSlide {
   imageFileName?: string;
   question: string; // The actual question
   options: Option[];
+  allowMultiple?: boolean;
 }
 
 // 3. True/False (Boolean)
@@ -77,5 +78,6 @@ export interface StudentPayload {
   type: SlideType;
   questionText?: string;
   options?: { id: string; text: string }[]; // NOTE: no isCorrect info
+  allowMultiple?: boolean;
   state: 'WAITING' | 'ANSWERING' | 'REVEALED';
 }

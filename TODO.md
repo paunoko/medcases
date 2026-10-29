@@ -42,12 +42,12 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
 
 ## 2. Kysymyslogiikka ja luokkatilanteen pedagoginen UX
 
-- [ ] **2.1 Toteuta Yksivalinta (Single choice) vs. Monivalinta (`allowMultiple`)**
+- [x] **2.1 Toteuta Yksivalinta (Single choice) vs. Monivalinta (`allowMultiple`)**
   - **Prioriteetti:** Korkea (pedagoginen logiikka ja tilastot)
-  - **Tiedostot:** `client/src/types.ts`, `server/src/types.ts`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/EditorView.tsx`, `client/src/views/StudentView.tsx`, `server/src/index.ts`, `client/src/utils/sanitizer.ts`
+  - **Tiedostot:** `client/src/types.ts`, `server/src/types.ts`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/StudentView.tsx`, `server/src/index.ts`, `client/src/utils/sanitizer.ts`, `client/src/hooks/useCaseEditor.ts`, `data-description.md`
   - **Ongelma:** Opiskelija voi aina valita useita vaihtoehtoja, jolloin yksivalintakysymyksissä tulospalkkien summa ylittää 100 %. Editorissa ei voi valita, onko kyseessä yksi- vai monivalinta.
   - **Toimenpiteet:**
-    - Lisää `allowMultiple?: boolean` tyyppeihin `MultipleChoiceSlide`, `StudentPayload` ja `BroadcastPayload`.
+    - Lisätty `allowMultiple?: boolean` tyyppeihin `MultipleChoiceSlide`, `StudentPayload` ja `BroadcastPayload`.
     - **Oletuksena `allowMultiple: false` (yksivalinta):**
       - Editorissa oikea vastaus valitaan radiopainikkeella (vain yksi valinta).
       - Opiskelijanäkymässä uusi valinta korvaa edellisen, ja ohjeena lukee *"Yksivalinta (valitse yksi)"*.

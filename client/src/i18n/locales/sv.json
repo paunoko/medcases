@@ -31,6 +31,8 @@
     "readFromScreen": "Läs informationen på tavlan.",
     "answerSent": "Svaret har skickats!",
     "submitAnswer": "SKICKA SVAR",
+    "singleChoiceHint": "Enkelval (välj ett)",
+    "multipleChoiceHint": "Flerval – välj alla som passar",
     "answeringLocked": "Svarstiden har gått ut.",
     "writeAnswer": "Skriv svar...",
     "send": "SKICKA"
@@ -89,6 +91,7 @@
     "markAsCorrect": "Markera som rätt svar",
     "optionPlaceholder": "Alternativ...",
     "addOption": "+ Lägg till alternativ",
+    "allowMultiple": "Tillåt flera val (Flerval)",
     "correctAnswer": "Rätt svar:",
     "yesTrue": "Ja",
     "noFalse": "Nej",

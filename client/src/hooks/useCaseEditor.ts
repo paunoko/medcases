@@ -38,6 +38,7 @@ export const useCaseEditor = () => {
             content: '',
             question: type !== 'INFO' ? '' : undefined,
             options: type === 'MULTIPLE_CHOICE' ? [] : undefined,
+            allowMultiple: type === 'MULTIPLE_CHOICE' ? false : undefined,
             correctAnswer: type === 'TRUE_FALSE' ? true : undefined,
             modelAnswer: type === 'OPEN_TEXT' ? '' : undefined
         };

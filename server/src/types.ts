@@ -17,6 +17,7 @@ export interface BroadcastPayload {
   type: string;
   questionText?: string;
   options?: any[];
+  allowMultiple?: boolean;
   state: RoomStatus;
 }
 

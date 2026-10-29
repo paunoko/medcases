@@ -52,6 +52,7 @@ Presents a multiple-choice question to the student with several options.
 
 **Specific fields:**
 - `question` (String, Required): The actual question text being asked.
+- `allowMultiple` (Boolean, Optional): Defaults to `false`. When `false` (single choice), only one option is correct and students can select only one answer. When `true` (multiple choice), multiple options can be marked correct and students can select multiple answers.
 - `options` (Array of Objects, Required): A list of possible answers. Each object contains:
   - `id` (String, Required): Unique identifier for the option.
   - `text` (String, Required): The text of the choice.

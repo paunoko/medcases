@@ -49,11 +49,48 @@ export const SlideInteraction: React.FC<Props> = ({
           />
         ) : (
           slide.question && (
-            <h3 className="text-4xl font-semibold text-blue-900">
-              {slide.question}
-            </h3>
+            <div className="flex flex-col gap-2">
+              {slide.type === 'MULTIPLE_CHOICE' && (
+                <span className="text-xl font-bold uppercase tracking-wider text-blue-600">
+                  {(slide as any).allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint')}
+                </span>
+              )}
+              <h3 className="text-4xl font-semibold text-blue-900">
+                {slide.question}
+              </h3>
+            </div>
           )
         )
+      )}
+
+      {/* MULTIPLE CHOICE SETTINGS (Edit Only) */}
+      {isEdit && slide.type === 'MULTIPLE_CHOICE' && (
+        <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl w-fit">
+          <label className="flex items-center gap-3 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              className="w-6 h-6 rounded accent-blue-600 cursor-pointer"
+              checked={!!(slide as any).allowMultiple}
+              onChange={e => {
+                const allowMultiple = e.target.checked;
+                let opts = (slide as any).options || [];
+                if (!allowMultiple) {
+                  let foundFirst = false;
+                  opts = opts.map((opt: Option) => {
+                    if (opt.isCorrect && !foundFirst) {
+                      foundFirst = true;
+                      return opt;
+                    }
+                    return { ...opt, isCorrect: false };
+                  });
+                }
+                onUpdate?.('allowMultiple', allowMultiple);
+                onUpdate?.('options', opts);
+              }}
+            />
+            <span className="font-bold text-xl text-gray-700">{t('editor.allowMultiple')}</span>
+          </label>
+        </div>
       )}
 
       {/* INTERACTION ELEMENTS */}
@@ -74,17 +111,34 @@ export const SlideInteraction: React.FC<Props> = ({
               return (
                 <div key={i} className={`relative p-6 border-4 flex-1 min-w-[200px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all focus-within:border-blue-500 ${opt.isCorrect ? 'border-green-500 bg-green-50' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
                   <div className="flex w-full items-start gap-4">
-                    <input
-                      type="checkbox"
-                      className="w-8 h-8 mt-1 rounded shrink-0 accent-green-600 cursor-pointer"
-                      checked={opt.isCorrect}
-                      onChange={e => {
-                        const opts = [...(slide as any).options];
-                        opts[i].isCorrect = e.target.checked;
-                        onUpdate?.('options', opts);
-                      }}
-                      title={t('editor.markAsCorrect')}
-                    />
+                    {!(slide as any).allowMultiple && slide.type === 'MULTIPLE_CHOICE' ? (
+                      <input
+                        type="radio"
+                        name={`correct-opt-${slide.id}`}
+                        className="w-8 h-8 mt-1 shrink-0 accent-green-600 cursor-pointer"
+                        checked={!!opt.isCorrect}
+                        onChange={() => {
+                          const opts = (slide as any).options.map((o: Option, idx: number) => ({
+                            ...o,
+                            isCorrect: idx === i
+                          }));
+                          onUpdate?.('options', opts);
+                        }}
+                        title={t('editor.markAsCorrect')}
+                      />
+                    ) : (
+                      <input
+                        type="checkbox"
+                        className="w-8 h-8 mt-1 rounded shrink-0 accent-green-600 cursor-pointer"
+                        checked={opt.isCorrect}
+                        onChange={e => {
+                          const opts = [...(slide as any).options];
+                          opts[i].isCorrect = e.target.checked;
+                          onUpdate?.('options', opts);
+                        }}
+                        title={t('editor.markAsCorrect')}
+                      />
+                    )}
                     <textarea
                       rows={2}
                       className="font-bold text-2xl flex-1 bg-transparent focus:outline-none w-full resize-none leading-tight"

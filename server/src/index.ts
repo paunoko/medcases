@@ -198,6 +198,10 @@ io.on('connection', (socket: Socket) => {
     if (Array.isArray(answer)) {
       if (answer.length > 20) return; // Max options
       safeAnswer = answer.map(a => typeof a === 'string' ? a.slice(0, 100) : '').filter(Boolean);
+      // For single-choice multiple choice questions, restrict to at most 1 selection
+      if (room.currentPayload?.type === 'MULTIPLE_CHOICE' && !room.currentPayload?.allowMultiple) {
+        safeAnswer = safeAnswer.slice(0, 1);
+      }
     } else if (typeof answer === 'string') {
       if (answer.length > 1000) return; // Max length
       safeAnswer = answer.replace(/[<>]/g, "").trim();

@@ -18,6 +18,7 @@ export const createStudentPayload = (
 
     if (slide.type === 'MULTIPLE_CHOICE') {
         payload.questionText = slide.question;
+        payload.allowMultiple = !!slide.allowMultiple;
         // IMPORTANT: Map to a new object to exclude 'isCorrect'
         payload.options = slide.options.map(opt => ({
             id: opt.id,

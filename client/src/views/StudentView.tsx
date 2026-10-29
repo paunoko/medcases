@@ -85,6 +85,11 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
   return (
     <div className="h-full bg-white flex flex-col p-4">
       <div className="py-4 border-b mb-4">
+        {activeSlide.type === 'MULTIPLE_CHOICE' && (
+          <div className="text-sm font-bold text-blue-600 uppercase mb-1">
+            {activeSlide.allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint')}
+          </div>
+        )}
         <h2 className="text-lg font-medium text-gray-800 leading-snug">{activeSlide.questionText}</h2>
       </div>
 
@@ -108,11 +113,15 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
                     <button
                       key={opt.id}
                       onClick={() => {
-                        setSelectedOptions(prev =>
-                          prev.includes(opt.id)
-                            ? prev.filter(id => id !== opt.id)
-                            : [...prev, opt.id]
-                        );
+                        if (activeSlide.allowMultiple) {
+                          setSelectedOptions(prev =>
+                            prev.includes(opt.id)
+                              ? prev.filter(id => id !== opt.id)
+                              : [...prev, opt.id]
+                          );
+                        } else {
+                          setSelectedOptions([opt.id]);
+                        }
                       }}
                       className={`w-full p-6 text-left border-2 rounded-xl text-lg font-bold transition-all shadow-sm ${isSelected
                         ? 'border-blue-500 bg-blue-50 text-blue-900'
@@ -121,7 +130,11 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
                     >
                       <div className="flex items-center justify-between">
                         <span>{opt.text}</span>
-                        {isSelected && <CheckCircle2 size={24} className="text-blue-600" />}
+                        {isSelected ? (
+                          <CheckCircle2 size={24} className="text-blue-600" />
+                        ) : (
+                          <div className={`w-6 h-6 border-2 border-gray-300 ${activeSlide.allowMultiple ? 'rounded' : 'rounded-full'}`} />
+                        )}
                       </div>
                     </button>
                   );

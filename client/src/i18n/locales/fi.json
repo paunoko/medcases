@@ -31,6 +31,8 @@
     "readFromScreen": "Lue tiedot taululta.",
     "answerSent": "Vastaus lähetetty!",
     "submitAnswer": "LÄHETÄ VASTAUS",
+    "singleChoiceHint": "Yksivalinta (valitse yksi)",
+    "multipleChoiceHint": "Monivalinta – valitse kaikki sopivat",
     "answeringLocked": "Vastaaminen on päättynyt.",
     "writeAnswer": "Kirjoita vastaus...",
     "send": "LÄHETÄ"
@@ -89,6 +91,7 @@
     "markAsCorrect": "Merkitse oikeaksi vastaukseksi",
     "optionPlaceholder": "Vaihtoehto...",
     "addOption": "+ Lisää vaihtoehto",
+    "allowMultiple": "Salli useampi valinta (Monivalinta)",
     "correctAnswer": "Oikea vastaus:",
     "yesTrue": "Kyllä",
     "noFalse": "Ei",
