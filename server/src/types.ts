@@ -41,4 +41,7 @@ export interface RoomState {
   // For graceful teacher reconnection
   teacherSecret: string;
   disconnectTimer?: NodeJS.Timeout | null;
+
+  // Timestamp of last activity in the room
+  lastActivity: number;
 }

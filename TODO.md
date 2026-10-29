@@ -130,13 +130,12 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Palvelin kuittaa onnistuneen palautumisen (`TEACHER_RECONNECTED`) ja synkronoi aktiivisen dian.
     - Siivotaan `sessionStorage` kun opettaja päättää istunnon (`endSession`) tai poistuu esityksestä.
 
-- [ ] **4.3 Huoneiden elinkaari ja inaktiivisuusaikakatkaisu**
+- [x] **4.3 Huoneiden elinkaari ja inaktiivisuusaikakatkaisu**
   - **Prioriteetti:** Keskitaso / Ylläpito
-  - **Tiedostot:** `server/src/index.ts`
-  - **Ongelma:** Palvelimella on kovakoodattu 60 sekunnin `disconnectTimer` (`60000`), mutta auki jätetyt ja unohdetut istunnot, joissa yhteys säilyy auki, voivat roikkua muistissa loputtomiin.
+  - **Tiedostot:** `server/src/index.ts`, `server/src/types.ts`
+  - **Ongelma:** Auki jätetyt ja unohdetut istunnot voivat roikkua muistissa loputtomiin.
   - **Toimenpiteet:**
-    - Määrittele selkeät aikarajavakiot:
-      - `TEACHER_DISCONNECT_GRACE_MS = 60_000` (60 s toipumisaika yhteyden katketessa)
-      - `ROOM_INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000` (30 min inaktiivisuusaika)
-    - Korvaa kovakoodattu `60000` vakiolla `TEACHER_DISCONNECT_GRACE_MS`.
-    - Lisää huoneelle inaktiivisuusaikakatkaisu (`ROOM_INACTIVITY_TIMEOUT_MS`), joka nollautuu aina kun huoneessa tapahtuu toimintaa (opettajan siirtymät, opiskelijoiden vastaukset) ja siivoaa hylätyt huoneet.
+    - Lisätty `lastActivity`-aikaleima `RoomState`-tietorakenteeseen.
+    - Päivitetään aktiivisuus huoneen luonnissa, dian vaihdossa, opiskelijan liittyessä ja vastauksissa.
+    - Lisätty taustasiivous (`cleanupInactiveRooms`), joka tarkistaa 5 minuutin välein huoneet ja poistaa yli 60 minuuttia inaktiivisena olleet huoneet muistista.
+    - Tyhjennetään `disconnectTimer` aina hallitusti myös `END_SESSION`-kutsussa.

@@ -35,6 +35,8 @@ const MAX_OPTION_TEXT_LENGTH = 100;
 const MAX_ANSWER_TEXT_LENGTH = 1000;
 const ANSWERS_BATCH_INTERVAL_MS = 1000;
 const TEACHER_RECONNECT_GRACE_PERIOD_MS = 60000;
+const ROOM_INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000; // 60 minutes
+const INACTIVITY_CLEANUP_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 
 // --- IN-MEMORY DATABASE ---
 // Since we don't use a database, we save everything in this Map.
@@ -82,7 +84,8 @@ io.on('connection', (socket: Socket) => {
       teacherSecret,
       currentPayload: null,
       answers: [],
-      studentCount: 0
+      studentCount: 0,
+      lastActivity: Date.now()
     };
 
     rooms.set(roomId, newRoom);
@@ -106,6 +109,8 @@ io.on('connection', (socket: Socket) => {
       room.disconnectTimer = null;
     }
     
+    room.lastActivity = Date.now();
+
     // Update active socket
     room.teacherSocketId = socket.id;
     socketToRoom.set(socket.id, roomId);
@@ -133,6 +138,7 @@ io.on('connection', (socket: Socket) => {
 
     // Delete room and cleanup socket mapping
     if (room.throttleTimer) clearTimeout(room.throttleTimer);
+    if (room.disconnectTimer) clearTimeout(room.disconnectTimer);
     rooms.delete(roomId);
     socketToRoom.delete(socket.id);
   });
@@ -171,6 +177,7 @@ io.on('connection', (socket: Socket) => {
 
     // Update memory representation
     room.currentPayload = payload;
+    room.lastActivity = Date.now();
 
     // BROADCAST EVERYONE IN THE ROOM
     // socket.to(roomId) targets everyone but the sender (teacher)
@@ -197,6 +204,7 @@ io.on('connection', (socket: Socket) => {
     socket.join(roomId);
     socketToRoom.set(socket.id, roomId);
     room.studentCount++;
+    room.lastActivity = Date.now();
     logger.info(`[Join] Student joined room ${roomId}`);
 
     // Notify teacher of the new count
@@ -213,6 +221,8 @@ io.on('connection', (socket: Socket) => {
   socket.on('SUBMIT_ANSWER', ({ roomId, slideId, answer }: { roomId: string, slideId: string, answer: string | string[] }) => {
     const room = rooms.get(roomId);
     if (!room) return;
+
+    room.lastActivity = Date.now();
 
     // Accept answers only if state is ANSWERING 
     // (Can be stripped if late submissions map correctly)
@@ -301,6 +311,25 @@ io.on('connection', (socket: Socket) => {
     socketToRoom.delete(socket.id);
   });
 });
+
+// --- PERIODIC CLEANUP OF INACTIVE ROOMS ---
+const cleanupInactiveRooms = () => {
+  const now = Date.now();
+  for (const [roomId, room] of rooms.entries()) {
+    if (now - room.lastActivity > ROOM_INACTIVITY_TIMEOUT_MS) {
+      logger.info(`[Cleanup] Room ${roomId} timed out due to inactivity (> ${ROOM_INACTIVITY_TIMEOUT_MS / 60000} mins).`);
+      io.to(roomId).emit('SESSION_ENDED');
+      if (room.throttleTimer) clearTimeout(room.throttleTimer);
+      if (room.disconnectTimer) clearTimeout(room.disconnectTimer);
+      rooms.delete(roomId);
+    }
+  }
+};
+
+const cleanupInterval = setInterval(cleanupInactiveRooms, INACTIVITY_CLEANUP_INTERVAL_MS);
+if (cleanupInterval.unref) {
+  cleanupInterval.unref();
+}
 
 // --- SERVE STATIC FILES (Production) ---
 app.use(BASE_PATH, express.static(path.join(__dirname, '../public')));
