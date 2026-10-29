@@ -226,3 +226,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Tallennetaan opiskelijan huonekoodi `sessionStorage`-muistiin, jolloin vahinkopäivitys (pull-to-refresh) tai F5 ei katkaise vastaamista.
     - Lisätty selkeä uudelleenyhdistysindikaattori verkkokatkoksen ajaksi.
     - Palvelimen ja tiedostovalidoinnin virheilmoitukset siirretty virhekoodeiksi ja lokalisoitu i18n-kieliavaimin (FI/EN/SV).
+
+- [x] **6.4 Aloitusnäkymän brändäys, infomodaali ja opettajakorttien modernisointi**
+  - **Prioriteetti:** Keskitaso (ensivaikutelma ja perehdytys)
+  - **Tiedostot:** `client/src/views/LandingView.tsx`, `client/src/views/StudentView.tsx`, `client/src/i18n/locales/`
+  - **Ongelma:** MedCases-nimi ja irrallinen stetoskooppilaatikko näkyivät vain opiskelijanäkymässä. Opettajatilasta puuttui brändäys ja toiminnot olivat sekavia erivärisiä palikoita. Sovelluksesta puuttui nopea perehdytysopaste ("Mikä tämä on?").
+  - **Toimenpiteet:**
+    - Tuotu yhtenäinen MedCases-brändiotsikko ja tunnus (`Activity`) pääsivun ylätunnisteeseen.
+    - Poistettu opiskelijan PIN-kortista toistuva otsikko ja irrallinen stetoskooppisymboli.
+    - Lisätty esteetön "Mikä MedCases on?" -infomodaali (`HelpCircle`), joka esittelee sovelluksen toiminnan opiskelijalle, opettajalle sekä yksityisyysperiaatteet (FI, EN, SV).
+    - Modernisoitu opettajan toiminnot tyylikkäiksi, saavutettaviksi toimintokorteiksi selittein ja kuvakkein.

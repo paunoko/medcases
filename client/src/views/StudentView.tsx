@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStudentSession } from '../hooks/useStudentSession';
-import { Eye, CheckCircle2, Stethoscope, Lock, Send, WifiOff } from 'lucide-react';
+import { Eye, CheckCircle2, Lock, Send, WifiOff } from 'lucide-react';
 
 export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession: boolean) => void }) => {
   const { t } = useTranslation();
@@ -32,13 +32,6 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
   if (!joinedRoomId) {
     return (
       <div className="min-h-full flex flex-col items-center justify-center p-4">
-        <div className="text-center mb-6">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 text-white shadow-lg mb-3">
-            <Stethoscope size={36} />
-          </div>
-          <h1 className="text-3xl font-extrabold text-blue-950 tracking-tight">MedCases</h1>
-        </div>
-
         <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-sm space-y-5 border border-gray-100">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm font-semibold text-center">

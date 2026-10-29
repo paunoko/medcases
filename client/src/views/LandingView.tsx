@@ -2,7 +2,18 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { StudentView } from './StudentView';
-import { GraduationCap, Stethoscope, MonitorPlay, Sparkles, Pencil } from 'lucide-react';
+import { 
+    GraduationCap, 
+    Presentation, 
+    MonitorPlay, 
+    PlusCircle, 
+    Pencil, 
+    ChevronRight, 
+    HelpCircle, 
+    X, 
+    Activity, 
+    ShieldCheck 
+} from 'lucide-react';
 
 const LanguageSlider = () => {
     const { i18n } = useTranslation();
@@ -12,20 +23,18 @@ const LanguageSlider = () => {
         { code: 'en', label: 'EN', emoji: '🇬🇧' }
     ];
 
-    // Get current language index, defaulting to FI if not found
     const currentCode = i18n.language.split('-')[0];
     const currentIndex = languages.findIndex(l => l.code === currentCode);
     const safeIndex = currentIndex === -1 ? 0 : currentIndex;
 
     return (
-        <div className="fixed top-4 right-4 z-[100] bg-white border border-gray-200 p-1.5 rounded-full shadow-lg flex items-center relative h-12 min-w-[210px] overflow-hidden">
-            {/* Sliding background indicator container */}
-            <div className="absolute inset-1.5 z-0">
+        <div className="bg-white border border-gray-200 p-1 rounded-full shadow-sm flex items-center relative h-10 min-w-[190px] overflow-hidden">
+            <div className="absolute inset-1 z-0">
                 <div 
                     className="absolute h-full bg-blue-600 rounded-full transition-all duration-300 ease-out shadow-sm"
                     style={{ 
-                        width: `${100/languages.length}%`,
-                        left: `${safeIndex * (100/languages.length)}%` 
+                        width: `${100 / languages.length}%`,
+                        left: `${safeIndex * (100 / languages.length)}%` 
                     }}
                 />
             </div>
@@ -34,12 +43,12 @@ const LanguageSlider = () => {
                 <button
                     key={lang.code}
                     onClick={() => i18n.changeLanguage(lang.code)}
-                    className={`flex-1 relative z-10 h-full flex items-center justify-center gap-2 px-2 transition-colors duration-300 rounded-full ${
+                    className={`flex-1 relative z-10 h-full flex items-center justify-center gap-1.5 px-2 transition-colors duration-300 rounded-full cursor-pointer select-none ${
                         safeIndex === idx ? 'text-white' : 'text-gray-500 hover:text-gray-800'
                     }`}
                 >
-                    <span className="text-xl">{lang.emoji}</span>
-                    <span className="font-bold text-sm tracking-tight">{lang.label}</span>
+                    <span className="text-base">{lang.emoji}</span>
+                    <span className="font-bold text-xs tracking-tight">{lang.label}</span>
                 </button>
             ))}
         </div>
@@ -52,6 +61,7 @@ export const LandingView = () => {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState<'student' | 'teacher'>('student');
     const [inSession, setInSession] = useState(false);
+    const [showAbout, setShowAbout] = useState(false);
 
     useEffect(() => {
         if (location.state?.tab) {
@@ -59,69 +69,230 @@ export const LandingView = () => {
         }
     }, [location.state]);
 
-    return (
-        <div className="min-h-screen bg-gray-50 flex flex-col items-center">
-            <LanguageSlider />
+    // Close about modal on Escape
+    useEffect(() => {
+        if (!showAbout) return;
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setShowAbout(false);
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [showAbout]);
 
-            {/* Tabs - Hidden if student is in session */}
+    return (
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            {/* TOP HEADER - Hidden when student is actively in a presentation session */}
             {!inSession && (
-                <div className="flex space-x-4 mt-8 mb-4 z-10">
-                    <button
-                        onClick={() => setActiveTab('student')}
-                        className={`px-6 py-3 rounded-full font-bold text-lg transition-all ${activeTab === 'student'
-                            ? 'bg-blue-600 text-white shadow-lg'
-                            : 'bg-white text-gray-600 hover:bg-gray-100'
-                            }`}
-                    >
-                        <span className="flex items-center gap-2">{t('landing.imStudent')} <GraduationCap size={24} /></span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('teacher')}
-                        className={`px-6 py-3 rounded-full font-bold text-lg transition-all ${activeTab === 'teacher'
-                            ? 'bg-purple-600 text-white shadow-lg'
-                            : 'bg-white text-gray-600 hover:bg-gray-100'
-                            }`}
-                    >
-                        <span className="flex items-center gap-2">{t('landing.imTeacher')} <Stethoscope size={24} /></span>
-                    </button>
-                </div>
+                <header className="w-full bg-white border-b border-gray-200 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 z-20">
+                    {/* Brand */}
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
+                            <Activity size={24} className="stroke-[2.5]" />
+                        </div>
+                        <div>
+                            <div className="flex items-baseline gap-2">
+                                <h1 className="text-2xl font-black text-blue-950 tracking-tight">MedCases</h1>
+                                <span className="hidden md:inline-block text-xs font-semibold text-gray-500 border-l border-gray-200 pl-2">
+                                    {t('landing.tagline')}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right actions: Info button & Language */}
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={() => setShowAbout(true)}
+                            className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-bold text-gray-600 hover:text-blue-700 hover:bg-blue-50 border border-gray-200 transition-colors cursor-pointer"
+                            title={t('landing.aboutApp')}
+                        >
+                            <HelpCircle size={18} className="text-blue-600" />
+                            <span className="hidden sm:inline">{t('landing.aboutApp')}</span>
+                        </button>
+                        <LanguageSlider />
+                    </div>
+                </header>
             )}
 
-            {/* Content */}
-            <div className="w-full flex-1 flex flex-col items-center">
-                {activeTab === 'student' ? (
-                    <div className="w-full flex-1">
-                        <StudentView onSessionChange={setInSession} />
-                    </div>
-                ) : (
-                    <div className="w-full max-w-md p-4 mt-8">
-                        <div className="bg-white p-8 rounded-xl shadow-xl space-y-4">
-                            <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">{t('landing.teacherActions')}</h2>
-
+            {/* MAIN CONTENT */}
+            <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 w-full">
+                {/* Tabs - Hidden if student is in session */}
+                {!inSession && (
+                    <div className="w-full max-w-sm mb-6 mt-2">
+                        <div className="bg-gray-200/80 p-1.5 rounded-2xl flex shadow-inner">
                             <button
-                                onClick={() => navigate('/teacher')}
-                                className="w-full p-4 bg-green-100 text-green-800 rounded-lg font-bold text-lg hover:bg-green-200 transition-colors text-left flex items-center gap-3"
+                                onClick={() => setActiveTab('student')}
+                                className={`flex-1 py-3 px-4 rounded-xl font-extrabold text-base transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                                    activeTab === 'student'
+                                        ? 'bg-blue-600 text-white shadow-md'
+                                        : 'text-gray-600 hover:text-gray-900'
+                                }`}
                             >
-                                <MonitorPlay size={28} /> {t('landing.presentCase')}
+                                <GraduationCap size={20} />
+                                <span>{t('landing.imStudent')}</span>
                             </button>
-
                             <button
-                                onClick={() => navigate('/editor')}
-                                className="w-full p-4 bg-blue-100 text-blue-800 rounded-lg font-bold text-lg hover:bg-blue-200 transition-colors text-left flex items-center gap-3"
+                                onClick={() => setActiveTab('teacher')}
+                                className={`flex-1 py-3 px-4 rounded-xl font-extrabold text-base transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                                    activeTab === 'teacher'
+                                        ? 'bg-purple-600 text-white shadow-md'
+                                        : 'text-gray-600 hover:text-gray-900'
+                                }`}
                             >
-                                <Sparkles size={28} /> {t('landing.createNew')}
-                            </button>
-
-                            <button
-                                onClick={() => navigate('/editor?mode=edit')}
-                                className="w-full p-4 bg-yellow-100 text-yellow-800 rounded-lg font-bold text-lg hover:bg-yellow-200 transition-colors text-left flex items-center gap-3"
-                            >
-                                <Pencil size={28} /> {t('landing.editExisting')}
+                                <Presentation size={20} />
+                                <span>{t('landing.imTeacher')}</span>
                             </button>
                         </div>
                     </div>
                 )}
-            </div>
+
+                {/* Content Section */}
+                <div className="w-full flex-1 flex flex-col items-center justify-center">
+                    {activeTab === 'student' ? (
+                        <div className="w-full flex-1 flex flex-col items-center justify-center">
+                            <StudentView onSessionChange={setInSession} />
+                        </div>
+                    ) : (
+                        <div className="w-full max-w-md p-2 animate-fade-in">
+                            <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-gray-100 space-y-4">
+                                <h2 className="text-xl font-extrabold text-center mb-6 text-gray-900">
+                                    {t('landing.teacherActions')}
+                                </h2>
+
+                                <button
+                                    onClick={() => navigate('/teacher')}
+                                    className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-emerald-500 bg-white hover:bg-emerald-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3.5">
+                                        <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                            <MonitorPlay size={26} />
+                                        </div>
+                                        <div>
+                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                {t('landing.presentCase')}
+                                            </div>
+                                            <div className="text-xs text-gray-500 mt-0.5 font-medium">
+                                                {t('landing.presentCaseDesc')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                </button>
+
+                                <button
+                                    onClick={() => navigate('/editor')}
+                                    className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-500 bg-white hover:bg-blue-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3.5">
+                                        <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                            <PlusCircle size={26} />
+                                        </div>
+                                        <div>
+                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                {t('landing.createNew')}
+                                            </div>
+                                            <div className="text-xs text-gray-500 mt-0.5 font-medium">
+                                                {t('landing.createNewDesc')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                </button>
+
+                                <button
+                                    onClick={() => navigate('/editor?mode=edit')}
+                                    className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-purple-500 bg-white hover:bg-purple-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3.5">
+                                        <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                            <Pencil size={26} />
+                                        </div>
+                                        <div>
+                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                {t('landing.editExisting')}
+                                            </div>
+                                            <div className="text-xs text-gray-500 mt-0.5 font-medium">
+                                                {t('landing.editExistingDesc')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </main>
+
+            {/* "MIKÄ MEDCASES ON?" INFO MODAL */}
+            {showAbout && (
+                <div 
+                    className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+                    onClick={() => setShowAbout(false)}
+                >
+                    <div 
+                        className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-gray-100 animate-scale-in max-h-[90vh] overflow-y-auto"
+                        onClick={e => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={() => setShowAbout(false)}
+                            className="absolute top-6 right-6 text-gray-400 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
+                            title={t('common.close')}
+                        >
+                            <X size={22} />
+                        </button>
+
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md">
+                                <Activity size={28} className="stroke-[2.5]" />
+                            </div>
+                            <div>
+                                <h3 className="text-2xl font-black text-blue-950 tracking-tight">MedCases</h3>
+                                <p className="text-xs font-semibold text-gray-500">{t('landing.tagline')}</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-5 text-gray-700 text-sm leading-relaxed">
+                            <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100">
+                                <div className="flex items-center gap-2 font-bold text-blue-950 mb-1 text-base">
+                                    <GraduationCap size={20} className="text-blue-600" />
+                                    <span>{t('landing.aboutStudentTitle')}</span>
+                                </div>
+                                <p className="text-gray-600">
+                                    {t('landing.aboutStudentText')}
+                                </p>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-100">
+                                <div className="flex items-center gap-2 font-bold text-purple-950 mb-1 text-base">
+                                    <Presentation size={20} className="text-purple-600" />
+                                    <span>{t('landing.aboutTeacherTitle')}</span>
+                                </div>
+                                <p className="text-gray-600">
+                                    {t('landing.aboutTeacherText')}
+                                </p>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100">
+                                <div className="flex items-center gap-2 font-bold text-emerald-950 mb-1 text-base">
+                                    <ShieldCheck size={20} className="text-emerald-600" />
+                                    <span>{t('landing.aboutPrivacyTitle')}</span>
+                                </div>
+                                <p className="text-gray-600">
+                                    {t('landing.aboutPrivacyText')}
+                                </p>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() => setShowAbout(false)}
+                            className="mt-6 w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl transition-colors cursor-pointer"
+                        >
+                            {t('common.close')}
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

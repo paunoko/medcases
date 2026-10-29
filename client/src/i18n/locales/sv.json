@@ -16,10 +16,22 @@
   "landing": {
     "imStudent": "Jag är student",
     "imTeacher": "Jag är lärare",
+    "tagline": "Interaktiva patientfall för klinisk undervisning",
+    "aboutApp": "Om MedCases",
+    "aboutTitle": "Om MedCases",
+    "aboutStudentTitle": "För studenter",
+    "aboutStudentText": "Ange den 4-siffriga rumskoden från din lärare. Inget konto eller inloggning krävs – delta och svara anonymt direkt från din telefon eller bärbara dator.",
+    "aboutTeacherTitle": "För lärare",
+    "aboutTeacherText": "Presentera en färdig .medcase-fil på föreläsningssalens skärm eller skapa nya patientfall i den enkla editorn. Studenternas svar samlas och visualiseras i realtid.",
+    "aboutPrivacyTitle": "Integritet och enkelhet",
+    "aboutPrivacyText": "MedCases kräver inga molnkonton och samlar inte in personuppgifter. Alla patientfall sparas lokalt som .medcase-filer på din egen enhet.",
     "teacherActions": "Lärarverktyg",
     "presentCase": "Presentera patientfall",
+    "presentCaseDesc": "Öppna en .medcase-fil och visa den på skärmen.",
     "createNew": "Skapa nytt fall",
-    "editExisting": "Redigera fall"
+    "createNewDesc": "Bygg ett nytt kliniskt fall och frågor i editorn.",
+    "editExisting": "Redigera fall",
+    "editExistingDesc": "Öppna ett tidigare sparat fall för att fortsätta redigera."
   },
   "student": {
     "roomCode": "Rumskod",

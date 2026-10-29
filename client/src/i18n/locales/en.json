@@ -16,10 +16,22 @@
   "landing": {
     "imStudent": "I'm a student",
     "imTeacher": "I'm a teacher",
+    "tagline": "Interactive patient cases for clinical education",
+    "aboutApp": "About MedCases",
+    "aboutTitle": "About MedCases",
+    "aboutStudentTitle": "For Students",
+    "aboutStudentText": "Enter the 4-digit room code given by your teacher. No account or login required – participate and answer anonymously directly from your phone or laptop.",
+    "aboutTeacherTitle": "For Teachers",
+    "aboutTeacherText": "Present a ready .medcase file on the lecture hall screen or create new patient cases in the easy-to-use editor. Student responses aggregate and visualize in real time.",
+    "aboutPrivacyTitle": "Privacy & Simplicity",
+    "aboutPrivacyText": "MedCases does not require cloud accounts or personal data collection. All patient cases are stored locally as .medcase files on your device.",
     "teacherActions": "Teacher tools",
     "presentCase": "Present a case",
+    "presentCaseDesc": "Open a .medcase file and project it on the screen.",
     "createNew": "Create new case",
-    "editExisting": "Edit existing case"
+    "createNewDesc": "Build a new clinical case and questions in the editor.",
+    "editExisting": "Edit existing case",
+    "editExistingDesc": "Open a previously saved case to continue editing."
   },
   "student": {
     "roomCode": "Room Code",

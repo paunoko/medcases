@@ -16,10 +16,22 @@
   "landing": {
     "imStudent": "Olen opiskelija",
     "imTeacher": "Olen opettaja",
+    "tagline": "Interaktiivinen potilastapausalusta kliiniseen opetukseen",
+    "aboutApp": "Mikä MedCases on?",
+    "aboutTitle": "Tietoa MedCases-sovelluksesta",
+    "aboutStudentTitle": "Opiskelijalle",
+    "aboutStudentText": "Syötä opettajan antama 4-numeroinen huonekoodi. Et tarvitse erillistä käyttäjätiliä tai kirjautumista – voit osallistua ja vastata anonyymisti suoraan puhelimellasi tai kannettavallasi.",
+    "aboutTeacherTitle": "Opettajalle",
+    "aboutTeacherText": "Esitä valmis .medcase-tiedosto luentosalin valkokankaalle tai rakenna uusia potilastapauksia helppokäyttöisessä editorissa. Opiskelijoiden vastaukset kertyvät ja visualisoituvat reaaliajassa.",
+    "aboutPrivacyTitle": "Yksityisyys ja helppous",
+    "aboutPrivacyText": "MedCases ei vaadi pilvipalvelusitoumuksia tai henkilötietojen rekisteröintiä. Kaikki potilastapaukset tallentuvat paikallisina .medcase-tiedostoina omalle laitteellesi.",
     "teacherActions": "Opettajan toiminnot",
     "presentCase": "Esitä potilastapaus",
+    "presentCaseDesc": "Avaa .medcase-tiedosto ja heijasta se valkokankaalle.",
     "createNew": "Luo uusi tapaus",
-    "editExisting": "Muokkaa tapausta"
+    "createNewDesc": "Rakenna uusi kliininen tapaus ja kysymyssarja editorissa.",
+    "editExisting": "Muokkaa tapausta",
+    "editExistingDesc": "Avaa aiemmin tallennettu tapaus muokattavaksi."
   },
   "student": {
     "roomCode": "Huonekoodi",
