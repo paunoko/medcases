@@ -1,109 +1,141 @@
 # MedCases
 
-MedCases is an interactive teaching tool designed for medical education. It allows teachers to create, present, and conduct real-time quizzes based on patient cases.
+An interactive, privacy-focused clinical case teaching and audience response platform designed for medical, dental, and healthcare education.
 
-## Features
+MedCases empowers instructors to present clinical patient scenarios, medical imaging, and real-time interactive questions in lecture halls and small-group sessions—while students participate anonymously using their phones or laptops without accounts, downloads, or logins.
 
--   **Interactive Presentations**: Teachers can present patient cases slide by slide.
--   **Real-time Quizzes**: Students answer questions (Multiple Choice, True/False, Open Text) in real-time using their devices.
--   **Live Results**: Teachers see student answers immediately (anonymously).
--   **Case Editor**: Built-in editor to create and modify `.medcase` files (ZIP archives containing JSON + images).
--   **Easy Joining**: Students join via a room code or by scanning a QR code.
--   **Dual Roles**: Unified landing page for both Students and Teachers.
+---
 
-## Screenshots
+## Key Highlights
 
-| Teacher View | Student View |
-|:---:|:---:|
-| ![Teacher Dashboard](docs/teacher_view.png) <br> *Control slides & see live results* | ![Student Mobile](docs/student_view.png) <br> *Answer questions on mobile* |
+- 🖥️ **Lecture Hall Presentation Engine**:
+  - **1:1 WYSIWYG Parity**: What you create in the editor renders with pixel-perfect aspect ratio (16:9 dynamic canvas clamping) on projector screens.
+  - **Takariviluettavuus (Back-Row Readability)**: High-contrast typography (Inter) with dynamic font scaling guarantees legibility from the back of large 200+ seat auditoriums.
+  - **Hardware Clicker & Remote Support**: Full navigation support for wireless presentation remotes and keyboards (`Arrow` keys, `PageUp`/`PageDown`, `Space`/`Enter` to reveal answers, `F` for fullscreen, `Tab` for sidebar).
+  - **Medical Image Lightbox**: Instant full-screen zoom for radiographs, CT scans, ECGs, and histology slides with keyboard `Escape` dismissal.
+
+- 📱 **Frictionless Student Participation**:
+  - **No Registration or App Download**: Students simply join via a 4-digit room code or QR code on any device with a modern browser.
+  - **Touch Ergonomics**: Zero 300ms mobile tap delay (`touch-action: manipulation`), large tactile cards, and instant visual feedback.
+  - **Network Resilience & Pull-to-Refresh Tolerance**: Room state is preserved across accidental browser reloads or temporary campus Wi-Fi drops.
+
+- 📊 **WCAG AA Accessible Data Visualization**:
+  - High-contrast animated voting distribution bars.
+  - Color-independent indicators (explicit `CheckCircle2` and text ribbon badges) complying with WCAG 1.4.1 for color-blind accessibility.
+  - Jitter-free UI design with frozen card dimensions between question and reveal states.
+
+- 🔒 **Zero Database & Privacy by Design (GDPR Compliant)**:
+  - **No Database to Maintain**: Eliminates complex database setups, backups, and schema migrations.
+  - **Zero PII**: No student names, emails, or personal identifiers are collected or stored.
+  - **Offline-First `.medcase` Files**: Patient cases and high-resolution images are packaged as portable ZIP archives stored safely on your own computer.
+
+- 🌍 **Multilingual**: Native full-interface support for **Finnish (Suomi)**, **Swedish (Svenska)**, and **English**, complete with an interactive language slider.
+
+---
 
 ## How It Works
 
-### For Teachers
-1.  **Create/Load a Case**: Use the built-in Editor to create a patient case or upload an existing `.medcase` file.
-2.  **Start a Session**: Click "Start Session" to generate a unique 4-digit **Room Code**.
-3.  **Share**: Show the Room Code or QR code to your students.
-4.  **Present**: Navigate through slides. When a Question slide is shown, students can answer.
-5.  **Review**: See incoming answers in real-time and reveal the correct answer when ready.
+```mermaid
+flowchart LR
+    subgraph Teacher ["👨‍🏫 Teacher (Projector / Laptop)"]
+        Editor["1. Case Editor\n(Creates .medcase)"] --> Presenter["2. Presentation Mode\n(Opens 4-Digit Room)"]
+        Presenter --> Reveal["3. Lock & Reveal\n(Live Results & Model Answer)"]
+    end
+
+    subgraph Server ["⚡ MedCases Server (Docker / Node)"]
+        WebSocketHub["In-Memory WebSocket Hub\n(Zero DB, Zero Storage)"]
+    end
+
+    subgraph Students ["👩‍🎓 Students (Audience Mobile)"]
+        Join["1. Enter 4-digit PIN\n(or scan QR)"] --> Vote["2. Submit Answer\n(MCQ, T/F, or Open)"]
+    end
+
+    Presenter <-->|WebSocket State| WebSocketHub
+    WebSocketHub <-->|Anonymous Sockets| Vote
+    WebSocketHub <-->|Live Aggregated Stats| Reveal
+```
+
+### For Instructors
+1. **Prepare**: Build an interactive case in the built-in Editor, or load an existing `.medcase` file.
+2. **Launch**: Click **"Avaa luokkahuone / Open Classroom"** to generate a 4-digit Room PIN and on-screen QR code.
+3. **Present**: Navigate through patient history, lab values, and imaging.
+4. **Interact**: When a question slide appears, students answer in real time. Click **"Lukitse ja paljasta / Lock & reveal"** (or hit `Space`) to reveal answer distributions and correct answers.
 
 ### For Students
-1.  **Join**: Open the app on a phone or laptop.
-2.  **Enter Code**: Type the 4-digit Room Code presented by the teacher.
-3.  **Participate**: Wait for the teacher to present questions and submit your answers instantly.
+1. **Join**: Open the web application on your smartphone or scan the projector QR code.
+2. **PIN**: Enter the 4-digit code shown on screen.
+3. **Engage**: Tap your answer and follow the live discussion on the main screen.
 
-## Architecture
-
-This project uses a real-time **WebSocket** architecture to synchronize the teacher's state with all connected students.
-
--   **Server**: Node.js + Socket.io. Keeps track of active rooms, current slide, and student answers in-memory.
--   **Client**: React + Vite. Connects to the server.
-    -   *Teacher Client*: Emits `PUSH_UPDATE` events when changing slides.
-    -   *Student Client*: Listens for `SLIDE_UPDATE` events to render the current view.
-
-## Logging & Docker
-
-The server utilizes structured **Winston logging** instead of raw console outputs.
-
-- **Development (`NODE_ENV=dev`)**: Logs are printed to the console in a friendly, color-coded fashion.
-- **Production (`NODE_ENV=production`)**: Logs are output in raw **JSON format**, making them easy to scrape. 
-- **Log Voluming**: Logs are simultaneously written to rotated files inside the `server/logs/` directory, archiving up to 14 days of history.
-
-### Accessing Logs in Docker
-When deploying via Docker, the recommended 12-factor standard is to access logs directly via standard output rather than entering the container filesystem. The Docker engine will capture the raw JSON lines.
-
-To read live logs:
-```bash
-docker logs -f <your-container-name>
-```
-
-If you prefer to browse the rolling daily flat files, ensure you map a volume to `/app/server/logs/` when running the container, e.g.:
-```bash
-docker run -v /your/host/path/logs:/app/server/logs -p 3000:3000 medcases-server
-```
-
-## Documentation
-
-For more detailed technical information, check the following docs:
-
--   [📥 Data Format Description](data-description.md) - Structure of the `.medcase` file and JSON schema.
--   [📂 Project Structure](project-structure.md) - Overview of the codebase layout and key files.
--   [🚀 Deployment Guide](DEPLOYMENT.md) - How to deploy using Docker.
+---
 
 ## Tech Stack
 
--   **Frontend**: React, Vite, Tailwind CSS
--   **Backend**: Node.js, Socket.io
--   **Data Format**: Custom `.medcase` (ZIP) format
+- **Client**: React 19, TypeScript, Vite, Tailwind CSS, Lucide Icons, `i18next`, `@dnd-kit` (drag & drop reordering), `JSZip` (local image extraction).
+- **Server**: Node.js, Express, Socket.io (real-time low-latency synchronization), Winston (structured JSON logging).
+- **Containerization & Proxy**: Docker (multi-stage Alpine runner), Caddy 2 (automatic HTTPS & Let's Encrypt).
 
-## Getting Started
+---
 
-1.  **Install dependencies**:
-    ```bash
-    npm run install-all
-    ```
+## Quick Start (Local Development)
 
-2.  **Start development servers** (Client + Server):
-    ```bash
-    npm run dev
-    ```
+### Prerequisites
+- Node.js >= 20.x
+- npm >= 10.x
 
-3.  Open `http://localhost:5173` in your browser.
+### Installation & Run
 
-## Local Development
+1. Clone the repository and install dependencies:
+   ```bash
+   git clone https://github.com/paunoko/medcases.git
+   cd medcases
+   npm install
+   ```
 
-To run the application locally for development:
+2. Start development servers (Vite frontend + Socket.io backend concurrently):
+   ```bash
+   npm run dev
+   ```
 
-1.  **Install dependencies**:
-    ```bash
-    npm install
-    # OR if you have a recursive install script
-    npm run install-all
-    ```
+3. Open your browser:
+   - **Frontend**: [http://localhost:5173](http://localhost:5173)
+   - **Backend Server**: [http://localhost:3000](http://localhost:3000)
 
-2.  **Start the development server**:
-    This will start both the client (Vite) and the server (Node/Express).
-    ```bash
-    npm run dev
-    ```
-    - Client: http://localhost:5173
-    - Server: http://localhost:3000
+---
+
+## Production Deployment (1-Minute Setup)
+
+MedCases is packaged as a unified Docker container and includes a turnkey `docker-compose.yml` with **Caddy** for automatic HTTPS.
+
+1. **Configure your domain:**
+   ```bash
+   cp .env.example .env
+   ```
+   Set your public domain in `.env`:
+   ```ini
+   DOMAIN=medcases.your-university.edu
+   ACME_EMAIL=admin@your-university.edu
+   ```
+
+2. **Launch with Docker Compose:**
+   ```bash
+   docker compose up -d
+   ```
+
+3. Open `https://medcases.your-university.edu` in your browser. Caddy automatically provisions and renews SSL certificates from Let's Encrypt.
+
+👉 For detailed institutional hosting guidelines, Nginx reverse proxy examples, and capacity benchmarks, see [DEPLOYMENT.md](DEPLOYMENT.md).
+
+---
+
+## Documentation
+
+- 🚀 [Deployment & Production Guide](DEPLOYMENT.md) – Hardware sizing, capacity benchmarks, and institutional IT checklist.
+- 📥 [Data Format Description](data-description.md) – File structure and JSON schema of `.medcase` archives.
+- 📂 [Project Structure](project-structure.md) – Directory organization and component hierarchy.
+- ✅ [Task Checklist & Changelog](TODO.md) – Comprehensive task tracking and architecture log.
+
+---
+
+## License
+
+This project is licensed under the [GNU General Public License v3.0](LICENSE).

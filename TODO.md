@@ -236,3 +236,16 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Poistettu opiskelijan PIN-kortista toistuva otsikko ja irrallinen stetoskooppisymboli.
     - Lisätty esteetön "Mikä MedCases on?" -infomodaali (`HelpCircle`), joka esittelee sovelluksen toiminnan opiskelijalle, opettajalle sekä yksityisyysperiaatteet (FI, EN, SV).
     - Modernisoitu opettajan toiminnot tyylikkäiksi, saavutettaviksi toimintokorteiksi selittein ja kuvakkein.
+
+---
+
+## 7. Tuotantovalmius, Deployment ja Dokumentaatio
+
+- [x] **7.1 Tuotantovalmis Docker Compose, Caddy ja Automaattinen HTTPS**
+  - **Prioriteetti:** Korkea (oppilaitosten IT-käyttöönotto)
+  - **Tiedostot:** `docker-compose.yml`, `Caddyfile`, `.env.example`, `DEPLOYMENT.md`, `README.md`
+  - **Toimenpiteet:**
+    - Luotu tuotantovalmis `docker-compose.yml`, joka orkestroi MedCases-kontin ja Caddy 2 -välityspalvelimen.
+    - Caddy hoitaa Let's Encrypt -SSL-sertifikaattien luomisen ja uusimisen automaattisesti ilman certbot-skriptejä.
+    - Kirjoitettu kattava `DEPLOYMENT.md` mitoitusoppaineen (RAM, CPU, kaistanleveys), Nginx-esimerkkeineen ja IT-osaston GDPR/tietosuoja-tarkistuslistoineen.
+    - Uudistettu ja ammattimaistettu `README.md` havainnollistavine arkkitehtuurikaavioineen ja pikaohjeineen.
