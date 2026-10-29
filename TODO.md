@@ -31,12 +31,12 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Vaihdettu `SlideInteraction.tsx`:n syöttökenttä `<textarea>`-elementiksi ja lisätty esitykseen `whitespace-pre-wrap`.
     - Alustettu `modelAnswer: ''` `useCaseEditor.ts`:n `addSlide('OPEN_TEXT')`-haarassa.
 
-- [ ] **1.4 Yhtenäistä Kyllä/Ei -sanamuodot**
+- [x] **1.4 Yhtenäistä Kyllä/Ei -sanamuodot**
   - **Prioriteetti:** Matala / Käytettävyys
-  - **Tiedostot:** `client/src/i18n/locales/{fi,en,sv}.json`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/StudentView.tsx`, `client/src/utils/sanitizer.ts`
-  - **Ongelma:** Valinnoissa käytetään yhdistelmämuotoa *"Kyllä / Tosi"* ja *"Ei / Epätosi"*, mikä on tarpeettoman kömpelöä tavallisissa kliinisissä kysymyksissä.
+  - **Tiedostot:** `client/src/i18n/locales/{fi,en,sv}.json`
+  - **Ongelma:** Valinnoissa käytettiin yhdistelmämuotoa *"Kyllä / Tosi"* ja *"Ei / Epätosi"*, mikä oli kömpelöä tavallisissa kliinisissä kysymyksissä.
   - **Toimenpiteet:**
-    - Päivitä käännösavaimet `editor.yesTrue` ja `editor.noFalse` muotoon *"Kyllä"* / *"Ei"* (FI), *"Yes"* / *"No"* (EN) ja *"Ja"* / *"Nej"* (SV).
+    - Päivitetty käännösavaimet `editor.yesTrue` ja `editor.noFalse` muotoon *"Kyllä"* / *"Ei"* (FI), *"Yes"* / *"No"* (EN) ja *"Ja"* / *"Nej"* (SV).
 
 ---
 
