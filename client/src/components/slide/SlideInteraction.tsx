@@ -51,15 +51,16 @@ export const SlideInteraction: React.FC<Props> = ({
       ) : (
         slide.question && (
           <div className="flex flex-col gap-2">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-base font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800 w-fit">
-              {slide.type === 'MULTIPLE_CHOICE'
-                ? ((slide as any).allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint'))
-                : slide.type === 'TRUE_FALSE'
-                  ? t('student.trueFalseHint')
-                  : slide.type === 'OPEN_TEXT'
-                    ? t('student.openTextHint')
-                    : null}
-            </div>
+            {slide.type === 'MULTIPLE_CHOICE' && (slide as any).allowMultiple && (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-base font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800 w-fit">
+                {t('student.multipleChoiceHint')}
+              </div>
+            )}
+            {slide.type === 'OPEN_TEXT' && (
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-base font-extrabold uppercase tracking-wider bg-amber-100 text-amber-900 w-fit">
+                {t('student.openTextHint')}
+              </div>
+            )}
             <h3 className="text-4xl font-bold text-blue-950 tracking-tight">
               {slide.question}
             </h3>

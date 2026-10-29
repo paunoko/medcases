@@ -10,6 +10,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+button, a, input, textarea {
+  touch-action: manipulation;
+}
+
 /* Nice little animation for waiting state */
 @keyframes pulse {
   0%, 100% { opacity: 1; }

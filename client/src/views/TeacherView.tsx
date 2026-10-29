@@ -11,11 +11,14 @@ import {
     QrCode, 
     ChevronLeft, 
     ChevronRight, 
-    X 
+    X,
+    Maximize,
+    Minimize,
+    WifiOff
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useUI } from '../context/UIContext';
-import { loadCaseFromZip, revokeImageUrls } from '../utils/fileHelpers';
+import { loadCaseFromZip, revokeImageUrls, CaseValidationError } from '../utils/fileHelpers';
 import { SlideRenderer } from '../components/SlideRenderer';
 import { useTeacherSession, TEACHER_SESSION_KEY } from '../hooks/useTeacherSession';
 import type { PatientCase } from '../types';
@@ -79,9 +82,12 @@ export const TeacherView = () => {
                                         setCaseData(result.caseData);
                                     } catch (e) {
                                         console.error("Load failed", e);
+                                        const message = e instanceof CaseValidationError
+                                            ? String(t(`errors.${e.code}`, e.params || { defaultValue: e.message }))
+                                            : (e instanceof Error ? e.message : t('teacher.uploadFailedMsg'));
                                         showAlert({
                                             title: t('teacher.uploadFailed'),
-                                            message: e instanceof Error ? e.message : t('teacher.uploadFailedMsg'),
+                                            message,
                                             variant: 'destructive'
                                         });
                                     }
@@ -104,8 +110,23 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
     const session = useTeacherSession(caseData);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showQrModal, setShowQrModal] = useState(false);
+    const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
 
-    // Keyboard navigation (clicker remote support: PageUp/PageDown, Left/Right arrows, Tab for sidebar)
+    useEffect(() => {
+        const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
+        document.addEventListener('fullscreenchange', handleFsChange);
+        return () => document.removeEventListener('fullscreenchange', handleFsChange);
+    }, []);
+
+    const toggleFullscreen = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+            document.exitFullscreen().catch(() => {});
+        }
+    };
+
+    // Keyboard navigation (clicker remote support: PageUp/PageDown, Left/Right arrows, Tab for sidebar, Space/Enter for reveal, F for fullscreen)
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
             if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
@@ -124,6 +145,18 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
             } else if (e.key === 'Tab') {
                 e.preventDefault();
                 setIsSidebarOpen(prev => !prev);
+            } else if (e.key === ' ' || e.key === 'Enter') {
+                if (session.slideState === 'ANSWERING' && session.currentSlide?.type !== 'INFO') {
+                    e.preventDefault();
+                    if (session.currentSlide?.type === 'OPEN_TEXT') {
+                        session.toggleOpenTextReveal();
+                    } else {
+                        session.revealAnswer();
+                    }
+                }
+            } else if (e.key === 'f' || e.key === 'F') {
+                e.preventDefault();
+                toggleFullscreen();
             }
         };
 
@@ -153,6 +186,12 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
 
     return (
         <div className="flex h-screen bg-gray-900 text-white overflow-hidden relative">
+            {!session.isConnected && session.roomId && (
+                <div className="fixed top-0 left-0 right-0 z-50 bg-amber-600 text-white text-center py-2 px-4 text-sm font-bold shadow-md flex items-center justify-center gap-2 animate-pulse">
+                    <WifiOff size={18} />
+                    <span>{t('student.reconnecting')}</span>
+                </div>
+            )}
 
             {/* LEFT: Projector (This is what students see) */}
             <div className="flex-1 min-w-0 p-4 flex flex-col min-h-0 relative overflow-hidden">
@@ -248,6 +287,15 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                         </span>
                     </button>
 
+                    {/* Fullscreen button */}
+                    <button
+                        onClick={toggleFullscreen}
+                        className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors cursor-pointer"
+                        title={isFullscreen ? t('teacher.exitFullscreen') : t('teacher.fullscreen')}
+                    >
+                        {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+                    </button>
+
                     {/* Open sidebar button */}
                     <button
                         onClick={() => setIsSidebarOpen(true)}
@@ -265,13 +313,22 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
 
                     <div className="flex items-center justify-between mb-4">
                         <span className="text-xs uppercase font-extrabold tracking-widest text-gray-400">{t('teacher.controls')}</span>
-                        <button
-                            onClick={() => setIsSidebarOpen(false)}
-                            className="p-1.5 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors cursor-pointer"
-                            title={t('teacher.hideSidebar')}
-                        >
-                            <PanelRightClose size={20} />
-                        </button>
+                        <div className="flex items-center gap-1">
+                            <button
+                                onClick={toggleFullscreen}
+                                className="p-1.5 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors cursor-pointer"
+                                title={isFullscreen ? t('teacher.exitFullscreen') : t('teacher.fullscreen')}
+                            >
+                                {isFullscreen ? <Minimize size={18} /> : <Maximize size={18} />}
+                            </button>
+                            <button
+                                onClick={() => setIsSidebarOpen(false)}
+                                className="p-1.5 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors cursor-pointer"
+                                title={t('teacher.hideSidebar')}
+                            >
+                                <PanelRightClose size={20} />
+                            </button>
+                        </div>
                     </div>
 
                     <div className="bg-gray-700 p-4 rounded-lg mb-6 text-center">

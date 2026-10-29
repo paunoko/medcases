@@ -58,7 +58,7 @@ io.on('connection', (socket: Socket) => {
   socket.on('CREATE_ROOM', () => {
     if (rooms.size >= MAX_ACTIVE_ROOMS) {
       logger.warn(`[Create Room Rejected] Max active rooms (${MAX_ACTIVE_ROOMS}) reached.`);
-      socket.emit('ERROR', { message: 'Palvelin on varattu: huoneiden enimmäismäärä saavutettu.' });
+      socket.emit('ERROR', { code: 'SERVER_BUSY', message: 'Palvelin on varattu: huoneiden enimmäismäärä saavutettu.' });
       return;
     }
 
@@ -71,7 +71,7 @@ io.on('connection', (socket: Socket) => {
 
     if (rooms.has(roomId)) {
       logger.error(`[Create Room Failed] Could not find unique room code after ${MAX_ROOM_CREATION_ATTEMPTS} attempts.`);
-      socket.emit('ERROR', { message: 'Huonekoodin luominen epäonnistui. Yritä uudelleen.' });
+      socket.emit('ERROR', { code: 'ROOM_CREATION_FAILED', message: 'Huonekoodin luominen epäonnistui. Yritä uudelleen.' });
       return;
     }
 
@@ -99,7 +99,7 @@ io.on('connection', (socket: Socket) => {
   socket.on('RECONNECT_TEACHER', ({ roomId, teacherSecret }: { roomId: string, teacherSecret: string }) => {
     const room = rooms.get(roomId);
     if (!room || room.teacherSecret !== teacherSecret) {
-      socket.emit('ERROR', { message: 'Invalid reconnect credentials.' });
+      socket.emit('ERROR', { code: 'INVALID_RECONNECT', message: 'Invalid reconnect credentials.' });
       return;
     }
     
@@ -190,14 +190,14 @@ io.on('connection', (socket: Socket) => {
   socket.on('JOIN_ROOM', ({ roomId }: { roomId: string }) => {
     // VALIDATION
     if (!roomId || typeof roomId !== 'string' || roomId.length !== 4) {
-      socket.emit('ERROR', { message: "Virheellinen huonekoodi." });
+      socket.emit('ERROR', { code: 'INVALID_ROOM_CODE', message: "Virheellinen huonekoodi." });
       return;
     }
 
     const room = rooms.get(roomId);
 
     if (!room) {
-      socket.emit('ERROR', { message: "Huonetta ei löydy. Tarkista koodi." });
+      socket.emit('ERROR', { code: 'ROOM_NOT_FOUND', message: "Huonetta ei löydy. Tarkista koodi." });
       return;
     }
 

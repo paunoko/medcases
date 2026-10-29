@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { arrayMove } from '@dnd-kit/sortable';
 import type { PatientCase, CaseSlide } from '../types';
-import { saveCaseToZip, loadCaseFromZip, revokeImageUrls } from '../utils/fileHelpers';
+import { saveCaseToZip, loadCaseFromZip, revokeImageUrls, CaseValidationError } from '../utils/fileHelpers';
 import { useUI } from '../context/UIContext';
 
 const uuid = () => Math.random().toString(36).substr(2, 9);
@@ -205,9 +205,12 @@ export const useCaseEditor = () => {
             setHasUnsavedChanges(false);
         } catch (e) {
             console.error("Load failed", e);
+            const message = e instanceof CaseValidationError
+                ? String(t(`errors.${e.code}`, e.params || { defaultValue: e.message }))
+                : (e instanceof Error ? e.message : t('editor.uploadFailedMsg'));
             showAlert({
                 title: t('editor.uploadFailed'),
-                message: e instanceof Error ? e.message : t('editor.uploadFailedMsg'),
+                message,
                 variant: 'destructive',
             });
         }

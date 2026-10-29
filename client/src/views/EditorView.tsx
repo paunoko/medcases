@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
@@ -76,6 +76,20 @@ export const EditorView = () => {
       navigate('/', { state: { tab: 'teacher' } });
     }, 5000);
   };
+
+  // Keyboard shortcut Ctrl+S / Cmd+S to save, Escape to close menus
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        onSave();
+      } else if (e.key === 'Escape' && showAddMenu) {
+        setShowAddMenu(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onSave, showAddMenu]);
 
   const handleToastDismiss = () => {
     navigate('/', { state: { tab: 'teacher' } });

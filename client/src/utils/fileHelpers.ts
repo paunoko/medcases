@@ -78,44 +78,56 @@ export const saveCaseToZip = async (
     return filename;
 };
 
+export class CaseValidationError extends Error {
+    code: string;
+    params?: Record<string, any>;
+
+    constructor(code: string, defaultMessage: string, params?: Record<string, any>) {
+        super(defaultMessage);
+        this.name = 'CaseValidationError';
+        this.code = code;
+        this.params = params;
+    }
+}
+
 export const validatePatientCase = (data: unknown): PatientCase => {
     if (!data || typeof data !== 'object') {
-        throw new Error('Tiedosto ei sisällä kelvollista tapausta (virheellinen JSON).');
+        throw new CaseValidationError('INVALID_FILE', 'Tiedosto ei sisällä kelvollista potilastapausta.');
     }
 
     const c = data as Record<string, unknown>;
 
     if (!c.meta || typeof c.meta !== 'object') {
-        throw new Error('Tapauksen metatiedot (meta) puuttuvat.');
+        throw new CaseValidationError('MISSING_META', 'Tapauksen metatiedot puuttuvat.');
     }
 
     const meta = c.meta as Record<string, unknown>;
     if (typeof meta.title !== 'string') {
-        throw new Error('Tapauksen otsikko (meta.title) puuttuu tai on virheellinen.');
+        throw new CaseValidationError('MISSING_TITLE', 'Tapauksen otsikko puuttuu tai on virheellinen.');
     }
 
     if (!Array.isArray(c.slides)) {
-        throw new Error('Tapauksen diat (slides) puuttuvat tai eivät ole taulukko.');
+        throw new CaseValidationError('MISSING_SLIDES', 'Tapauksen diat puuttuvat tai ovat virheellisiä.');
     }
 
     const validTypes: SlideType[] = ['INFO', 'MULTIPLE_CHOICE', 'TRUE_FALSE', 'OPEN_TEXT'];
 
     c.slides.forEach((slide: unknown, idx: number) => {
         if (!slide || typeof slide !== 'object') {
-            throw new Error(`Dia #${idx + 1} on virheellinen.`);
+            throw new CaseValidationError('INVALID_SLIDE', `Dia #${idx + 1} on virheellinen.`, { index: idx + 1 });
         }
         const s = slide as Record<string, unknown>;
         if (typeof s.id !== 'string' || !s.id) {
-            throw new Error(`Dian #${idx + 1} tunniste (id) puuttuu.`);
+            throw new CaseValidationError('INVALID_SLIDE', `Dia #${idx + 1} on virheellinen.`, { index: idx + 1 });
         }
         if (!validTypes.includes(s.type as SlideType)) {
-            throw new Error(`Dian #${idx + 1} tyyppi '${s.type}' on tuntematon.`);
+            throw new CaseValidationError('INVALID_SLIDE', `Dia #${idx + 1} on virheellinen.`, { index: idx + 1 });
         }
         if (typeof s.title !== 'string') {
-            throw new Error(`Dian #${idx + 1} otsikko (title) puuttuu tai on virheellinen.`);
+            throw new CaseValidationError('INVALID_SLIDE', `Dia #${idx + 1} on virheellinen.`, { index: idx + 1 });
         }
         if (s.type === 'MULTIPLE_CHOICE' && !Array.isArray(s.options)) {
-            throw new Error(`Monivalintadian #${idx + 1} vastausvaihtoehdot (options) puuttuvat.`);
+            throw new CaseValidationError('INVALID_SLIDE', `Dia #${idx + 1} on virheellinen.`, { index: idx + 1 });
         }
     });
 
@@ -128,14 +140,14 @@ export const loadCaseFromZip = async (file: File) => {
 
     // 1. Read and validate JSON
     const jsonFile = loadedZip.file(CASE_FILENAME);
-    if (!jsonFile) throw new Error(`Virheellinen tiedosto: ${CASE_FILENAME} puuttuu`);
+    if (!jsonFile) throw new CaseValidationError('MISSING_CASE_JSON', `Virheellinen tiedosto: ${CASE_FILENAME} puuttuu.`);
 
     const jsonStr = await jsonFile.async("string");
     let parsed: unknown;
     try {
         parsed = JSON.parse(jsonStr);
     } catch {
-        throw new Error(`Tiedosto ${CASE_FILENAME} ei sisällä kelvollista JSON-dataa.`);
+        throw new CaseValidationError('INVALID_JSON', `Tiedosto ${CASE_FILENAME} ei sisällä kelvollista JSON-dataa.`);
     }
 
     const caseData = validatePatientCase(parsed);

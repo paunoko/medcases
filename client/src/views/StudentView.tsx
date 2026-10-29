@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStudentSession } from '../hooks/useStudentSession';
-import { Eye, CheckCircle2, Stethoscope, Lock, Send } from 'lucide-react';
+import { Eye, CheckCircle2, Stethoscope, Lock, Send, WifiOff } from 'lucide-react';
 
 export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession: boolean) => void }) => {
   const { t } = useTranslation();
@@ -42,7 +42,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
         <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-sm space-y-5 border border-gray-100">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm font-semibold text-center">
-              {error}
+              {t(`errors.${error}`, { defaultValue: error })}
             </div>
           )}
 
@@ -77,7 +77,13 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
   // 2. WAITING FOR TEACHER
   if (isWaiting || !activeSlide) {
     return (
-      <div className="min-h-full flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-full flex flex-col items-center justify-center p-6 text-center relative">
+        {!isConnected && (
+          <div className="fixed top-0 left-0 right-0 z-50 bg-amber-600 text-white text-center py-2 px-4 text-xs sm:text-sm font-bold shadow-md flex items-center justify-center gap-2 animate-pulse">
+            <WifiOff size={16} />
+            <span>{t('student.reconnecting')}</span>
+          </div>
+        )}
         <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center">
           <div className="w-20 h-20 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 animate-pulse">
             <Eye size={44} />
@@ -95,7 +101,13 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
   // 3. INFO SLIDE (Passive observation)
   if (activeSlide.type === 'INFO') {
     return (
-      <div className="min-h-full flex flex-col items-center justify-center p-6 text-center">
+      <div className="min-h-full flex flex-col items-center justify-center p-6 text-center relative">
+        {!isConnected && (
+          <div className="fixed top-0 left-0 right-0 z-50 bg-amber-600 text-white text-center py-2 px-4 text-xs sm:text-sm font-bold shadow-md flex items-center justify-center gap-2 animate-pulse">
+            <WifiOff size={16} />
+            <span>{t('student.reconnecting')}</span>
+          </div>
+        )}
         <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center">
           <span className="text-xs font-mono font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full mb-4">
             {t('student.roomPin')}: {joinedRoomId}
@@ -109,7 +121,13 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
 
   // 4. ACTIVE RESPONSE FORM
   return (
-    <div className="min-h-full w-full max-w-lg mx-auto flex flex-col p-4 sm:p-6 bg-white sm:rounded-3xl sm:shadow-lg sm:border sm:border-gray-100 sm:my-6">
+    <div className="min-h-full w-full max-w-lg mx-auto flex flex-col p-4 sm:p-6 bg-white sm:rounded-3xl sm:shadow-lg sm:border sm:border-gray-100 sm:my-6 relative">
+      {!isConnected && (
+        <div className="fixed top-0 left-0 right-0 z-50 bg-amber-600 text-white text-center py-2 px-4 text-xs sm:text-sm font-bold shadow-md flex items-center justify-center gap-2 animate-pulse">
+          <WifiOff size={16} />
+          <span>{t('student.reconnecting')}</span>
+        </div>
+      )}
       {/* Header */}
       <div className="pb-4 border-b border-gray-100 mb-5">
         <div className="flex items-center justify-between gap-2 mb-3">

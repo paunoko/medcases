@@ -33,6 +33,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
     const savedSession = getInitialSavedSession();
 
     const [socket, setSocket] = useState<Socket | null>(null);
+    const [isConnected, setIsConnected] = useState(false);
     const [roomId, setRoomId] = useState<string | null>(savedSession?.roomId || null);
     const [studentCount, setStudentCount] = useState(0);
     const [error, setError] = useState<string | null>(null);
@@ -63,10 +64,16 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         setSocket(newSocket);
 
         newSocket.on('connect', () => {
+             setIsConnected(true);
+             setError(null);
              // If we already have a room info, we are likely reconnecting.
              if (roomInfoRef.current) {
                  newSocket.emit('RECONNECT_TEACHER', roomInfoRef.current);
              }
+        });
+
+        newSocket.on('disconnect', () => {
+             setIsConnected(false);
         });
 
         newSocket.on('ROOM_CREATED', ({ roomId, teacherSecret }) => {
@@ -99,8 +106,8 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
 
         newSocket.on('STUDENT_COUNT', ({ count }) => setStudentCount(count));
         newSocket.on('ANSWERS_UPDATE', (updatedAnswers) => setAnswers(updatedAnswers));
-        newSocket.on('ERROR', ({ message }: { message: string }) => {
-             setError(message);
+        newSocket.on('ERROR', ({ code, message }: { code?: string; message?: string }) => {
+             setError(code || message || 'Virhe');
              try {
                  sessionStorage.removeItem(TEACHER_SESSION_KEY);
              } catch {}
@@ -174,6 +181,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
 
     return {
         socket,
+        isConnected,
         roomId,
         studentCount,
         error,

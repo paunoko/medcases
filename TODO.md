@@ -196,3 +196,33 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Lisätty vaihtoehtojen kirjaintunnisteet (A, B, C, D...) synkronoidusti sekä valkokankaalle (esitys- ja muokkaustila) että opiskelijoiden vastauskortteihin.
     - Suurennetut, ergonomiset kosketusalueet (`min-h-[64px]`), selkeät radio- ja valintaruututilat sekä taktiili painalluspalaute.
     - Uudistettu PIN-syöttö, odotustilat ja vastauksen lähetetty -vahvistuskortti saumattoman tyylikkääksi.
+
+---
+
+## 6. Kieli, symbolit, käytettävyysergonomia ja virheensieto
+
+- [x] **6.1 Kielen ja typografian harmonisointi (toiston poisto & Sentence case)**
+  - **Prioriteetti:** Korkea (käyttöliittymän ammattimaisuus ja selkeys)
+  - **Tiedostot:** `client/src/i18n/locales/`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/StudentView.tsx`
+  - **Ongelma:** Turhaa toistoa (esim. "Yksivalinta (valitse yksi)"), huutavaa ALL-CAPS -kirjoitusasua painikkeissa ja epäluontevia käännöksiä englanniksi ja ruotsiksi.
+  - **Toimenpiteet:**
+    - Karsittu tautologiat: valkokankaalta poistettu turhat yksivalintabannerit, monivalinnalle jätetty tarpeellinen opaste "Valitse kaikki sopivat".
+    - Muutettu painikkeet ja toiminnot Sentence case -asuun ("Lukitse ja paljasta", "Lähetä vastaus", "Liity", "Avaa luokkahuone").
+    - Luontevoitettu ja täydennetty FI-, EN- ja SV-käännökset kauttaaltaan.
+
+- [x] **6.2 Käytettävyysergonomia ja pikanäppäimet (esitys & editori)**
+  - **Prioriteetti:** Keskitaso (opettajan ergonomia)
+  - **Tiedostot:** `client/src/views/TeacherView.tsx`, `client/src/views/EditorView.tsx`, `client/src/index.css`
+  - **Toimenpiteet:**
+    - Lisätty täyden ruudun kytkin (`Fullscreen`) esitystilan kelluvaan ohjauspalkkiin ja sivupalkkiin.
+    - Lisätty esitystilaan `Space` / `Enter` -pikanäppäintuki vastausten paljastamiseksi ja `F` kokoruututilalle.
+    - Lisätty editoriin `Ctrl+S` / `Cmd+S` -pikanäppäintallennus ja `Escape`-sulku valikoille.
+    - Lisätty `touch-action: manipulation` poistamaan mobiililaitteiden 300 ms klikkausviive.
+
+- [x] **6.3 Vikasietoisuus, verkkokatkokset ja virheiden lokalisointi**
+  - **Prioriteetti:** Korkea (luentosalin luotettavuus)
+  - **Tiedostot:** `server/src/index.ts`, `client/src/hooks/useStudentSession.ts`, `client/src/hooks/useTeacherSession.ts`, `client/src/utils/fileHelpers.ts`, `client/src/views/StudentView.tsx`, `client/src/views/TeacherView.tsx`, `client/src/hooks/useCaseEditor.ts`
+  - **Toimenpiteet:**
+    - Tallennetaan opiskelijan huonekoodi `sessionStorage`-muistiin, jolloin vahinkopäivitys (pull-to-refresh) tai F5 ei katkaise vastaamista.
+    - Lisätty selkeä uudelleenyhdistysindikaattori verkkokatkoksen ajaksi.
+    - Palvelimen ja tiedostovalidoinnin virheilmoitukset siirretty virhekoodeiksi ja lokalisoitu i18n-kieliavaimin (FI/EN/SV).
