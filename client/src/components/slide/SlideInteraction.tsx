@@ -35,33 +35,31 @@ export const SlideInteraction: React.FC<Props> = ({
     return Math.round((count / answers.length) * 100);
   };
 
-  if (slide.type === 'INFO' && !isEdit) return null;
+  if (slide.type === 'INFO') return null;
 
   return (
     <div className={`shrink-0 flex flex-col gap-6 ${(!slide.imageFileName && !isEdit) ? 'mt-auto' : ''}`}>
 
       {/* QUESTION AREA */}
-      {slide.type !== 'INFO' && (
-        isEdit ? (
-          <input
-            className="text-4xl font-bold text-blue-950 w-full bg-transparent border-b-2 border-dashed border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none transition-colors pb-2"
-            placeholder={t('editor.questionPlaceholder')}
-            value={slide.question || ''}
-            onChange={e => onUpdate?.('question', e.target.value)}
-          />
-        ) : (
-          slide.question && (
-            <div className="flex flex-col gap-2">
-              {slide.type === 'MULTIPLE_CHOICE' && (
-                <span className="text-xl font-bold uppercase tracking-wider text-blue-600">
-                  {(slide as any).allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint')}
-                </span>
-              )}
-              <h3 className="text-4xl font-bold text-blue-950 tracking-tight">
-                {slide.question}
-              </h3>
-            </div>
-          )
+      {isEdit ? (
+        <input
+          className="text-4xl font-bold text-blue-950 w-full bg-transparent border-b-2 border-dashed border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none transition-colors pb-2"
+          placeholder={t('editor.questionPlaceholder')}
+          value={slide.question || ''}
+          onChange={e => onUpdate?.('question', e.target.value)}
+        />
+      ) : (
+        slide.question && (
+          <div className="flex flex-col gap-2">
+            {slide.type === 'MULTIPLE_CHOICE' && (
+              <span className="text-xl font-bold uppercase tracking-wider text-blue-600">
+                {(slide as any).allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint')}
+              </span>
+            )}
+            <h3 className="text-4xl font-bold text-blue-950 tracking-tight">
+              {slide.question}
+            </h3>
+          </div>
         )
       )}
 

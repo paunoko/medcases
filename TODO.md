@@ -153,13 +153,15 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korjattu `useResizeText`: nostettu oletuskoko 36px:iin ja asetettu ehdoton takariviluettava alaraja (vähintään 24px leipätekstille; ei kutistu lukukelvottomaksi).
     - Parannettu otsikon, leipätekstin ja kysymysten kontrastia (`text-gray-900` ja `text-blue-950`) sekä riviväliä (`leading-relaxed`).
 
-- [ ] **5.2 Esitysnäkymän ja editorin 1:1 visuaalinen vastaavuus (WYSIWYG-kangas)**
+- [x] **5.2 Esitysnäkymän ja editorin 1:1 visuaalinen vastaavuus (WYSIWYG-kangas)**
   - **Prioriteetti:** Korkea (opettajan valmistelukokemus)
-  - **Tiedostot:** `client/src/components/slide/SlideContainer.tsx`, `client/src/views/TeacherView.tsx`, `client/src/views/EditorView.tsx`
-  - **Ongelma:** Editorin yläpalkki ja näytön joustava venyminen aiheuttavat sen, että teksti rivittyy ja asettuu eri tavalla editorissa kuin valkokankaalla.
+  - **Tiedostot:** `client/src/components/slide/SlideContainer.tsx`, `client/src/components/slide/SlideBody.tsx`, `client/src/components/slide/SlideTitle.tsx`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/EditorView.tsx`
+  - **Ongelma:** Editorin yläpalkki ja näytön joustava venyminen aiheuttivat sen, että teksti rivittyi ja asettui eri tavalla editorissa kuin valkokankaalla. Lisäksi tyhjä kuvalohko pakotti tekstin 50 % leveyteen editorissa.
   - **Toimenpiteet:**
-    - Yhtenäistetään `SlideContainer` toimimaan identtisellä kuvasuhteella (16:9 -esityskangas) ja marginaaleilla sekä editorissa että esityksessä.
-    - Varmistetaan, että opettajan työtila ja esitystila vastaavat toisiaan suoraan ilman yllättäviä rivitys- tai asettelumuutoksia.
+    - Toteutettu `SlideContainer`:iin dynaaminen 16:9 -esityskankaan kuvasuhdelukitus (`ResizeObserver`), joka varmistaa pikselintarkan 16:9 -esitysgeometrian riippumatta näytön koosta tai editorin yläpalkista.
+    - Korjattu `SlideBody`: ilman kuvaa leipäteksti täyttää 100 % leveyden myös editorissa (+ Lisää kuva -painike yläkulmassa). Kuvan kanssa näkymä jakautuu automaattisesti 50/50 -tilaan molemmissa.
+    - Yhdenmukaistettu `SlideTitle` ja `SlideInteraction` marginaalit ja tyhjän tilan käsittely.
+    - Lisätty editoriin reaaliaikainen "Esikatselu / Muokkaa" -kytkin (`SlideRenderer`).
 
 - [ ] **5.3 Vastauspylväiden, tulosten ja oikean vastauksen korkeakontrastinen visualisointi**
   - **Prioriteetti:** Korkea (luentosalin näkyvyys & esteettömyys WCAG AA)

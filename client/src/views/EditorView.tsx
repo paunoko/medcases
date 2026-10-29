@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
-import { Home, Pencil, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
+import { Home, Pencil, Eye, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
 import { useUI } from '../context/UIContext';
+import { SlideRenderer } from '../components/SlideRenderer';
 import { SlideContainer } from '../components/slide/SlideContainer';
 import { SlideTitle } from '../components/slide/SlideTitle';
 import { SlideBody } from '../components/slide/SlideBody';
@@ -37,6 +38,7 @@ export const EditorView = () => {
 
   const [toast, setToast] = useState<{ show: boolean; filename: string } | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
 
   const {
     caseData, updateMeta, activeSlideIndex, setActiveSlideIndex, imagePreviews,
@@ -129,6 +131,18 @@ export const EditorView = () => {
           <h1 className="font-bold text-xl uppercase tracking-wider text-gray-200">MedCases Editor</h1>
         </div>
         <div className="flex gap-4">
+          <button
+            onClick={() => setIsPreview(!isPreview)}
+            className={`px-5 py-2 rounded font-bold shadow transition-colors flex items-center gap-2 ${
+              isPreview
+                ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+            }`}
+            title={isPreview ? t('editor.editMode') : t('editor.previewMode')}
+          >
+            {isPreview ? <Pencil size={20} /> : <Eye size={20} />}
+            {isPreview ? t('editor.editMode') : t('editor.previewMode')}
+          </button>
           <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded font-bold shadow transition-colors flex items-center gap-2">
             <FolderOpen size={20} /> {t('editor.open')}
             <input 
@@ -167,28 +181,35 @@ export const EditorView = () => {
         <div className="flex-1 p-4 flex flex-col bg-gray-900 overflow-hidden min-h-0">
           <div className="flex-1 relative transition-all duration-300 min-h-0">
             {activeSlide ? (
-              <SlideContainer>
-                <SlideTitle
-                  value={activeSlide.title}
-                  mode="edit"
-                  onChange={val => updateSlide(activeSlideIndex!, 'title', val)}
-                />
-
-                <SlideBody
-                  content={activeSlide.content}
-                  imageUrl={activeSlide.imageFileName ? imagePreviews[activeSlide.imageFileName] : null}
-                  mode="edit"
-                  onContentChange={val => updateSlide(activeSlideIndex!, 'content', val)}
-                  onImageChange={file => attachImageToSlide(activeSlideIndex!, file)}
-                  onImageRemove={() => removeImageFromSlide(activeSlideIndex!)}
-                />
-
-                <SlideInteraction
+              isPreview ? (
+                <SlideRenderer
                   slide={activeSlide}
-                  mode="edit"
-                  onUpdate={(field, value) => updateSlide(activeSlideIndex!, field, value)}
+                  imageMap={imagePreviews}
                 />
-              </SlideContainer>
+              ) : (
+                <SlideContainer>
+                  <SlideTitle
+                    value={activeSlide.title}
+                    mode="edit"
+                    onChange={val => updateSlide(activeSlideIndex!, 'title', val)}
+                  />
+
+                  <SlideBody
+                    content={activeSlide.content}
+                    imageUrl={activeSlide.imageFileName ? imagePreviews[activeSlide.imageFileName] : null}
+                    mode="edit"
+                    onContentChange={val => updateSlide(activeSlideIndex!, 'content', val)}
+                    onImageChange={file => attachImageToSlide(activeSlideIndex!, file)}
+                    onImageRemove={() => removeImageFromSlide(activeSlideIndex!)}
+                  />
+
+                  <SlideInteraction
+                    slide={activeSlide}
+                    mode="edit"
+                    onUpdate={(field, value) => updateSlide(activeSlideIndex!, field, value)}
+                  />
+                </SlideContainer>
+              )
             ) : (
               <div className="flex h-full flex-col mt-32 items-center justify-start text-gray-500 gap-6">
                 <ArrowRight size={64} className="animate-bounce" />

@@ -25,6 +25,6 @@ export const SlideTitle: React.FC<Props> = ({ value, mode, onChange, placeholder
   if (!value) return null;
 
   return (
-    <h2 className="text-5xl font-extrabold text-gray-900 tracking-tight shrink-0">{value}</h2>
+    <h2 className="text-5xl font-extrabold text-gray-900 tracking-tight shrink-0 border-b-2 border-transparent pb-2">{value}</h2>
   );
 };
