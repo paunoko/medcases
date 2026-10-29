@@ -153,14 +153,17 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korjattu `useResizeText`: nostettu oletuskoko 36px:iin ja asetettu ehdoton takariviluettava alaraja (vähintään 24px leipätekstille; ei kutistu lukukelvottomaksi).
     - Parannettu otsikon, leipätekstin ja kysymysten kontrastia (`text-gray-900` ja `text-blue-950`) sekä riviväliä (`leading-relaxed`).
 
-- [x] **5.2 Esitysnäkymän ja editorin 1:1 visuaalinen vastaavuus (WYSIWYG-kangas)**
-  - **Prioriteetti:** Korkea (opettajan valmistelukokemus)
-  - **Tiedostot:** `client/src/components/slide/SlideContainer.tsx`, `client/src/components/slide/SlideBody.tsx`, `client/src/components/slide/SlideTitle.tsx`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/EditorView.tsx`
+- [x] **5.2 Esitysnäkymän ja editorin 1:1 visuaalinen vastaavuus (WYSIWYG-kangas & taitettava sivupalkki)**
+  - **Prioriteetti:** Korkea (opettajan valmistelukokemus ja luentosalikäytettävyys)
+  - **Tiedostot:** `client/src/components/slide/SlideContainer.tsx`, `client/src/components/slide/SlideBody.tsx`, `client/src/components/slide/SlideTitle.tsx`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/EditorView.tsx`, `client/src/views/TeacherView.tsx`
   - **Ongelma:** Editorin yläpalkki ja näytön joustava venyminen aiheuttivat sen, että teksti rivittyi ja asettui eri tavalla editorissa kuin valkokankaalla. Lisäksi tyhjä kuvalohko pakotti tekstin 50 % leveyteen editorissa.
   - **Toimenpiteet:**
     - Toteutettu `SlideContainer`:iin dynaaminen 16:9 -esityskankaan kuvasuhdelukitus (`ResizeObserver`), joka varmistaa pikselintarkan 16:9 -esitysgeometrian riippumatta näytön koosta tai editorin yläpalkista.
     - Korjattu `SlideBody`: ilman kuvaa leipäteksti täyttää 100 % leveyden myös editorissa (+ Lisää kuva -painike yläkulmassa). Kuvan kanssa näkymä jakautuu automaattisesti 50/50 -tilaan molemmissa.
     - Yhdenmukaistettu `SlideTitle` ja `SlideInteraction` marginaalit ja tyhjän tilan käsittely.
+    - Toteutettu taitettava sivupalkki (Collapse/Expand) ja täyden valkokankaan esitystila sekä `TeacherView`:ssa että `EditorView`:ssa.
+    - Esitystilassa piilotetun sivupalkin korvaa yläkulman huomaamaton huonekoodi- ja QR-modaalinappi sekä alareunan leijuva ohjauspalkki.
+    - Lisätty esitykseen laiteohjaintuki / esitysklikkeri (nuolinäppäimet `←`/`→`, `PageUp`/`PageDown`, `Tab` sivupalkille).
     - Lisätty editoriin reaaliaikainen "Esikatselu / Muokkaa" -kytkin (`SlideRenderer`).
 
 - [ ] **5.3 Vastauspylväiden, tulosten ja oikean vastauksen korkeakontrastinen visualisointi**

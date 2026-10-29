@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
-import { Home, Pencil, Eye, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
+import { Home, Pencil, Eye, PanelRightClose, PanelRightOpen, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 import { SlideRenderer } from '../components/SlideRenderer';
 import { SlideContainer } from '../components/slide/SlideContainer';
@@ -39,6 +39,7 @@ export const EditorView = () => {
   const [toast, setToast] = useState<{ show: boolean; filename: string } | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const {
     caseData, updateMeta, activeSlideIndex, setActiveSlideIndex, imagePreviews,
@@ -130,10 +131,10 @@ export const EditorView = () => {
           <button onClick={handleHome} className="text-2xl hover:bg-gray-700 p-2 rounded transition-colors" title={t('common.home')}><Home size={24} /></button>
           <h1 className="font-bold text-xl uppercase tracking-wider text-gray-200">MedCases Editor</h1>
         </div>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           <button
             onClick={() => setIsPreview(!isPreview)}
-            className={`px-5 py-2 rounded font-bold shadow transition-colors flex items-center gap-2 ${
+            className={`px-5 py-2 rounded font-bold shadow transition-colors flex items-center gap-2 cursor-pointer ${
               isPreview
                 ? 'bg-blue-600 hover:bg-blue-500 text-white'
                 : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
@@ -142,6 +143,17 @@ export const EditorView = () => {
           >
             {isPreview ? <Pencil size={20} /> : <Eye size={20} />}
             {isPreview ? t('editor.editMode') : t('editor.previewMode')}
+          </button>
+          <button
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            className={`px-3 py-2 rounded font-bold shadow transition-colors flex items-center gap-1.5 cursor-pointer ${
+              !isSidebarOpen
+                ? 'bg-blue-600 hover:bg-blue-500 text-white'
+                : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+            }`}
+            title={isSidebarOpen ? t('editor.hideSidebar') : t('editor.showSidebar')}
+          >
+            {isSidebarOpen ? <PanelRightClose size={20} /> : <PanelRightOpen size={20} />}
           </button>
           <label className="cursor-pointer bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded font-bold shadow transition-colors flex items-center gap-2">
             <FolderOpen size={20} /> {t('editor.open')}
@@ -216,65 +228,87 @@ export const EditorView = () => {
                 <div className="text-3xl font-bold uppercase tracking-widest text-gray-600">{t('editor.selectOrCreateSlide')}</div>
               </div>
             )}
+
+            {!isSidebarOpen && (
+              <button
+                onClick={() => setIsSidebarOpen(true)}
+                className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-gray-800/90 hover:bg-gray-800 backdrop-blur-md border border-gray-700/80 px-4 py-2 rounded-xl text-white shadow-xl transition-all cursor-pointer"
+                title={t('editor.showSidebar')}
+              >
+                <PanelRightOpen size={18} />
+                <span className="text-sm font-semibold">{t('editor.showSidebar')}</span>
+              </button>
+            )}
           </div>
         </div>
 
         {/* RIGHT: Settings and Slides (TeacherView w-80 panel) */}
-        <div className="w-80 bg-gray-800 flex flex-col border-l border-gray-700 min-h-0">
-          <div className="p-6 pb-2">
-            <div className="bg-gray-750 p-4 rounded-xl border border-gray-700 shadow-inner bg-gray-900/50">
-              <label className="block text-xs font-bold text-gray-400 uppercase mb-2 tracking-widest">{t('editor.caseName')}</label>
-              <input
-                className="w-full bg-gray-800 border-2 border-gray-600 text-white font-bold p-3 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-lg"
-                placeholder={t('editor.caseNamePlaceholder')}
-                value={caseData.meta.title}
-                onChange={e => updateMeta('title', e.target.value)}
-              />
+        {isSidebarOpen && (
+          <div className="w-80 bg-gray-800 flex flex-col border-l border-gray-700 min-h-0 transition-all">
+            <div className="p-6 pb-2">
+              <div className="bg-gray-750 p-4 rounded-xl border border-gray-700 shadow-inner bg-gray-900/50">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest">{t('editor.caseName')}</label>
+                  <button
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="p-1 hover:bg-gray-700 rounded-lg text-gray-400 hover:text-white transition-colors cursor-pointer"
+                    title={t('editor.hideSidebar')}
+                  >
+                    <PanelRightClose size={18} />
+                  </button>
+                </div>
+                <input
+                  className="w-full bg-gray-800 border-2 border-gray-600 text-white font-bold p-3 rounded-lg focus:outline-none focus:border-blue-500 transition-colors text-lg"
+                  placeholder={t('editor.caseNamePlaceholder')}
+                  value={caseData.meta.title}
+                  onChange={e => updateMeta('title', e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-6 py-2 space-y-3 custom-scrollbar">
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+                modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
+              >
+                <SortableContext
+                  items={caseData.slides.map(s => s.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {caseData.slides.map((slide, idx) => (
+                    <SortableSlideItem
+                      key={slide.id}
+                      slide={slide}
+                      index={idx}
+                      isActive={idx === activeSlideIndex}
+                      onSelect={setActiveSlideIndex}
+                      onDelete={deleteSlide}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            </div>
+
+            <div className="p-6 pt-2 border-t border-gray-700 relative shrink-0">
+              {showAddMenu && (
+                <div className="absolute bottom-full left-0 w-full mb-3 bg-gray-700 border border-gray-600 rounded-xl shadow-2xl overflow-hidden z-20">
+                  <button onClick={() => { addSlide('INFO'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><Info size={20} className="inline mr-2 -mt-1"/> {t('editor.infoSlide')}</button>
+                  <button onClick={() => { addSlide('MULTIPLE_CHOICE'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><CheckSquare size={20} className="inline mr-2 -mt-1"/> {t('editor.multipleChoice')}</button>
+                  <button onClick={() => { addSlide('TRUE_FALSE'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><Scale size={20} className="inline mr-2 -mt-1"/> {t('editor.trueFalse')}</button>
+                  <button onClick={() => { addSlide('OPEN_TEXT'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors"><PenTool size={20} className="inline mr-2 -mt-1"/> {t('editor.openText')}</button>
+                </div>
+              )}
+              <button
+                onClick={() => setShowAddMenu(!showAddMenu)}
+                className="w-full bg-blue-600 text-white p-4 rounded-xl hover:bg-blue-500 font-bold text-lg flex justify-center items-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
+              >
+                <Plus size={28} /> {t('editor.newSlide')}
+              </button>
             </div>
           </div>
-
-          <div className="flex-1 overflow-y-auto px-6 py-2 space-y-3 custom-scrollbar">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
-            >
-              <SortableContext
-                items={caseData.slides.map(s => s.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                {caseData.slides.map((slide, idx) => (
-                  <SortableSlideItem
-                    key={slide.id}
-                    slide={slide}
-                    index={idx}
-                    isActive={idx === activeSlideIndex}
-                    onSelect={setActiveSlideIndex}
-                    onDelete={deleteSlide}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-          </div>
-
-          <div className="p-6 pt-2 border-t border-gray-700 relative shrink-0">
-            {showAddMenu && (
-              <div className="absolute bottom-full left-0 w-full mb-3 bg-gray-700 border border-gray-600 rounded-xl shadow-2xl overflow-hidden z-20">
-                <button onClick={() => { addSlide('INFO'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><Info size={20} className="inline mr-2 -mt-1"/> {t('editor.infoSlide')}</button>
-                <button onClick={() => { addSlide('MULTIPLE_CHOICE'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><CheckSquare size={20} className="inline mr-2 -mt-1"/> {t('editor.multipleChoice')}</button>
-                <button onClick={() => { addSlide('TRUE_FALSE'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors border-b border-gray-600/50"><Scale size={20} className="inline mr-2 -mt-1"/> {t('editor.trueFalse')}</button>
-                <button onClick={() => { addSlide('OPEN_TEXT'); setShowAddMenu(false); }} className="block w-full text-left px-5 py-4 hover:bg-gray-600 font-bold text-white transition-colors"><PenTool size={20} className="inline mr-2 -mt-1"/> {t('editor.openText')}</button>
-              </div>
-            )}
-            <button
-              onClick={() => setShowAddMenu(!showAddMenu)}
-              className="w-full bg-blue-600 text-white p-4 rounded-xl hover:bg-blue-500 font-bold text-lg flex justify-center items-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
-            >
-              <Plus size={28} /> {t('editor.newSlide')}
-            </button>
-          </div>
-        </div>
+        )}
 
       </div>
 

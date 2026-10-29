@@ -57,9 +57,14 @@
     "next": "Nästa →",
     "endSession": "Avsluta sessionen",
     "endSessionTitle": "Vill du avsluta sessionen?",
-    "endSessionMsg": "Alla studenter kommer att kopplas ifrån och sessionen stängs."
+    "endSessionMsg": "Alla studenter kommer att kopplas ifrån och sessionen stängs.",
+    "hideSidebar": "Dölj kontrollpanelen",
+    "showSidebar": "Visa kontrollpanelen",
+    "controls": "Kontrollpanel"
   },
   "editor": {
+    "hideSidebar": "Dölj sidopanel",
+    "showSidebar": "Visa sidopanel",
     "viewTitle": "Redigera fall",
     "loadFile": "Ladda en befintlig .medcase-fil",
     "uploadFailed": "Uppladdningen misslyckades",
