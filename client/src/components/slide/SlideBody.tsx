@@ -36,14 +36,14 @@ export const SlideBody: React.FC<Props> = ({
       {mode === 'edit' ? (
         <textarea
           ref={contentRef}
-          className="flex-1 min-h-0 overflow-y-auto prose max-w-none text-3xl leading-snug text-gray-700 whitespace-pre-wrap bg-transparent border-2 border-dashed border-transparent hover:border-gray-200 focus:border-blue-500 focus:outline-none resize-none transition-colors rounded-lg p-2 -ml-2 custom-scrollbar"
+          className="flex-1 min-h-0 overflow-y-auto prose max-w-none text-3xl leading-relaxed text-gray-900 font-medium whitespace-pre-wrap bg-transparent border-2 border-dashed border-transparent hover:border-gray-200 focus:border-blue-500 focus:outline-none resize-none transition-colors rounded-lg p-2 -ml-2 custom-scrollbar"
           placeholder={effectivePlaceholder}
           value={content}
           onChange={e => onContentChange?.(e.target.value)}
         />
       ) : (
         content && (
-          <div ref={contentRef} className="flex-1 min-h-0 overflow-y-auto prose max-w-none text-3xl leading-snug text-gray-700 whitespace-pre-wrap custom-scrollbar pr-4">
+          <div ref={contentRef} className="flex-1 min-h-0 overflow-y-auto prose max-w-none text-3xl leading-relaxed text-gray-900 font-medium whitespace-pre-wrap custom-scrollbar pr-4">
             {content}
           </div>
         )

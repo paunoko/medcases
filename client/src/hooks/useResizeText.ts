@@ -1,18 +1,32 @@
 import { useEffect } from 'react';
 
-export const useResizeText = (ref: { current: HTMLElement | null }, dependencies: any[]) => {
+interface ResizeOptions {
+  maxSize?: number;
+  minSize?: number;
+  step?: number;
+}
+
+export const useResizeText = (
+  ref: { current: HTMLElement | null },
+  dependencies: unknown[],
+  options?: ResizeOptions
+) => {
+  const maxSize = options?.maxSize ?? 36; // 36px default max (generous for lecture halls)
+  const minSize = options?.minSize ?? 24; // 24px default floor (never unreadable from back row)
+  const step = options?.step ?? 1;
+
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     
     const resize = () => {
-      // Allow it to grow back to max size to recalculate
-      let size = 30; // text-3xl roughly
+      // Start from max size
+      let size = maxSize;
       el.style.fontSize = `${size}px`;
       
-      // If it overflows vertically, shrink it down iteratively
-      while (el.scrollHeight > el.clientHeight && size > 14) {
-        size -= 1;
+      // If it overflows vertically, shrink down iteratively, but never below minSize
+      while (el.scrollHeight > el.clientHeight && size > minSize) {
+        size -= step;
         el.style.fontSize = `${size}px`;
       }
     };
@@ -24,5 +38,6 @@ export const useResizeText = (ref: { current: HTMLElement | null }, dependencies
     const observer = new ResizeObserver(resize);
     observer.observe(el);
     return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 };

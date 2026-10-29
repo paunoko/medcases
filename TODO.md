@@ -144,13 +144,14 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
 
 ## 5. Visuaalinen ilme, saavutettavuus ja luentosalikäytettävyys (WYSIWYG)
 
-- [ ] **5.1 Moderni typografia ja valkokankaan takariviluettavuus**
+- [x] **5.1 Moderni typografia ja valkokankaan takariviluettavuus**
   - **Prioriteetti:** Korkea (luentosalin saavutettavuus)
-  - **Tiedostot:** `client/src/index.css`, `client/index.html`, `client/src/hooks/useResizeText.ts`, `client/src/components/slide/SlideBody.tsx`
-  - **Ongelma:** Käytössä on oletusjärjestelmäfontti (`sans-serif`). `useResizeText` kutistaa leipätekstin jopa `14px` kokoon, mikä on luentosalin takariviltä täysin lukukelvoton.
+  - **Tiedostot:** `client/src/index.css`, `client/index.html`, `client/tailwind.config.js`, `client/src/hooks/useResizeText.ts`, `client/src/components/slide/SlideBody.tsx`, `client/src/components/slide/SlideTitle.tsx`, `client/src/components/slide/SlideInteraction.tsx`
+  - **Ongelma:** Käytössä oli oletusjärjestelmäfontti (`sans-serif`). `useResizeText` kutisti leipätekstin jopa `14px` kokoon, mikä oli luentosalin takariviltä täysin lukukelvoton.
   - **Toimenpiteet:**
-    - Otetaan käyttöön moderni, erinomaisen x-korkeuden omaava kirjasinperhe (Inter).
-    - Korjataan `useResizeText` asettamalla selkeä luentosalin minimikoko (vähintään 24–28 px leipätekstille) ja parannetaan suuren tekstin skaalautuvuutta.
+    - Otettu käyttöön moderni, korkean x-korkeuden omaava kirjasinperhe (Inter).
+    - Korjattu `useResizeText`: nostettu oletuskoko 36px:iin ja asetettu ehdoton takariviluettava alaraja (vähintään 24px leipätekstille; ei kutistu lukukelvottomaksi).
+    - Parannettu otsikon, leipätekstin ja kysymysten kontrastia (`text-gray-900` ja `text-blue-950`) sekä riviväliä (`leading-relaxed`).
 
 - [ ] **5.2 Esitysnäkymän ja editorin 1:1 visuaalinen vastaavuus (WYSIWYG-kangas)**
   - **Prioriteetti:** Korkea (opettajan valmistelukokemus)

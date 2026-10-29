@@ -44,7 +44,7 @@ export const SlideInteraction: React.FC<Props> = ({
       {slide.type !== 'INFO' && (
         isEdit ? (
           <input
-            className="text-4xl font-semibold text-blue-900 w-full bg-transparent border-b-2 border-dashed border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none transition-colors pb-2"
+            className="text-4xl font-bold text-blue-950 w-full bg-transparent border-b-2 border-dashed border-transparent hover:border-gray-300 focus:border-blue-500 focus:outline-none transition-colors pb-2"
             placeholder={t('editor.questionPlaceholder')}
             value={slide.question || ''}
             onChange={e => onUpdate?.('question', e.target.value)}
@@ -57,7 +57,7 @@ export const SlideInteraction: React.FC<Props> = ({
                   {(slide as any).allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint')}
                 </span>
               )}
-              <h3 className="text-4xl font-semibold text-blue-900">
+              <h3 className="text-4xl font-bold text-blue-950 tracking-tight">
                 {slide.question}
               </h3>
             </div>
