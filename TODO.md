@@ -80,12 +80,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
 
 ## 3. Kuvat ja tiedostojen käsittely (Editor & Assets)
 
-- [ ] **3.1 Korjaa kuvatiedostojen nimikollisio**
+- [x] **3.1 Korjaa kuvatiedostojen nimikollisio**
   - **Prioriteetti:** Keskitaso (datan eheys)
-  - **Tiedostot:** `client/src/hooks/useCaseEditor.ts`, `client/src/utils/fileHelpers.ts`
-  - **Ongelma:** Kuvat tallennetaan suoraan tiedostonimellä (`[file.name]: file`). Jos kahteen eri diaan liitetään eri kuvat, joilla on sama nimi (esim. `image.png`), jälkimmäinen korvaa edellisen.
+  - **Tiedostot:** `client/src/hooks/useCaseEditor.ts`, `client/src/utils/fileHelpers.ts`, `client/src/views/EditorView.tsx`
+  - **Ongelma:** Kuvat tallennettiin suoraan käyttäjän tiedostonimellä (`[file.name]: file`). Jos kahteen eri diaan liitettiin eri kuvat, joilla on sama nimi (esim. `image.png`), jälkimmäinen korvasi edellisen.
   - **Toimenpiteet:**
-    - Avainna kuvat yksilöivällä tunnisteella, esim. `${slide.id}_${file.name}` tai generoimalla kuvalle uniikki ID/hash.
+    - Tallennusvaiheessa (`saveCaseToZip`) kuvat normalisoidaan ja tallennetaan suoraan dian mukaan (`slide1.png`, `slide2.jpg` jne.) sekä `case.json`:iin että zipin `images/`-hakemistoon.
+    - Muokkausistunnossa kuvat erotellaan turvallisesti diakohtaisesti (`attachImageToSlide`), vanhat kuvat poistetaan korvattaessa, ja lisätty `removeImageFromSlide` sekä `deleteSlide`-siivous.
 
 - [ ] **3.2 Selaimen Object URL -muistivuotojen korjaus**
   - **Prioriteetti:** Keskitaso (muistinhallinta)

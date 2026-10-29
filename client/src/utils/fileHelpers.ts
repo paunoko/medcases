@@ -14,21 +14,41 @@ export const saveCaseToZip = async (
 ) => {
     const zip = new JSZip();
 
-    // 1. Add JSON
-    zip.file(CASE_FILENAME, JSON.stringify(caseData, null, 2));
+    // 1. Prepare normalized slides with slide{index + 1}.{ext} image names
+    const normalizedSlides = caseData.slides.map((slide, index) => {
+        if (!slide.imageFileName || !imageFiles[slide.imageFileName]) {
+            const { imageFileName: _, ...rest } = slide;
+            return rest;
+        }
+        const ext = slide.imageFileName.split('.').pop()?.toLowerCase() || 'png';
+        const zipImageName = `slide${index + 1}.${ext}`;
+        return {
+            ...slide,
+            imageFileName: zipImageName
+        };
+    });
 
-    // 2. Add images to images-folder
+    const normalizedCase: PatientCase = {
+        ...caseData,
+        slides: normalizedSlides as PatientCase['slides']
+    };
+
+    // 2. Add JSON
+    zip.file(CASE_FILENAME, JSON.stringify(normalizedCase, null, 2));
+
+    // 3. Add images to images-folder
     const imgFolder = zip.folder(IMAGES_FOLDER);
     if (imgFolder) {
-        // Process only images that are actually used in data
-        caseData.slides.forEach(slide => {
+        caseData.slides.forEach((slide, index) => {
             if (slide.imageFileName && imageFiles[slide.imageFileName]) {
-                imgFolder.file(slide.imageFileName, imageFiles[slide.imageFileName]);
+                const ext = slide.imageFileName.split('.').pop()?.toLowerCase() || 'png';
+                const zipImageName = `slide${index + 1}.${ext}`;
+                imgFolder.file(zipImageName, imageFiles[slide.imageFileName]);
             }
         });
     }
 
-    // 3. Generate and download
+    // 4. Generate and download
     const blob = await zip.generateAsync({ type: "blob" });
 
     // Sanitize filename and add timestamp

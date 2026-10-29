@@ -40,7 +40,7 @@ export const EditorView = () => {
 
   const {
     caseData, updateMeta, activeSlideIndex, setActiveSlideIndex, imagePreviews,
-    addSlide, deleteSlide, updateSlide, reorderSlides, attachImageToSlide, handleSave, handleLoad,
+    addSlide, deleteSlide, updateSlide, reorderSlides, attachImageToSlide, removeImageFromSlide, handleSave, handleLoad,
     hasUnsavedChanges
   } = useCaseEditor();
 
@@ -180,7 +180,7 @@ export const EditorView = () => {
                   mode="edit"
                   onContentChange={val => updateSlide(activeSlideIndex!, 'content', val)}
                   onImageChange={file => attachImageToSlide(activeSlideIndex!, file)}
-                  onImageRemove={() => updateSlide(activeSlideIndex!, 'imageFileName', undefined)}
+                  onImageRemove={() => removeImageFromSlide(activeSlideIndex!)}
                 />
 
                 <SlideInteraction

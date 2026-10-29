@@ -49,6 +49,24 @@ export const useCaseEditor = () => {
     };
 
     const deleteSlide = (index: number) => {
+        const slideToDelete = caseData.slides[index];
+        if (slideToDelete?.imageFileName) {
+            const imgName = slideToDelete.imageFileName;
+            if (imagePreviews[imgName]) {
+                URL.revokeObjectURL(imagePreviews[imgName]);
+            }
+            setImagePreviews(prev => {
+                const next = { ...prev };
+                delete next[imgName];
+                return next;
+            });
+            setImageFiles(prev => {
+                const next = { ...prev };
+                delete next[imgName];
+                return next;
+            });
+        }
+
         setCaseData(prev => {
             const newSlides = prev.slides.filter((_, i) => i !== index);
             return { ...prev, slides: newSlides };
@@ -93,11 +111,58 @@ export const useCaseEditor = () => {
         });
     };
 
+    const removeImageFromSlide = (index: number) => {
+        const slide = caseData.slides[index];
+        if (slide?.imageFileName) {
+            const fileName = slide.imageFileName;
+            if (imagePreviews[fileName]) {
+                URL.revokeObjectURL(imagePreviews[fileName]);
+            }
+            setImagePreviews(prev => {
+                const next = { ...prev };
+                delete next[fileName];
+                return next;
+            });
+            setImageFiles(prev => {
+                const next = { ...prev };
+                delete next[fileName];
+                return next;
+            });
+        }
+        updateSlide(index, 'imageFileName', undefined);
+        setHasUnsavedChanges(true);
+    };
+
     const attachImageToSlide = (index: number, file: File) => {
-        setImageFiles(prev => ({ ...prev, [file.name]: file }));
-        const previewUrl = URL.createObjectURL(file);
-        setImagePreviews(prev => ({ ...prev, [file.name]: previewUrl }));
-        updateSlide(index, 'imageFileName', file.name);
+        const slide = caseData.slides[index];
+        if (!slide) return;
+
+        // Clean up previous image on this slide if exists
+        if (slide.imageFileName) {
+            const oldName = slide.imageFileName;
+            if (imagePreviews[oldName]) {
+                URL.revokeObjectURL(imagePreviews[oldName]);
+            }
+            setImagePreviews(prev => {
+                const next = { ...prev };
+                delete next[oldName];
+                return next;
+            });
+            setImageFiles(prev => {
+                const next = { ...prev };
+                delete next[oldName];
+                return next;
+            });
+        }
+
+        const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
+        const internalName = `slide_${slide.id}.${ext}`;
+        const newFile = new File([file], internalName, { type: file.type });
+        const previewUrl = URL.createObjectURL(newFile);
+
+        setImageFiles(prev => ({ ...prev, [internalName]: newFile }));
+        setImagePreviews(prev => ({ ...prev, [internalName]: previewUrl }));
+        updateSlide(index, 'imageFileName', internalName);
         setHasUnsavedChanges(true);
     };
 
@@ -146,6 +211,7 @@ export const useCaseEditor = () => {
         updateSlide,
         reorderSlides,
         attachImageToSlide,
+        removeImageFromSlide,
         handleSave,
         handleLoad,
         hasUnsavedChanges
