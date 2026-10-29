@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStudentSession } from '../hooks/useStudentSession';
-import { Eye, CheckCircle2 } from 'lucide-react';
+import { Eye, CheckCircle2, Stethoscope, Lock, Send } from 'lucide-react';
 
 export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession: boolean) => void }) => {
   const { t } = useTranslation();
@@ -28,121 +28,188 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
     setSelectedOptions([]);
   }, [activeSlide?.slideId]);
 
-  // 1. LOGIN
+  // 1. LOGIN / PIN ENTRY
   if (!joinedRoomId) {
     return (
-      <div className="h-full flex flex-col items-center justify-center p-4">
-        <h1 className="text-3xl font-bold text-blue-900 mb-8">MedCases</h1>
+      <div className="min-h-full flex flex-col items-center justify-center p-4">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-600 text-white shadow-lg mb-3">
+            <Stethoscope size={36} />
+          </div>
+          <h1 className="text-3xl font-extrabold text-blue-950 tracking-tight">MedCases</h1>
+        </div>
 
-        <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm space-y-4">
-          {error && <div className="bg-red-100 text-red-700 p-3 rounded">{error}</div>}
+        <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-sm space-y-5 border border-gray-100">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm font-semibold text-center">
+              {error}
+            </div>
+          )}
 
           <div>
-            <label className="block text-sm font-bold text-gray-600 mb-1">{t('student.roomCode')}</label>
+            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 text-center">
+              {t('student.roomCode')}
+            </label>
             <input
               type="tel"
               maxLength={4}
-              className="w-full text-center text-3xl tracking-widest p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none"
-              value={code} onChange={e => setCode(e.target.value)} placeholder="0000"
+              autoFocus
+              className="w-full text-center text-4xl font-mono font-black tracking-widest py-3 px-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-blue-950 placeholder:text-gray-300"
+              value={code}
+              onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              placeholder="0000"
             />
           </div>
 
           <button
             disabled={!isConnected || code.length < 4}
             onClick={() => joinRoom(code)}
-            className="w-full bg-blue-600 text-white font-bold py-4 rounded-lg text-xl hover:bg-blue-700 disabled:opacity-50"
+            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl shadow-md transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
           >
             {t('student.join')}
           </button>
         </div>
-        {!isConnected && <p className="mt-4 text-gray-400 text-sm">{t('student.connecting')}</p>}
+        {!isConnected && <p className="mt-4 text-gray-400 text-sm font-medium animate-pulse">{t('student.connecting')}</p>}
       </div>
     );
   }
 
-  // 2. WAITING
+  // 2. WAITING FOR TEACHER
   if (isWaiting || !activeSlide) {
     return (
-      <div className="h-full bg-blue-600 flex flex-col items-center justify-center text-white p-8 text-center">
-        <Eye size={64} className="mb-4 animate-bounce mx-auto" />
-        <h2 className="text-2xl font-bold">{t('student.lookAtProjector')}</h2>
-        <p className="opacity-80 mt-2">{t('student.waitingForTeacher')}</p>
+      <div className="min-h-full flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center">
+          <div className="w-20 h-20 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mb-6 animate-pulse">
+            <Eye size={44} />
+          </div>
+          <span className="text-xs font-mono font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full mb-3">
+            {t('student.roomPin')}: {joinedRoomId}
+          </span>
+          <h2 className="text-2xl font-extrabold text-blue-950 leading-snug">{t('student.lookAtProjector')}</h2>
+          <p className="text-gray-500 mt-2 text-base font-medium">{t('student.waitingForTeacher')}</p>
+        </div>
       </div>
     );
   }
 
-  // 3. INFO SLIDE (Passive)
+  // 3. INFO SLIDE (Passive observation)
   if (activeSlide.type === 'INFO') {
     return (
-      <div className="h-full bg-gray-100 flex flex-col items-center justify-center p-8 text-center">
-        <h2 className="text-xl font-bold text-gray-700">{t('student.info')}</h2>
-        <p className="text-gray-500 mt-2">{t('student.readFromScreen')}</p>
+      <div className="min-h-full flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-full max-w-sm bg-white p-8 rounded-3xl shadow-xl border border-gray-100 flex flex-col items-center">
+          <span className="text-xs font-mono font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full mb-4">
+            {t('student.roomPin')}: {joinedRoomId}
+          </span>
+          <h2 className="text-2xl font-extrabold text-gray-800">{t('student.info')}</h2>
+          <p className="text-gray-500 mt-3 text-base font-medium">{t('student.readFromScreen')}</p>
+        </div>
       </div>
     );
   }
 
-  // 4. RESPONSE FORM
+  // 4. ACTIVE RESPONSE FORM
   return (
-    <div className="h-full bg-white flex flex-col p-4">
-      <div className="py-4 border-b mb-4">
-        {activeSlide.type === 'MULTIPLE_CHOICE' && (
-          <div className="text-sm font-bold text-blue-600 uppercase mb-1">
-            {activeSlide.allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint')}
+    <div className="min-h-full w-full max-w-lg mx-auto flex flex-col p-4 sm:p-6 bg-white sm:rounded-3xl sm:shadow-lg sm:border sm:border-gray-100 sm:my-6">
+      {/* Header */}
+      <div className="pb-4 border-b border-gray-100 mb-5">
+        <div className="flex items-center justify-between gap-2 mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800">
+            {activeSlide.type === 'MULTIPLE_CHOICE'
+              ? (activeSlide.allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint'))
+              : activeSlide.type === 'TRUE_FALSE'
+                ? t('student.trueFalseHint')
+                : activeSlide.type === 'OPEN_TEXT'
+                  ? t('student.openTextHint')
+                  : null}
           </div>
-        )}
-        <h2 className="text-lg font-medium text-gray-800 leading-snug">{activeSlide.questionText}</h2>
+          <span className="text-xs font-mono font-bold text-gray-500 bg-gray-100 px-2.5 py-1 rounded-md shrink-0">
+            {t('student.roomPin')}: {joinedRoomId}
+          </span>
+        </div>
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-blue-950 leading-snug tracking-tight">
+          {activeSlide.questionText}
+        </h2>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center gap-3">
+      {/* Main Interaction Area */}
+      <div className="flex-1 flex flex-col justify-center">
         {hasAnswered ? (
-          <div className="bg-green-100 text-green-800 p-8 rounded-xl text-center">
-            <CheckCircle2 size={40} className="mb-2 mx-auto" />
-            <div className="font-bold text-xl">{t('student.answerSent')}</div>
+          <div className="bg-emerald-50 border-2 border-emerald-200 text-emerald-950 p-8 rounded-2xl text-center shadow-sm">
+            <CheckCircle2 size={52} className="text-emerald-600 mb-3 mx-auto stroke-[2.5]" />
+            <div className="font-extrabold text-2xl text-emerald-950 mb-1">{t('student.answerSent')}</div>
+            <p className="text-emerald-800/80 font-medium text-base">{t('student.lookAtResults')}</p>
           </div>
         ) : activeSlide.state === 'REVEALED' && activeSlide.type !== 'OPEN_TEXT' ? (
-          <div className="bg-gray-100 text-gray-500 p-8 rounded-xl text-center border-2 border-dashed border-gray-300">
-            <div className="font-bold text-xl">{t('student.answeringLocked')}</div>
+          <div className="bg-gray-50 text-gray-600 p-8 rounded-2xl text-center border-2 border-dashed border-gray-300">
+            <Lock size={40} className="text-gray-400 mb-2 mx-auto" />
+            <div className="font-extrabold text-xl text-gray-800 mb-1">{t('student.answeringLocked')}</div>
+            <p className="text-gray-500 text-sm font-medium">{t('student.lookAtResults')}</p>
           </div>
         ) : (
-          <>
+          <div className="space-y-3">
             {activeSlide.type === 'MULTIPLE_CHOICE' && (
               <>
-                {activeSlide.options?.map(opt => {
-                  const isSelected = selectedOptions.includes(opt.id);
-                  return (
-                    <button
-                      key={opt.id}
-                      onClick={() => {
-                        if (activeSlide.allowMultiple) {
-                          setSelectedOptions(prev =>
-                            prev.includes(opt.id)
-                              ? prev.filter(id => id !== opt.id)
-                              : [...prev, opt.id]
-                          );
-                        } else {
-                          setSelectedOptions([opt.id]);
-                        }
-                      }}
-                      className={`w-full p-6 text-left border-2 rounded-xl text-lg font-bold transition-all shadow-sm ${isSelected
-                        ? 'border-blue-500 bg-blue-50 text-blue-900'
-                        : 'border-gray-200 hover:bg-gray-50'
+                <div className="space-y-3">
+                  {activeSlide.options?.map((opt, i) => {
+                    const isSelected = selectedOptions.includes(opt.id);
+                    const letter = String.fromCharCode(65 + i);
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => {
+                          if (activeSlide.allowMultiple) {
+                            setSelectedOptions(prev =>
+                              prev.includes(opt.id)
+                                ? prev.filter(id => id !== opt.id)
+                                : [...prev, opt.id]
+                            );
+                          } else {
+                            setSelectedOptions([opt.id]);
+                          }
+                        }}
+                        className={`w-full min-h-[64px] p-4 sm:p-5 text-left border-2 rounded-2xl transition-all shadow-sm flex items-center justify-between gap-3 cursor-pointer ${
+                          isSelected
+                            ? 'border-blue-600 bg-blue-50/90 text-blue-950 ring-2 ring-blue-500/20 shadow-md scale-[1.01]'
+                            : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/70 text-gray-900 active:scale-[0.99]'
                         }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{opt.text}</span>
-                        {isSelected ? (
-                          <CheckCircle2 size={24} className="text-blue-600" />
+                      >
+                        <div className="flex items-center gap-3.5 min-w-0">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-lg shrink-0 transition-colors shadow-sm ${
+                            isSelected
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-100 border border-gray-200 text-gray-700'
+                          }`}>
+                            {letter}
+                          </div>
+                          <span className="text-lg sm:text-xl font-bold leading-snug break-words">
+                            {opt.text}
+                          </span>
+                        </div>
+
+                        {/* Radio or Checkbox indicator */}
+                        {activeSlide.allowMultiple ? (
+                          <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all ${
+                            isSelected ? 'bg-blue-600 text-white shadow-sm' : 'border-2 border-gray-300'
+                          }`}>
+                            {isSelected && <CheckCircle2 size={18} className="stroke-[3]" />}
+                          </div>
                         ) : (
-                          <div className={`w-6 h-6 border-2 border-gray-300 ${activeSlide.allowMultiple ? 'rounded' : 'rounded-full'}`} />
+                          <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                            isSelected ? 'border-2 border-blue-600' : 'border-2 border-gray-300'
+                          }`}>
+                            {isSelected && <div className="w-3.5 h-3.5 rounded-full bg-blue-600" />}
+                          </div>
                         )}
-                      </div>
-                    </button>
-                  );
-                })}
+                      </button>
+                    );
+                  })}
+                </div>
+
                 <button
                   onClick={() => submitAnswer(selectedOptions)}
                   disabled={selectedOptions.length === 0}
-                  className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl mt-4 shadow-md transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
                 >
                   {t('student.submitAnswer')}
                 </button>
@@ -151,32 +218,39 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
 
             {activeSlide.type === 'TRUE_FALSE' && (
               <>
-                {activeSlide.options?.map(opt => {
-                  const isSelected = selectedOptions.includes(opt.id);
-                  return (
-                    <button
-                      key={opt.id}
-                      onClick={() => setSelectedOptions([opt.id])}
-                      className={`w-full p-6 text-left border-2 rounded-xl text-lg font-bold transition-all shadow-sm ${isSelected
-                        ? 'border-blue-500 bg-blue-50 text-blue-900'
-                        : 'border-gray-200 hover:bg-gray-50'
+                <div className="space-y-3">
+                  {activeSlide.options?.map(opt => {
+                    const isSelected = selectedOptions.includes(opt.id);
+                    const label = opt.id === 'true' ? t('editor.yesTrue') : (opt.id === 'false' ? t('editor.noFalse') : opt.text);
+                    return (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setSelectedOptions([opt.id])}
+                        className={`w-full min-h-[64px] p-5 text-left border-2 rounded-2xl transition-all shadow-sm flex items-center justify-between gap-3 cursor-pointer ${
+                          isSelected
+                            ? 'border-blue-600 bg-blue-50/90 text-blue-950 ring-2 ring-blue-500/20 shadow-md scale-[1.01]'
+                            : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/70 text-gray-900 active:scale-[0.99]'
                         }`}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{opt.id === 'true' ? t('editor.yesTrue') : (opt.id === 'false' ? t('editor.noFalse') : opt.text)}</span>
-                        {isSelected ? (
-                          <CheckCircle2 size={24} className="text-blue-600" />
-                        ) : (
-                          <div className="w-6 h-6 border-2 border-gray-300 rounded-full" />
-                        )}
-                      </div>
-                    </button>
-                  );
-                })}
+                      >
+                        <span className="text-2xl font-black tracking-tight">
+                          {label}
+                        </span>
+
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all ${
+                          isSelected ? 'border-2 border-blue-600' : 'border-2 border-gray-300'
+                        }`}>
+                          {isSelected && <div className="w-3.5 h-3.5 rounded-full bg-blue-600" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
                 <button
                   onClick={() => selectedOptions[0] && submitAnswer(selectedOptions[0])}
                   disabled={selectedOptions.length === 0}
-                  className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-xl mt-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl mt-4 shadow-md transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
                 >
                   {t('student.submitAnswer')}
                 </button>
@@ -184,22 +258,24 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
             )}
 
             {activeSlide.type === 'OPEN_TEXT' && (
-              <div className="w-full">
+              <div className="w-full space-y-4">
                 <textarea
-                  className="w-full border-2 border-gray-300 rounded-xl p-4 text-lg h-40 mb-4 focus:border-blue-500"
+                  className="w-full border-2 border-gray-200 focus:border-blue-600 focus:ring-4 focus:ring-blue-100 rounded-2xl p-4 text-lg font-medium text-gray-900 h-44 outline-none transition-all resize-none shadow-sm placeholder:text-gray-400"
                   placeholder={t('student.writeAnswer')}
-                  value={textAns} onChange={e => setTextAns(e.target.value)}
+                  value={textAns}
+                  onChange={e => setTextAns(e.target.value)}
                 />
                 <button
                   onClick={() => textAns.trim() && submitAnswer(textAns.trim())}
                   disabled={!textAns.trim()}
-                  className="w-full bg-blue-600 text-white font-bold py-4 rounded-xl text-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl shadow-md transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer flex items-center justify-center gap-2"
                 >
-                  {t('student.send')}
+                  <span>{t('student.send')}</span>
+                  <Send size={20} />
                 </button>
               </div>
             )}
-          </>
+          </div>
         )}
       </div>
     </div>

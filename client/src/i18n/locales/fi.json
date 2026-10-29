@@ -33,6 +33,10 @@
     "submitAnswer": "LÄHETÄ VASTAUS",
     "singleChoiceHint": "Yksivalinta (valitse yksi)",
     "multipleChoiceHint": "Monivalinta – valitse kaikki sopivat",
+    "trueFalseHint": "Kyllä / Ei -valinta",
+    "openTextHint": "Avoin tekstivastaus",
+    "lookAtResults": "Katso tulokset valkokankaalta.",
+    "roomPin": "Huone",
     "answeringLocked": "Vastaaminen on päättynyt.",
     "writeAnswer": "Kirjoita vastaus...",
     "send": "LÄHETÄ"

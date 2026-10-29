@@ -33,6 +33,10 @@
     "submitAnswer": "SUBMIT ANSWER",
     "singleChoiceHint": "Single choice (select one)",
     "multipleChoiceHint": "Multiple choice – select all that apply",
+    "trueFalseHint": "True / False selection",
+    "openTextHint": "Open text answer",
+    "lookAtResults": "Look at the projector screen for results.",
+    "roomPin": "Room",
     "answeringLocked": "Answering has ended.",
     "writeAnswer": "Write your answer...",
     "send": "SEND"

@@ -186,10 +186,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Lisätty sulkemisnappi ja sulkeminen `Escape`-näppäimellä tai taustaa klikkaamalla.
     - Lisätty monikieliset käännökset (fi, en, sv).
 
-- [ ] **5.5 Mobiilivastaamisen (StudentView) ja komponenttityylien viimeistely**
-  - **Prioriteetti:** Keskitaso (mobiili-UX)
-  - **Tiedostot:** `client/src/views/StudentView.tsx`, `client/src/components/ui/`
-  - **Ongelma:** Mobiilinäkymän kysymysteksti on pientä (`text-lg`) ja visuaalinen ilme kaipaa modernisointia yhtenäisen design-järjestelmän mukaiseksi.
+- [x] **5.5 Mobiilivastaamisen (StudentView) ja komponenttityylien viimeistely**
+  - **Prioriteetti:** Keskitaso (mobiili-UX & luentosalin yhtenäisyys)
+  - **Tiedostot:** `client/src/views/StudentView.tsx`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/i18n/locales/`
+  - **Ongelma:** Mobiilinäkymän kysymysteksti oli pientä (`text-lg`) ja visuaalinen ilme kaipasi modernisointia yhtenäisen design-järjestelmän mukaiseksi. Valkokankaan ja mobiilivastaamisen välillä oli epäyhtenäisyyttä mm. kysymystyyppien tunnisteissa ja vaihtoehtokirjaimissa.
   - **Toimenpiteet:**
-    - Kasvatetaan mobiilikysymysten kokoa ja vahvistetaan kontrastia.
-    - Yhtenäistetään painikkeet, kortit ja varjot modernin kliinisen teeman mukaiseksi.
+    - Kasvatettu mobiilikysymysten kokoa ja vahvistettu kontrastia (`text-2xl sm:text-3xl font-extrabold text-blue-950`).
+    - Yhdenmukaistettu kysymystyyppien tunnisteet (Monivalinta, Yksivalinta, Kyllä/Ei, Avoin tekstivastaus) valkokankaalle (`SlideInteraction.tsx`) ja mobiiliin (`StudentView.tsx`).
+    - Lisätty vaihtoehtojen kirjaintunnisteet (A, B, C, D...) synkronoidusti sekä valkokankaalle (esitys- ja muokkaustila) että opiskelijoiden vastauskortteihin.
+    - Suurennetut, ergonomiset kosketusalueet (`min-h-[64px]`), selkeät radio- ja valintaruututilat sekä taktiili painalluspalaute.
+    - Uudistettu PIN-syöttö, odotustilat ja vastauksen lähetetty -vahvistuskortti saumattoman tyylikkääksi.

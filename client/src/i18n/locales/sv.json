@@ -33,6 +33,10 @@
     "submitAnswer": "SKICKA SVAR",
     "singleChoiceHint": "Enkelval (välj ett)",
     "multipleChoiceHint": "Flerval – välj alla som passar",
+    "trueFalseHint": "Sant / Falskt-val",
+    "openTextHint": "Öppet textsvar",
+    "lookAtResults": "Titta på vita duken för resultat.",
+    "roomPin": "Rum",
     "answeringLocked": "Svarstiden har gått ut.",
     "writeAnswer": "Skriv svar...",
     "send": "SKICKA"

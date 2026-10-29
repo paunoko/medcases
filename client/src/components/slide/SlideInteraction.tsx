@@ -51,11 +51,15 @@ export const SlideInteraction: React.FC<Props> = ({
       ) : (
         slide.question && (
           <div className="flex flex-col gap-2">
-            {slide.type === 'MULTIPLE_CHOICE' && (
-              <span className="text-xl font-bold uppercase tracking-wider text-blue-600">
-                {(slide as any).allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint')}
-              </span>
-            )}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-base font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800 w-fit">
+              {slide.type === 'MULTIPLE_CHOICE'
+                ? ((slide as any).allowMultiple ? t('student.multipleChoiceHint') : t('student.singleChoiceHint'))
+                : slide.type === 'TRUE_FALSE'
+                  ? t('student.trueFalseHint')
+                  : slide.type === 'OPEN_TEXT'
+                    ? t('student.openTextHint')
+                    : null}
+            </div>
             <h3 className="text-4xl font-bold text-blue-950 tracking-tight">
               {slide.question}
             </h3>
@@ -111,6 +115,11 @@ export const SlideInteraction: React.FC<Props> = ({
               return (
                 <div key={i} className={`relative p-6 border-4 flex-1 min-w-[200px] min-h-[96px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all focus-within:border-blue-500 ${opt.isCorrect ? 'border-emerald-500 bg-emerald-50/70' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
                   <div className="flex w-full items-start gap-4">
+                    {slide.type === 'MULTIPLE_CHOICE' && (
+                      <span className="w-8 h-8 rounded-lg bg-gray-100 border border-gray-200 font-bold text-gray-700 flex items-center justify-center text-sm shrink-0 mt-1 select-none shadow-sm">
+                        {String.fromCharCode(65 + i)}
+                      </span>
+                    )}
                     {!(slide as any).allowMultiple && slide.type === 'MULTIPLE_CHOICE' ? (
                       <input
                         type="radio"
@@ -202,6 +211,17 @@ export const SlideInteraction: React.FC<Props> = ({
                 )}
 
                 <div className="relative z-10 flex w-full justify-between items-center gap-4">
+                  {/* Option letter badge A, B, C, D... for MULTIPLE_CHOICE */}
+                  {slide.type === 'MULTIPLE_CHOICE' && (
+                    <div className={`w-11 h-11 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center font-black text-xl lg:text-2xl shrink-0 transition-colors shadow-sm select-none ${
+                      isRevealed && isCorrect
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-white border-2 border-gray-200 text-blue-950'
+                    }`}>
+                      {String.fromCharCode(65 + i)}
+                    </div>
+                  )}
+
                   {/* Option text: constant font-bold and width so text NEVER re-wraps when revealed */}
                   <span className={`text-2xl lg:text-3xl flex-1 break-words whitespace-pre-wrap leading-snug tracking-tight font-bold ${
                     isRevealed && isCorrect ? 'text-emerald-950' : 'text-gray-900'
