@@ -172,30 +172,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
             {/* Top-right floating controls when sidebar is hidden */}
             {!isSidebarOpen && (
                 <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-gray-900/90 backdrop-blur-md border border-gray-700/80 p-2 rounded-2xl shadow-2xl">
-                    <button
-                        onClick={session.prevSlide}
-                        disabled={session.currentIndex === 0}
-                        className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-30 text-white transition-colors cursor-pointer"
-                        title={t('teacher.prev')}
-                    >
-                        <ChevronLeft size={20} />
-                    </button>
-
-                    <span className="text-sm font-bold text-gray-300 px-2 select-none font-mono">
-                        {session.currentIndex + 1} / {session.totalSlides}
-                    </span>
-
-                    <button
-                        onClick={session.nextSlide}
-                        disabled={session.currentIndex === session.totalSlides - 1}
-                        className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-30 text-white transition-colors cursor-pointer"
-                        title={t('teacher.next')}
-                    >
-                        <ChevronRight size={20} />
-                    </button>
-
-                    <div className="w-px h-6 bg-gray-700 mx-1" />
-
+                    {/* Action button: Reveal answer (placed on left so slide navigation position stays constant) */}
                     {session.currentSlide?.type === 'OPEN_TEXT' ? (
                         <button
                             onClick={session.toggleOpenTextReveal}
@@ -221,14 +198,43 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                         </span>
                     ) : null}
 
+                    {/* Answers count */}
                     {session.answers.length > 0 && (
                         <span className="text-xs bg-gray-800 border border-gray-700 text-gray-300 font-semibold px-2.5 py-1 rounded-lg">
-                            {t('teacher.answersCount', { count: session.answers.length })}
+                            {session.answers.length} {t('teacher.answersCount', { count: session.answers.length }).toLowerCase()}
                         </span>
                     )}
 
+                    {(session.currentSlide?.type !== 'INFO' || session.answers.length > 0) && (
+                        <div className="w-px h-6 bg-gray-700 mx-1" />
+                    )}
+
+                    {/* Slide Navigation: fixed coordinates relative to right-anchored bar */}
+                    <button
+                        onClick={session.prevSlide}
+                        disabled={session.currentIndex === 0}
+                        className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-30 text-white transition-colors cursor-pointer"
+                        title={t('teacher.prev')}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+
+                    <span className="text-sm font-bold text-gray-300 min-w-[3.5rem] text-center select-none font-mono">
+                        {session.currentIndex + 1} / {session.totalSlides}
+                    </span>
+
+                    <button
+                        onClick={session.nextSlide}
+                        disabled={session.currentIndex === session.totalSlides - 1}
+                        className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 disabled:opacity-30 text-white transition-colors cursor-pointer"
+                        title={t('teacher.next')}
+                    >
+                        <ChevronRight size={20} />
+                    </button>
+
                     <div className="w-px h-6 bg-gray-700 mx-1" />
 
+                    {/* Room code & QR trigger */}
                     <button
                         onClick={() => setShowQrModal(true)}
                         className="flex items-center gap-2 bg-gray-800 hover:bg-gray-750 border border-gray-700 px-3 py-1.5 rounded-xl text-white transition-all group cursor-pointer"
@@ -242,6 +248,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                         </span>
                     </button>
 
+                    {/* Open sidebar button */}
                     <button
                         onClick={() => setIsSidebarOpen(true)}
                         className="p-2 rounded-xl bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white transition-colors cursor-pointer"
