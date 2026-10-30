@@ -1,8 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Activity } from 'lucide-react';
 import { CaseFileDropzone } from './CaseFileDropzone';
-import { LanguageSlider } from './LanguageSlider';
+import { AppHeader } from './AppHeader';
 
 interface FilePickerViewProps {
     title: string;
@@ -29,20 +28,7 @@ export const FilePickerView: React.FC<FilePickerViewProps> = ({
             <div className="absolute top-16 left-1/2 -translate-x-1/2 w-[540px] h-[540px] bg-blue-100/35 rounded-full blur-3xl pointer-events-none -z-0" />
 
             {/* TOP HEADER */}
-            <header className="w-full bg-white/90 backdrop-blur-md border-b border-gray-200/80 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 z-20 shadow-xs">
-                {/* Brand */}
-                <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
-                        <Activity size={20} className="stroke-[2.5]" />
-                    </div>
-                    <h1 className="text-xl font-black text-blue-950 tracking-tight">MedCases</h1>
-                </div>
-
-                {/* Right actions: Language */}
-                <div className="flex items-center gap-3">
-                    <LanguageSlider />
-                </div>
-            </header>
+            <AppHeader showAboutButton={false} />
 
             {/* MAIN CONTENT */}
             <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 w-full relative z-10">

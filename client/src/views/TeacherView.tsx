@@ -62,7 +62,7 @@ export const TeacherView = () => {
     if (!caseData) {
         return (
             <FilePickerView
-                title={t('landing.presentCase', { defaultValue: 'Esitä potilastapauksia' })}
+                title={t('teacher.selectFirstCase', { defaultValue: 'Valitse ensimmäinen potilastapaus' })}
                 onFileSelected={async (file) => {
                     try {
                         revokeImageUrls(imagesRef.current);
@@ -447,7 +447,7 @@ const Dashboard = ({
                             className="w-full py-2.5 px-3 rounded-xl font-bold text-xs bg-gray-750 hover:bg-gray-700 text-gray-200 hover:text-white border border-gray-650 transition-all cursor-pointer shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 mt-2"
                         >
                             <FolderOpen size={16} className="text-emerald-400" />
-                            <span>{t('teacher.switchCase', { defaultValue: 'Vaihda seuraava tapaus' })}</span>
+                            <span>{t('teacher.selectNextCase', { defaultValue: 'Valitse seuraava potilastapaus' })}</span>
                         </button>
 
                         <button
@@ -513,7 +513,7 @@ const Dashboard = ({
                         </div>
                         <div>
                             <h3 className="text-lg font-bold text-white leading-tight">
-                                {t('teacher.switchCaseTitle', { defaultValue: 'Vaihda esitettävä tapaus' })}
+                                {t('teacher.selectNextCase', { defaultValue: 'Valitse seuraava potilastapaus' })}
                             </h3>
                             <p className="text-xs text-gray-400 mt-1 font-medium">
                                 {t('teacher.switchCaseDesc', { defaultValue: 'Huonekoodi ja liittyneet opiskelijat säilyvät ennallaan.' })}
