@@ -1,8 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Eye, Lightbulb, Plus, X } from 'lucide-react';
 import type { CaseSlide, Option } from '../../types';
 import { OptionCard } from './OptionCard';
+import { SlideNotes } from './SlideNotes';
 
 interface Props {
   slide: CaseSlide;
@@ -175,90 +175,32 @@ export const SlideInteraction: React.FC<Props> = ({
             </div>
           )}
 
-          {/* Explanation / Discussion notes (Edit mode) */}
-          {isEdit && (
-            (slide as any).explanation !== undefined ? (
-              <div className="col-span-2 p-5 bg-amber-50/60 border-2 border-dashed border-amber-300 rounded-2xl flex flex-col gap-2 relative transition-all">
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-800 bg-amber-100/90 border border-amber-300/80 px-2.5 py-1 rounded-md">
-                    <Eye size={14} />
-                    {t('editor.explanationHint')}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => onUpdate?.('explanation', undefined)}
-                    className="text-gray-400 hover:text-red-500 p-1 rounded-lg hover:bg-red-50 cursor-pointer transition-colors"
-                    title={t('editor.removeExplanation')}
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-                <label className="font-bold text-lg text-amber-950">
-                  {t('editor.explanationLabel')}
-                </label>
-                <textarea
-                  rows={2}
-                  className="w-full bg-transparent text-xl font-medium text-gray-900 focus:outline-none placeholder-amber-700/40 resize-y leading-relaxed"
-                  placeholder={t('editor.explanationPlaceholder')}
-                  value={(slide as any).explanation || ''}
-                  onChange={e => onUpdate?.('explanation', e.target.value)}
-                />
-              </div>
-            ) : (
-              <div className="col-span-2">
-                <button
-                  type="button"
-                  onClick={() => onUpdate?.('explanation', '')}
-                  className="w-full py-2.5 px-4 border-2 border-dashed border-gray-300 hover:border-blue-400 hover:text-blue-600 text-gray-500 rounded-2xl text-lg font-bold flex items-center justify-center gap-2 transition-colors bg-gray-50/60 hover:bg-blue-50/60 cursor-pointer"
-                >
-                  <Plus size={18} />
-                  <span>{t('editor.addExplanation')}</span>
-                </button>
-              </div>
-            )
-          )}
-
-          {/* Explanation / Discussion notes (View mode - revealed) */}
-          {!isEdit && isRevealed && (slide as any).explanation && (slide as any).explanation.trim() && (
-            <div className="col-span-2 p-5 bg-blue-50/90 border-2 border-blue-200 rounded-2xl shadow-sm animate-fade-in flex flex-col gap-1.5 mt-2">
-              <div className="flex items-center gap-2 text-blue-950 font-black text-xl">
-                <Lightbulb size={20} className="text-blue-600 stroke-[2.5]" />
-                <span>{t('teacher.explanationTitle')}</span>
-              </div>
-              <p className="text-xl text-gray-900 font-medium leading-relaxed whitespace-pre-wrap">
-                {(slide as any).explanation}
-              </p>
-            </div>
-          )}
+          {/* Notes (Edit and View modes) */}
+          <div className="col-span-2">
+            <SlideNotes
+              value={(slide as any).explanation}
+              mode={mode}
+              isRevealed={isRevealed}
+              onChange={val => onUpdate?.('explanation', val)}
+            />
+          </div>
         </div>
       )}
 
       {/* OPEN TEXT */}
       {slide.type === 'OPEN_TEXT' && (
         <div className="space-y-4">
-          {isEdit ? (
-            <div className="mt-2 p-5 bg-amber-50/60 border-2 border-dashed border-amber-300 rounded-2xl flex flex-col gap-2 relative">
-              <div className="flex items-center justify-between">
-                <span className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-amber-800 bg-amber-100/90 border border-amber-300/80 px-2.5 py-1 rounded-md">
-                  <Eye size={14} />
-                  {t('editor.explanationHint')}
-                </span>
-              </div>
-              <label className="font-bold text-lg text-amber-950">
-                {t('editor.modelAnswerLabel')}
-              </label>
-              <textarea
-                rows={3}
-                className="w-full bg-transparent text-xl font-medium text-gray-900 focus:outline-none placeholder-amber-700/40 resize-y leading-relaxed"
-                placeholder={t('editor.modelAnswerPlaceholder')}
-                value={slide.modelAnswer || (slide as any).explanation || ''}
-                onChange={e => {
-                  onUpdate?.('modelAnswer', e.target.value);
-                  onUpdate?.('explanation', e.target.value);
-                }}
-              />
-            </div>
-          ) : (
+          <SlideNotes
+            value={slide.modelAnswer ?? (slide as any).explanation}
+            mode={mode}
+            isRevealed={isRevealed}
+            onChange={val => {
+              onUpdate?.('modelAnswer', val);
+              onUpdate?.('explanation', val);
+            }}
+          />
+
+          {!isEdit && (
             <>
               {answers.length > 0 && (
                 <div className="text-xl font-bold text-gray-400 mb-1">
@@ -281,19 +223,6 @@ export const SlideInteraction: React.FC<Props> = ({
                   <div className="text-2xl text-gray-400 italic py-2">{t('editor.waitingForAnswers')}</div>
                 )}
               </div>
-
-              {/* Model answer revealed */}
-              {isRevealed && (slide.modelAnswer || (slide as any).explanation) && (
-                <div className="mt-4 p-5 bg-amber-50/90 border-2 border-amber-300 rounded-2xl shadow-sm animate-fade-in flex flex-col gap-1.5">
-                  <div className="flex items-center gap-2 text-amber-950 font-black text-xl">
-                    <Lightbulb size={20} className="text-amber-600 stroke-[2.5]" />
-                    <span>{t('editor.modelAnswerTitle')}</span>
-                  </div>
-                  <p className="text-xl text-gray-900 font-medium leading-relaxed whitespace-pre-wrap">
-                    {slide.modelAnswer || (slide as any).explanation}
-                  </p>
-                </div>
-              )}
             </>
           )}
         </div>

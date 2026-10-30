@@ -40,6 +40,7 @@ export const EditorView = () => {
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [previewRevealed, setPreviewRevealed] = useState(false);
+  const [dummyAnswers, setDummyAnswers] = useState<any[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const {
@@ -53,6 +54,76 @@ export const EditorView = () => {
   useEffect(() => {
     setPreviewRevealed(false);
   }, [activeSlideIndex, isPreview]);
+
+  // Generate realistic dummy simulation answers in Preview mode
+  useEffect(() => {
+    if (!isPreview || !activeSlide) {
+      setDummyAnswers([]);
+      return;
+    }
+
+    if (activeSlide.type === 'MULTIPLE_CHOICE' || activeSlide.type === 'TRUE_FALSE') {
+      const opts = activeSlide.type === 'TRUE_FALSE'
+        ? [{ id: 'true', isCorrect: activeSlide.correctAnswer }, { id: 'false', isCorrect: !activeSlide.correctAnswer }]
+        : (activeSlide as any).options || [];
+
+      if (opts.length === 0) {
+        setDummyAnswers([]);
+        return;
+      }
+
+      const answers: any[] = [];
+      const totalVotes = 25;
+      const correctOpts = opts.filter((o: any) => o.isCorrect);
+      const incorrectOpts = opts.filter((o: any) => !o.isCorrect);
+
+      const correctVotesTotal = correctOpts.length > 0 ? Math.round(totalVotes * 0.64) : Math.round(totalVotes / opts.length);
+      const remainingVotes = totalVotes - correctVotesTotal;
+
+      for (let i = 0; i < correctVotesTotal; i++) {
+        const targetOpt = correctOpts[i % correctOpts.length];
+        answers.push({ socketId: `dummy-c-${i}`, answer: targetOpt.id });
+      }
+
+      if (incorrectOpts.length > 0) {
+        for (let i = 0; i < remainingVotes; i++) {
+          const targetOpt = incorrectOpts[i % incorrectOpts.length];
+          answers.push({ socketId: `dummy-i-${i}`, answer: targetOpt.id });
+        }
+      } else {
+        for (let i = 0; i < remainingVotes; i++) {
+          answers.push({ socketId: `dummy-r-${i}`, answer: opts[i % opts.length].id });
+        }
+      }
+
+      setDummyAnswers(answers);
+    } else if (activeSlide.type === 'OPEN_TEXT') {
+      const sampleBank = [
+        'Akuutti sepelvaltimotauti (STEMI)',
+        'Aortadissektio',
+        'Keuhkoembolia',
+        'Perikardiitti',
+        'Jänniteilmarinta'
+      ];
+
+      setDummyAnswers([{ socketId: 'dummy-0', answer: sampleBank[0] }]);
+
+      const timeouts: any[] = [];
+      sampleBank.slice(1).forEach((ans, index) => {
+        const delay = 1000 + (index * 1300) + Math.floor(Math.random() * 300);
+        const tId = setTimeout(() => {
+          setDummyAnswers(prev => [...prev, { socketId: `dummy-${index + 1}`, answer: ans }]);
+        }, delay);
+        timeouts.push(tId);
+      });
+
+      return () => {
+        timeouts.forEach(tId => clearTimeout(tId));
+      };
+    } else {
+      setDummyAnswers([]);
+    }
+  }, [isPreview, activeSlide]);
 
   const onFileLoad = async (file: File) => {
     await handleLoad(file);
@@ -223,6 +294,7 @@ export const EditorView = () => {
                     slide={activeSlide}
                     imageMap={imagePreviews}
                     isRevealed={previewRevealed}
+                    answers={dummyAnswers}
                   />
                   {activeSlide.type !== 'INFO' && (
                     <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-gray-900/90 backdrop-blur-md border border-gray-700/80 p-1.5 rounded-2xl shadow-2xl">

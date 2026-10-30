@@ -282,3 +282,12 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Lisätty `explanation`-kenttä kaikkiin kysymystyyppeihin (Monivalinta, Kyllä/Ei, Avoin kysymys) WYSIWYG-filosofiaa noudattaen: huomaamaton lisäyspainike, visuaalinen "NÄKYY VASTA PALJASTETTAESSA" -kehys ja automaattinen `💡 Huomioita / Selitys` -laatikko paljastuksen yhteydessä.
     - Piilotettu "Odotetaan vastauksia..." -teksti avoimessa kysymyksessä, kun vastaukset on jo paljastettu.
     - Lisätty editorin esikatseluun live-paljastustesti (`Space` tai kelluva kytkin).
+
+- [x] **8.4 Jaettu SlideNotes-komponentti, Huomioita-terminologia ja esikatselun reaaliaikainen simulaatio**
+  - **Prioriteetti:** Keskitaso / Viimeistely
+  - **Tiedostot:** `client/src/components/slide/SlideNotes.tsx`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/EditorView.tsx`, `client/src/i18n/locales/`
+  - **Toimenpiteet:**
+    - Karsittu toistavat selitelaatikot: pidetty vain selkeä `👁️ NÄKYY VASTA VASTAUSTEN PALJASTUTTUA` -tunniste ja puhdas "Huomioita"-otsikko ilman sulkulausekkeita.
+    - Yhtenäistetty terminologia kauttaaltaan: kaikissa kysymysmuodoissa aina "Huomioita", luovuttu erillisestä sanasta "Mallivastaus".
+    - Luotu erillinen jaettu komponentti `SlideNotes.tsx`, joka yhdenmukaistaa ulkoasun ja lämpimän huomiovärin (`bg-amber-50/80 border-amber-300`) kaikkiin kysymystyyppeihin.
+    - Rakennettu editorin esikatselutilaan luentosalisimulaatio: monivalinnassa/kyllä-ei:ssä generoidaan realistiset äänet prosenttipalkkien ja vihreän oikean vastauksen animoimiseksi, ja avoimessa kysymyksessä vastaukset ilmestyvät porrastetusti dynaamisilla viiveillä.
