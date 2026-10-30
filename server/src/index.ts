@@ -184,6 +184,16 @@ io.on('connection', (socket: Socket) => {
     socket.to(roomId).emit('SLIDE_UPDATE', payload);
   });
 
+  // Teacher switches to a new case in the same room: clear room answers
+  socket.on('CLEAR_ROOM_ANSWERS', ({ roomId }: { roomId: string }) => {
+    const room = rooms.get(roomId);
+    if (!room || room.teacherSocketId !== socket.id) return;
+    room.answers = [];
+    room.currentPayload = null;
+    room.lastActivity = Date.now();
+    socket.emit('ANSWERS_UPDATE', []);
+  });
+
 
   // --- 2. STUDENT ACTIONS ---
 

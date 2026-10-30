@@ -83,6 +83,13 @@
     "closeImageHint": "Klikkaa mitä tahansa tai paina Esc sulkeaksesi",
     "fullscreen": "Koko näyttö",
     "exitFullscreen": "Poistu koko näytöstä",
+    "switchCase": "Vaihda seuraava tapaus",
+    "switchCaseTitle": "Vaihda esitettävä tapaus",
+    "switchCaseDesc": "Huonekoodi ja liittyneet opiskelijat säilyvät ennallaan.",
+    "dragFileHere": "Raahaa .medcase-tiedosto tähän",
+    "orSelectFromDevice": "tai valitse tiedosto koneelta",
+    "supportedFormats": "Tuetut tiedostomuodot: .medcase, .zip",
+    "openingRoom": "Avataan huonetta...",
     "tryReveal": "Kokeile paljastusta",
     "tryHide": "Piilota paljastus",
     "explanationTitle": "Huomioita"

@@ -2,23 +2,25 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
-    Home, 
-    Stethoscope, 
     Eye, 
     EyeOff, 
     PanelRightClose, 
     PanelRightOpen, 
-    QrCode, 
+    QrCode,
     ChevronLeft, 
     ChevronRight, 
-    Maximize,
-    Minimize,
-    WifiOff,
-    LogOut
+    Maximize, 
+    Minimize, 
+    WifiOff, 
+    LogOut,
+    FolderOpen,
+    MonitorPlay
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useUI } from '../context/UIContext';
 import { Modal } from '../components/common/Modal';
+import { FilePickerView } from '../components/common/FilePickerView';
+import { CaseFileDropzone } from '../components/common/CaseFileDropzone';
 import { loadCaseFromZip, revokeImageUrls, CaseValidationError } from '../utils/fileHelpers';
 import { SlideRenderer } from '../components/SlideRenderer';
 import { useTeacherSession, TEACHER_SESSION_KEY } from '../hooks/useTeacherSession';
@@ -59,62 +61,90 @@ export const TeacherView = () => {
     // If no data, show upload screen
     if (!caseData) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4 relative">
-                <button
-                    onClick={() => navigate('/', { state: { tab: 'teacher' } })}
-                    className="absolute top-4 left-4 bg-white p-2 rounded-full shadow hover:bg-gray-50 text-2xl"
-                    title={t('common.home')}
-                >
-                    <Home size={24} />
-                </button>
-                <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full text-center">
-                    <h1 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">{t('teacher.viewTitle')} <Stethoscope size={24} /></h1>
-                    <p className="text-gray-500 mb-6">{t('teacher.uploadFile')}</p>
-
-                    <label className="block w-full border-2 border-dashed border-blue-300 rounded-lg p-8 cursor-pointer hover:bg-blue-50 transition-colors">
-                        <span className="text-blue-600 font-bold">{t('teacher.selectFile')}</span>
-                        <input
-                            type="file"
-                            className="hidden"
-                            accept=".medcase,.zip"
-                            onChange={async (e) => {
-                                if (e.target.files?.[0]) {
-                                    try {
-                                        revokeImageUrls(imagesRef.current);
-                                        const result = await loadCaseFromZip(e.target.files[0]);
-                                        setImages(result.images);
-                                        setCaseData(result.caseData);
-                                    } catch (e) {
-                                        console.error("Load failed", e);
-                                        const message = e instanceof CaseValidationError
-                                            ? String(t(`errors.${e.code}`, e.params || { defaultValue: e.message }))
-                                            : (e instanceof Error ? e.message : t('teacher.uploadFailedMsg'));
-                                        showAlert({
-                                            title: t('teacher.uploadFailed'),
-                                            message,
-                                            variant: 'destructive'
-                                        });
-                                    }
-                                }
-                            }}
-                        />
-                    </label>
-                </div>
-            </div>
+            <FilePickerView
+                title={t('landing.presentCase', { defaultValue: 'Esitä potilastapaus' })}
+                subtitle={t('landing.presentCaseDesc', { defaultValue: 'Avaa .medcase-tiedosto ja heijasta se valkokankaalle.' })}
+                onFileSelected={async (file) => {
+                    try {
+                        revokeImageUrls(imagesRef.current);
+                        const result = await loadCaseFromZip(file);
+                        setImages(result.images);
+                        setCaseData(result.caseData);
+                    } catch (e) {
+                        console.error("Load failed", e);
+                        const message = e instanceof CaseValidationError
+                            ? String(t(`errors.${e.code}`, e.params || { defaultValue: e.message }))
+                            : (e instanceof Error ? e.message : t('teacher.uploadFailedMsg'));
+                        showAlert({
+                            title: t('teacher.uploadFailed'),
+                            message,
+                            variant: 'destructive'
+                        });
+                    }
+                }}
+                onBack={() => navigate('/', { state: { tab: 'teacher' } })}
+                variant="emerald"
+                badgeIcon={
+                    <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-sm">
+                        <MonitorPlay size={28} />
+                    </div>
+                }
+            />
         );
     }
 
-    return <Dashboard caseData={caseData} images={images} onExit={handleExit} />;
+    return <Dashboard initialCaseData={caseData} initialImages={images} onExit={handleExit} />;
 };
 
 // Actual session
-const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images: Record<string, string>, onExit: () => void }) => {
+const Dashboard = ({ 
+    initialCaseData, 
+    initialImages, 
+    onExit 
+}: { 
+    initialCaseData: PatientCase; 
+    initialImages: Record<string, string>; 
+    onExit: () => void; 
+}) => {
     const { t } = useTranslation();
-    const { showConfirm } = useUI();
-    const session = useTeacherSession(caseData);
+    const { showConfirm, showAlert } = useUI();
+    const [images, setImages] = useState<Record<string, string>>(initialImages);
+    const imagesRef = useRef<Record<string, string>>(initialImages);
+    imagesRef.current = images;
+
+    const session = useTeacherSession(initialCaseData);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [showQrModal, setShowQrModal] = useState(false);
+    const [showSwitchCaseModal, setShowSwitchCaseModal] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(!!document.fullscreenElement);
+
+    // Clean up all object URLs when dashboard unmounts
+    useEffect(() => {
+        return () => {
+            revokeImageUrls(imagesRef.current);
+        };
+    }, []);
+
+    const handleSwitchCaseFile = async (file: File) => {
+        try {
+            const result = await loadCaseFromZip(file);
+            revokeImageUrls(imagesRef.current);
+            setImages(result.images);
+            imagesRef.current = result.images;
+            session.switchCase(result.caseData);
+            setShowSwitchCaseModal(false);
+        } catch (e) {
+            console.error("Load failed", e);
+            const message = e instanceof CaseValidationError
+                ? String(t(`errors.${e.code}`, e.params || { defaultValue: e.message }))
+                : (e instanceof Error ? e.message : t('teacher.uploadFailedMsg'));
+            showAlert({
+                title: t('teacher.uploadFailed'),
+                message,
+                variant: 'destructive'
+            });
+        }
+    };
 
     useEffect(() => {
         const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
@@ -150,6 +180,8 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
             } else if (e.key === 'Escape') {
                 if (showQrModal) {
                     setShowQrModal(false);
+                } else if (showSwitchCaseModal) {
+                    setShowSwitchCaseModal(false);
                 }
             } else if (e.key === 'Tab') {
                 e.preventDefault();
@@ -171,27 +203,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [session, showQrModal]);
-
-    if (!session.roomId) {
-        return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-800 text-white">
-                <h1 className="text-4xl font-bold mb-4">{caseData.meta.title}</h1>
-                <p className="mb-8 text-gray-300">{t('teacher.slidesReady', { count: caseData.slides.length })}</p>
-                {session.error && (
-                    <div className="mb-6 bg-red-500/20 border border-red-500 text-red-200 px-6 py-3 rounded-xl max-w-md text-center">
-                        {session.error}
-                    </div>
-                )}
-                <button
-                    onClick={session.createRoom}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg shadow-emerald-950/30 transform transition-all hover:scale-105 active:scale-95 cursor-pointer"
-                >
-                    {t('teacher.openRoom')}
-                </button>
-            </div>
-        );
-    }
+    }, [session, showQrModal, showSwitchCaseModal]);
 
     return (
         <div className="flex h-screen bg-gray-900 text-white overflow-hidden relative">
@@ -342,13 +354,22 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
 
                     <div className="bg-gray-900/60 p-4 rounded-2xl border border-gray-700/80 mb-6 text-center shadow-inner">
                         <div className="text-xs text-gray-400 uppercase font-bold tracking-wider">{t('teacher.roomCode')}</div>
-                        <div className="text-5xl font-mono font-bold text-white tracking-widest my-2">{session.roomId}</div>
+                        {session.roomId ? (
+                            <>
+                                <div className="text-5xl font-mono font-bold text-white tracking-widest my-2">{session.roomId}</div>
 
-                        <div className="flex justify-center my-3 bg-white p-2.5 rounded-xl shadow-md w-fit mx-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => setShowQrModal(true)} title={t('teacher.roomCode')}>
-                            <QRCodeSVG value={`${window.location.origin}${import.meta.env.BASE_URL}?room=${session.roomId}`} size={128} />
-                        </div>
+                                <div className="flex justify-center my-3 bg-white p-2.5 rounded-xl shadow-md w-fit mx-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => setShowQrModal(true)} title={t('teacher.roomCode')}>
+                                    <QRCodeSVG value={`${window.location.origin}${import.meta.env.BASE_URL}?room=${session.roomId}`} size={128} />
+                                </div>
 
-                        <div className="text-emerald-400 font-bold text-sm">{t('teacher.studentsOnline', { count: session.studentCount })}</div>
+                                <div className="text-emerald-400 font-bold text-sm">{t('teacher.studentsOnline', { count: session.studentCount })}</div>
+                            </>
+                        ) : (
+                            <div className="py-6 flex flex-col items-center justify-center gap-2.5">
+                                <div className="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+                                <span className="text-xs text-gray-400 font-medium animate-pulse">{t('teacher.openingRoom', { defaultValue: 'Avataan huonetta...' })}</span>
+                            </div>
+                        )}
                     </div>
 
                     <div className="flex-1 overflow-y-auto mb-4">
@@ -414,6 +435,22 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                             </button>
                         </div>
 
+                        {session.currentIndex === session.totalSlides - 1 && (
+                            <div className="bg-emerald-950/40 border border-emerald-800/60 text-emerald-300 py-2 px-3 rounded-xl text-center text-xs font-bold mt-2 animate-fade-in">
+                                {t('teacher.lastSlideHint', { defaultValue: 'Tapauksen viimeinen dia' })}
+                            </div>
+                        )}
+
+                        {/* Switch case button */}
+                        <button
+                            type="button"
+                            onClick={() => setShowSwitchCaseModal(true)}
+                            className="w-full py-2.5 px-3 rounded-xl font-bold text-xs bg-gray-750 hover:bg-gray-700 text-gray-200 hover:text-white border border-gray-650 transition-all cursor-pointer shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 mt-2"
+                        >
+                            <FolderOpen size={16} className="text-emerald-400" />
+                            <span>{t('teacher.switchCase', { defaultValue: 'Vaihda seuraava tapaus' })}</span>
+                        </button>
+
                         <button
                             onClick={async () => {
                                 const confirmed = await showConfirm({
@@ -430,7 +467,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                                     onExit();
                                 }
                             }}
-                            className="w-full py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-wider bg-red-950/40 hover:bg-red-900/60 text-red-300 hover:text-red-100 border border-red-900/50 hover:border-red-700/60 transition-all cursor-pointer shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 mt-4"
+                            className="w-full py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-wider bg-red-950/40 hover:bg-red-900/60 text-red-300 hover:text-red-100 border border-red-900/50 hover:border-red-700/60 transition-all cursor-pointer shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 mt-2"
                         >
                             <LogOut size={16} />
                             <span>{t('teacher.endSession')}</span>
@@ -459,6 +496,46 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                     <p className="text-xs text-gray-400 break-all select-all font-mono bg-gray-950/60 p-2.5 rounded-xl border border-gray-800">
                         {`${window.location.origin}${import.meta.env.BASE_URL}?room=${session.roomId}`}
                     </p>
+                </div>
+            </Modal>
+
+            {/* Switch Case Modal */}
+            <Modal
+                isOpen={showSwitchCaseModal}
+                onClose={() => setShowSwitchCaseModal(false)}
+                maxWidth="md"
+                showCloseButton
+                theme="dark"
+            >
+                <div className="p-6 sm:p-7">
+                    <div className="flex items-center gap-3.5 mb-5">
+                        <div className="w-11 h-11 rounded-xl bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                            <FolderOpen size={24} />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-white leading-tight">
+                                {t('teacher.switchCaseTitle', { defaultValue: 'Vaihda esitettävä tapaus' })}
+                            </h3>
+                            <p className="text-xs text-gray-400 mt-1 font-medium">
+                                {t('teacher.switchCaseDesc', { defaultValue: 'Huonekoodi ja liittyneet opiskelijat säilyvät ennallaan.' })}
+                            </p>
+                        </div>
+                    </div>
+
+                    <CaseFileDropzone
+                        variant="emerald"
+                        onFileSelected={handleSwitchCaseFile}
+                    />
+
+                    <div className="mt-4 flex justify-end">
+                        <button
+                            type="button"
+                            onClick={() => setShowSwitchCaseModal(false)}
+                            className="px-4 py-2 rounded-xl text-xs font-bold text-gray-400 hover:text-white hover:bg-gray-800 transition-colors cursor-pointer"
+                        >
+                            {t('common.cancel')}
+                        </button>
+                    </div>
                 </div>
             </Modal>
         </div>

@@ -14,14 +14,18 @@ interface StoredTeacherSession {
     caseId: string;
 }
 
-export const useTeacherSession = (patientCase: PatientCase | null) => {
+export const useTeacherSession = (initialCase: PatientCase | null) => {
+    const [patientCase, setPatientCase] = useState<PatientCase | null>(initialCase);
+    const patientCaseRef = useRef<PatientCase | null>(initialCase);
+    patientCaseRef.current = patientCase;
+
     const getInitialSavedSession = (): StoredTeacherSession | null => {
-        if (!patientCase?.meta.id) return null;
+        if (!initialCase?.meta.id) return null;
         try {
             const raw = sessionStorage.getItem(TEACHER_SESSION_KEY);
             if (!raw) return null;
             const parsed = JSON.parse(raw);
-            if (parsed && parsed.roomId && parsed.teacherSecret && parsed.caseId === patientCase.meta.id) {
+            if (parsed && parsed.roomId && parsed.teacherSecret && parsed.caseId === initialCase.meta.id) {
                 return parsed as StoredTeacherSession;
             }
         } catch {
@@ -55,7 +59,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         savedSession ? { roomId: savedSession.roomId, teacherSecret: savedSession.teacherSecret } : null
     );
 
-    // Connection
+    // Connection - runs on mount, auto-connects and auto-creates room if not yet created
     useEffect(() => {
         const newSocket = io(SOCKET_URL, {
             path: `${import.meta.env.BASE_URL}/socket.io`.replace('//', '/')
@@ -66,9 +70,11 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         newSocket.on('connect', () => {
              setIsConnected(true);
              setError(null);
-             // If we already have a room info, we are likely reconnecting.
+             // Reconnect if room info exists in session storage, otherwise auto-create room
              if (roomInfoRef.current) {
                  newSocket.emit('RECONNECT_TEACHER', roomInfoRef.current);
+             } else {
+                 newSocket.emit('CREATE_ROOM');
              }
         });
 
@@ -80,12 +86,13 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
              setError(null);
              setRoomId(roomId);
              roomInfoRef.current = { roomId, teacherSecret };
-             if (patientCase?.meta.id) {
+             const activeCase = patientCaseRef.current;
+             if (activeCase?.meta.id) {
                  try {
                      sessionStorage.setItem(TEACHER_SESSION_KEY, JSON.stringify({
                          roomId,
                          teacherSecret,
-                         caseId: patientCase.meta.id
+                         caseId: activeCase.meta.id
                      }));
                  } catch (e) {
                      console.error("Failed to persist teacher session", e);
@@ -96,8 +103,9 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         newSocket.on('TEACHER_RECONNECTED', ({ roomId, currentSlideId }: { roomId: string, currentSlideId?: string }) => {
              setError(null);
              setRoomId(roomId);
-             if (currentSlideId && patientCase) {
-                 const targetIdx = patientCase.slides.findIndex(s => s.id === currentSlideId);
+             const activeCase = patientCaseRef.current;
+             if (currentSlideId && activeCase) {
+                 const targetIdx = activeCase.slides.findIndex(s => s.id === currentSlideId);
                  if (targetIdx !== -1) {
                      setCurrentIndex(targetIdx);
                  }
@@ -116,13 +124,14 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         });
 
         return () => { newSocket.disconnect(); };
-    }, [patientCase]);
+    }, []);
 
     // Broadcast logic
     const broadcastCurrentSlide = useCallback(() => {
         if (!socketRef.current || !roomId || !patientCase) return;
 
         const currentSlide = patientCase.slides[currentIndex];
+        if (!currentSlide) return;
         const payload: StudentPayload = createStudentPayload(currentSlide, slideState);
 
         socketRef.current.emit('PUSH_UPDATE', { 
@@ -134,13 +143,36 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
 
     // React to state changes
     useEffect(() => {
-        if (roomId) broadcastCurrentSlide();
-    }, [currentIndex, slideState, roomId, broadcastCurrentSlide]);
+        if (roomId && patientCase) broadcastCurrentSlide();
+    }, [currentIndex, slideState, roomId, patientCase, broadcastCurrentSlide]);
 
     // Actions
     const createRoom = () => {
         setError(null);
         socketRef.current?.emit('CREATE_ROOM');
+    };
+
+    const switchCase = (newCase: PatientCase) => {
+        setPatientCase(newCase);
+        patientCaseRef.current = newCase;
+        setCurrentIndex(0);
+        setSlideStates({});
+        setOpenTextRevealed({});
+        setAnswers([]);
+        setError(null);
+
+        if (roomId && roomInfoRef.current) {
+            try {
+                sessionStorage.setItem(TEACHER_SESSION_KEY, JSON.stringify({
+                    roomId,
+                    teacherSecret: roomInfoRef.current.teacherSecret,
+                    caseId: newCase.meta.id
+                }));
+            } catch (e) {
+                console.error("Failed to update teacher session storage", e);
+            }
+            socketRef.current?.emit('CLEAR_ROOM_ANSWERS', { roomId });
+        }
     };
 
     const nextSlide = () => {
@@ -194,6 +226,7 @@ export const useTeacherSession = (patientCase: PatientCase | null) => {
         toggleOpenTextReveal,
         answers,
         createRoom,
+        switchCase,
         nextSlide,
         prevSlide,
         revealAnswer,

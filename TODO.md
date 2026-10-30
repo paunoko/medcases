@@ -350,3 +350,12 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Harmonisoitu opiskelijan huonekoodikortin mitat ja muotoilu vastaamaan täsmälleen opettajan korttia (`w-full`, `rounded-3xl`, `shadow-xl shadow-slate-200/60`, `animate-fade-in`), säilyttäen selkeä vakiintunut terminologia ("Huonekoodi").
     - Lisätty hienovarainen lääketieteellisen moderni taustaliukuväri (`from-slate-50 via-blue-50/20 to-slate-100/60`) ja pehmeä valokehä (`ambient glow blur`).
     - Lisätty käyttäjän roolivalinnan pysyväismuisti (`localStorage` avaimella `medcases_selected_role`): ensikertalaiselle oletus on opiskelija, mutta opettajan läppärillä valinta muistetaan pysyvästi ilman uudelleenvalintaa.
+
+- [x] **8.11 Työkalujen siirtymien uudistus: moderni tiedostonavaus, suora esityksen aloitus ja monitapauksisuus samalla huonekoodilla**
+  - **Prioriteetti:** Korkea / UX & Opetustilanteen jatkuvuus
+  - **Tiedostot:** `client/src/components/common/CaseFileDropzone.tsx`, `client/src/components/common/FilePickerView.tsx`, `client/src/components/common/LanguageSlider.tsx`, `client/src/views/TeacherView.tsx`, `client/src/views/EditorView.tsx`, `client/src/views/LandingView.tsx`, `client/src/hooks/useTeacherSession.ts`, `server/src/index.ts`, `client/src/i18n/locales/`
+  - **Ongelma:** Olemassa olevaa tiedostoa avattaessa näkymä oli karu harmaa ikkuna irrallisella nurkkapainikkeella. Esitysmoodiin siirryttäessä vastaan tuli synkkä umpikujaruutu ("Avaa huone") ilman peruutusmahdollisuutta. Lisäksi jokainen uusi tapaus vaati uuden huonekoodin ja opiskelijoiden uudelleenliittymisen.
+  - **Toimenpiteet:**
+    - Luotu jaettu, moderni `FilePickerView`- ja `CaseFileDropzone`-komponentti: sisältää täyden MedCases-yläpalkin ("Etusivulle"-painike, brändi, kielivalitsin), hienovaraisen gradienttitaustan sekä houkuttelevan Drag & Drop -pudotusalueen.
+    - Poistettu TeacherView'n synkkä "Avaa huone" -välinäyttö: huone luodaan automaattisesti socket-yhteyden kytkeytyessä, ja esityskangas aukeaa välittömästi ensimmäiseen diaan samalla kun sivupalkki kytkee PIN- ja QR-koodit.
+    - Toteutettu monitapauksisuus samalla huonekoodilla (`switchCase`): opettaja voi vaihtaa seuraavaan `.medcase`-tiedostoon suoraan esityksen sivupalkista. Huonekoodi ja kaikki liittyneet opiskelijat säilyvät salissa, ja palvelimen vastausmuisti nollataan puhtaasti uutta tapausta varten (`CLEAR_ROOM_ANSWERS`).

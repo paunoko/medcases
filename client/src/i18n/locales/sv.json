@@ -83,6 +83,13 @@
     "closeImageHint": "Klicka var som helst eller tryck på Esc för att stänga",
     "fullscreen": "Helskärm",
     "exitFullscreen": "Lämna helskärm",
+    "switchCase": "Byt till nästa fall",
+    "switchCaseTitle": "Byt aktivt fall",
+    "switchCaseDesc": "Rumskoden och anslutna studenter behålls.",
+    "dragFileHere": "Dra .medcase-fil hit",
+    "orSelectFromDevice": "eller välj fil från datorn",
+    "supportedFormats": "Format som stöds: .medcase, .zip",
+    "openingRoom": "Öppnar rum...",
     "tryReveal": "Prova avslöja",
     "tryHide": "Dölj avslöjande",
     "explanationTitle": "Anteckningar"

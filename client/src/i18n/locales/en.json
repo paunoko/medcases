@@ -83,6 +83,13 @@
     "closeImageHint": "Click anywhere or press Esc to close",
     "fullscreen": "Fullscreen",
     "exitFullscreen": "Exit fullscreen",
+    "switchCase": "Switch to next case",
+    "switchCaseTitle": "Switch active case",
+    "switchCaseDesc": "The room code and connected students are preserved.",
+    "dragFileHere": "Drag .medcase file here",
+    "orSelectFromDevice": "or select file from device",
+    "supportedFormats": "Supported formats: .medcase, .zip",
+    "openingRoom": "Opening room...",
     "tryReveal": "Try reveal",
     "tryHide": "Hide reveal",
     "explanationTitle": "Notes"

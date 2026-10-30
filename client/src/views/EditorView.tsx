@@ -5,6 +5,7 @@ import { useCaseEditor } from '../hooks/useCaseEditor';
 import { Home, Pencil, Eye, EyeOff, PanelRightClose, PanelRightOpen, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus, CheckCircle2, FileText } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 import { Modal } from '../components/common/Modal';
+import { FilePickerView } from '../components/common/FilePickerView';
 import { SlideRenderer } from '../components/SlideRenderer';
 import { SlideContainer } from '../components/slide/SlideContainer';
 import { SlideTitle } from '../components/slide/SlideTitle';
@@ -238,29 +239,18 @@ export const EditorView = () => {
 
   if (isEditMode && !hasLoaded) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4 relative">
-        <button
-          onClick={() => navigate('/', { state: { tab: 'teacher' } })}
-          className="absolute top-4 left-4 bg-white p-2 rounded-full shadow hover:bg-gray-50 text-2xl"
-          title={t('common.home')}
-        >
-          <Home size={24} />
-        </button>
-        <div className="bg-white p-8 rounded-xl shadow-xl max-w-md w-full text-center">
-          <h1 className="text-2xl font-bold mb-2 flex items-center justify-center gap-2">{t('editor.viewTitle')} <Pencil size={24} /></h1>
-          <p className="text-gray-500 mb-6">{t('editor.loadFile')}</p>
-
-          <label className="block w-full border-2 border-dashed border-blue-300 rounded-lg p-8 cursor-pointer hover:bg-blue-50 transition-colors">
-            <span className="text-blue-600 font-bold">{t('editor.selectFile')}</span>
-            <input
-              type="file"
-              className="hidden"
-              accept=".medcase,.zip"
-              onChange={(e) => e.target.files?.[0] && onFileLoad(e.target.files[0])}
-            />
-          </label>
-        </div>
-      </div>
+      <FilePickerView
+        title={t('landing.editExisting', { defaultValue: 'Muokkaa tapausta' })}
+        subtitle={t('landing.editExistingDesc', { defaultValue: 'Avaa aiemmin tallennettu .medcase-tiedosto muokattavaksi.' })}
+        onFileSelected={onFileLoad}
+        onBack={() => navigate('/', { state: { tab: 'teacher' } })}
+        variant="blue"
+        badgeIcon={
+          <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center shadow-sm">
+            <Pencil size={28} />
+          </div>
+        }
+      />
     );
   }
 
