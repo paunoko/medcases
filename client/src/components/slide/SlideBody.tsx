@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { useResizeText } from '../../hooks/useResizeText';
 import { Trash2, ImagePlus, Maximize2, X } from 'lucide-react';
 
 interface Props {
@@ -26,8 +26,6 @@ export const SlideBody: React.FC<Props> = ({
   const effectivePlaceholder = placeholder || t('editor.slideContentPlaceholder');
   const contentRef = useRef<any>(null); // HTMLDivElement or HTMLTextAreaElement
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-
-  useResizeText(contentRef, [content, imageUrl]);
 
   // Close lightbox on Escape key
   useEffect(() => {
@@ -132,8 +130,8 @@ export const SlideBody: React.FC<Props> = ({
         </div>
       )}
 
-      {/* LIGHTBOX FULLSCREEN MODAL (View mode only) */}
-      {isLightboxOpen && imageUrl && (
+      {/* LIGHTBOX FULLSCREEN MODAL (View mode only, rendered to body via Portal) */}
+      {isLightboxOpen && imageUrl && typeof document !== 'undefined' && createPortal(
         <div
           className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out animate-fade-in"
           onClick={() => setIsLightboxOpen(false)}
@@ -156,7 +154,8 @@ export const SlideBody: React.FC<Props> = ({
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/70 text-sm font-medium bg-gray-900/80 border border-gray-700/60 px-4 py-1.5 rounded-full pointer-events-none shadow-lg">
             {t('teacher.closeImageHint')}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );

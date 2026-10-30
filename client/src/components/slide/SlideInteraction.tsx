@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import type { CaseSlide, Option } from '../../types';
+import { OptionCard } from './OptionCard';
 
 interface Props {
   slide: CaseSlide;
@@ -100,7 +101,7 @@ export const SlideInteraction: React.FC<Props> = ({
 
       {/* INTERACTION ELEMENTS */}
       {(slide.type === 'MULTIPLE_CHOICE' || slide.type === 'TRUE_FALSE') && (
-        <div className="flex flex-wrap gap-4">
+        <div className="grid grid-cols-2 gap-5 w-full">
           {/* Options List */}
           {(slide.type === 'TRUE_FALSE' && !isEdit
             ? [
@@ -112,138 +113,41 @@ export const SlideInteraction: React.FC<Props> = ({
             const percent = getPercentage(opt.id);
             const isCorrect = opt.isCorrect;
 
-            if (isEdit) {
-              return (
-                <div key={i} className={`relative p-6 border-4 flex-1 min-w-[200px] min-h-[96px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm transition-all focus-within:border-blue-500 ${opt.isCorrect ? 'border-emerald-500 bg-emerald-50/70' : 'border-gray-200 bg-white hover:border-gray-300'}`}>
-                  <div className="flex w-full items-start gap-4">
-                    {slide.type === 'MULTIPLE_CHOICE' && (
-                      <span className="w-8 h-8 rounded-lg bg-gray-100 border border-gray-200 font-bold text-gray-700 flex items-center justify-center text-sm shrink-0 mt-1 select-none shadow-sm">
-                        {String.fromCharCode(65 + i)}
-                      </span>
-                    )}
-                    {!(slide as any).allowMultiple && slide.type === 'MULTIPLE_CHOICE' ? (
-                      <input
-                        type="radio"
-                        name={`correct-opt-${slide.id}`}
-                        className="w-8 h-8 mt-1 shrink-0 accent-emerald-600 cursor-pointer"
-                        checked={!!opt.isCorrect}
-                        onChange={() => {
-                          const opts = (slide as any).options.map((o: Option, idx: number) => ({
-                            ...o,
-                            isCorrect: idx === i
-                          }));
-                          onUpdate?.('options', opts);
-                        }}
-                        title={t('editor.markAsCorrect')}
-                      />
-                    ) : (
-                      <input
-                        type="checkbox"
-                        className="w-8 h-8 mt-1 rounded shrink-0 accent-emerald-600 cursor-pointer"
-                        checked={opt.isCorrect}
-                        onChange={e => {
-                          const opts = [...(slide as any).options];
-                          opts[i].isCorrect = e.target.checked;
-                          onUpdate?.('options', opts);
-                        }}
-                        title={t('editor.markAsCorrect')}
-                      />
-                    )}
-                    <textarea
-                      rows={2}
-                      className="font-bold text-2xl flex-1 bg-transparent focus:outline-none w-full resize-none leading-tight text-gray-900"
-                      placeholder={t('editor.optionPlaceholder')}
-                      value={opt.text}
-                      onChange={e => {
-                        const opts = [...(slide as any).options];
-                        opts[i].text = e.target.value;
-                        onUpdate?.('options', opts);
-                      }}
-                    />
-                    {opt.isCorrect && (
-                      <span className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-md border border-emerald-300 uppercase tracking-wider shrink-0 mt-1">
-                        <CheckCircle2 size={14} className="stroke-[2.5]" />
-                        {t('teacher.correctAnswerBadge')}
-                      </span>
-                    )}
-                    <button
-                      className="text-gray-400 hover:text-red-500 shrink-0 p-2 cursor-pointer transition-colors"
-                      onClick={() => {
-                        const opts = (slide as any).options.filter((_: any, idx: number) => idx !== i);
-                        onUpdate?.('options', opts);
-                      }}
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
-                </div>
-              );
-            }
-
             return (
-              <div 
-                key={opt.id} 
-                className={`relative p-6 border-4 flex-1 min-w-[200px] min-h-[96px] basis-full lg:basis-[calc(50%-1rem)] 2xl:basis-[calc(25%-1rem)] rounded-2xl flex items-center shadow-sm overflow-visible transition-colors duration-300 ${
-                  isRevealed && isCorrect 
-                    ? 'border-emerald-600 bg-emerald-50/90 ring-4 ring-emerald-500/20 shadow-md' 
-                    : isRevealed 
-                      ? 'border-gray-200 bg-gray-50/60' 
-                      : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                {/* Result bar in background with smooth animated width and crisp edge */}
-                <div
-                  className={`absolute inset-0 h-full transition-all duration-1000 ease-out rounded-xl overflow-hidden pointer-events-none ${
-                    isRevealed && isCorrect 
-                      ? 'bg-emerald-200/80 border-r-4 border-emerald-600' 
-                      : isRevealed 
-                        ? 'bg-blue-100/90 border-r-4 border-blue-500' 
-                        : 'w-0'
-                  }`}
-                  style={{ width: isRevealed ? `${percent}%` : '0%' }}
-                />
-
-                {/* Floating "Oikea vastaus" ribbon badge on top border (does not shift text width or card height) */}
-                {isRevealed && isCorrect && (
-                  <div className="absolute -top-3.5 left-6 z-20 flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-600 text-white font-black text-xs uppercase tracking-wider shadow-md">
-                    <CheckCircle2 size={14} className="stroke-[3]" />
-                    <span>{t('teacher.correctAnswerBadge')}</span>
-                  </div>
-                )}
-
-                <div className="relative z-10 flex w-full justify-between items-center gap-4">
-                  {/* Option letter badge A, B, C, D... for MULTIPLE_CHOICE */}
-                  {slide.type === 'MULTIPLE_CHOICE' && (
-                    <div className={`w-11 h-11 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center font-black text-xl lg:text-2xl shrink-0 transition-colors shadow-sm select-none ${
-                      isRevealed && isCorrect
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-white border-2 border-gray-200 text-blue-950'
-                    }`}>
-                      {String.fromCharCode(65 + i)}
-                    </div>
-                  )}
-
-                  {/* Option text: constant font-bold and width so text NEVER re-wraps when revealed */}
-                  <span className={`text-2xl lg:text-3xl flex-1 break-words whitespace-pre-wrap leading-snug tracking-tight font-bold ${
-                    isRevealed && isCorrect ? 'text-emerald-950' : 'text-gray-900'
-                  }`}>
-                    {opt.text}
-                  </span>
-
-                  {/* Dedicated percentage badge slot: reserved fixed width so text column width NEVER changes */}
-                  <div className="w-24 lg:w-28 shrink-0 flex items-center justify-end">
-                    <span className={`text-2xl lg:text-3xl font-black px-3.5 py-1.5 rounded-xl border-2 shadow-sm font-mono transition-opacity duration-500 ${
-                      !isRevealed 
-                        ? 'opacity-0 select-none pointer-events-none' 
-                        : isCorrect
-                          ? 'opacity-100 bg-emerald-600 text-white border-emerald-700'
-                          : 'opacity-100 bg-white text-blue-950 border-blue-200'
-                    }`}>
-                      {percent}%
-                    </span>
-                  </div>
-                </div>
-              </div>
+              <OptionCard
+                key={opt.id || i}
+                id={opt.id}
+                index={i}
+                text={opt.text}
+                isCorrect={isCorrect}
+                mode={mode}
+                slideType={slide.type as 'MULTIPLE_CHOICE' | 'TRUE_FALSE'}
+                allowMultiple={!!(slide as any).allowMultiple}
+                percent={percent}
+                isRevealed={isRevealed}
+                onTextChange={newText => {
+                  const opts = [...(slide as any).options];
+                  opts[i].text = newText;
+                  onUpdate?.('options', opts);
+                }}
+                onCorrectChange={checked => {
+                  if (!(slide as any).allowMultiple) {
+                    const opts = (slide as any).options.map((o: Option, idx: number) => ({
+                      ...o,
+                      isCorrect: idx === i
+                    }));
+                    onUpdate?.('options', opts);
+                  } else {
+                    const opts = [...(slide as any).options];
+                    opts[i].isCorrect = checked;
+                    onUpdate?.('options', opts);
+                  }
+                }}
+                onDelete={() => {
+                  const opts = (slide as any).options.filter((_: any, idx: number) => idx !== i);
+                  onUpdate?.('options', opts);
+                }}
+              />
             );
           })}
 
@@ -251,7 +155,7 @@ export const SlideInteraction: React.FC<Props> = ({
           {isEdit && slide.type === 'MULTIPLE_CHOICE' && (
             <button
               onClick={() => onUpdate?.('options', [...(slide.options || []), { id: Math.random().toString(), text: '', isCorrect: false }])}
-              className="p-6 border-4 border-dashed border-gray-300 rounded-2xl flex-1 min-w-[250px] text-gray-500 font-bold text-2xl hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center bg-gray-50 hover:bg-blue-50"
+              className="p-5 border-2 sm:border-3 border-dashed border-gray-300 rounded-2xl w-full min-h-[104px] text-gray-500 font-bold text-xl hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center bg-gray-50/70 hover:bg-blue-50 cursor-pointer"
             >
               {t('editor.addOption')}
             </button>
@@ -259,7 +163,7 @@ export const SlideInteraction: React.FC<Props> = ({
 
           {/* True/False Specific Edit (Correct Answer Toggle) */}
           {isEdit && slide.type === 'TRUE_FALSE' && (
-            <div className="flex items-center gap-6 p-6 border-4 border-gray-200 rounded-2xl bg-gray-50 flex-1 hover:border-blue-300 transition-colors">
+            <div className="col-span-2 flex items-center gap-6 p-6 border-2 sm:border-3 border-gray-200 rounded-2xl bg-gray-50 w-full hover:border-blue-300 transition-colors">
               <span className="font-bold text-2xl text-gray-700 uppercase tracking-wider">{t('editor.correctAnswer')}</span>
               <select
                 className="flex-1 text-2xl font-bold bg-white border-2 border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:outline-none shadow-sm cursor-pointer"

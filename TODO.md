@@ -249,3 +249,25 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Caddy hoitaa Let's Encrypt -SSL-sertifikaattien luomisen ja uusimisen automaattisesti ilman certbot-skriptejä.
     - Kirjoitettu kattava `DEPLOYMENT.md` mitoitusoppaineen (RAM, CPU, kaistanleveys), Nginx-esimerkkeineen ja IT-osaston GDPR/tietosuoja-tarkistuslistoineen.
     - Uudistettu ja ammattimaistettu `README.md` havainnollistavine arkkitehtuurikaavioineen ja pikaohjeineen.
+
+---
+
+## 8. Dian kanoninen skaalaus ja esitysmoottorin arkkitehtuuri
+
+- [x] **8.1 Jaettu OptionCard-komponentti ja z-indeksi/vuotokorjaus**
+  - **Prioriteetti:** Korkea (esitystilan ja editorin yhtenäisyys)
+  - **Tiedostot:** `client/src/components/slide/OptionCard.tsx`, `client/src/components/slide/SlideInteraction.tsx`
+  - **Toimenpiteet:**
+    - Eristetty vastausvaihtoehdon kortti omaksi jaetuksi komponentiksi `OptionCard.tsx`.
+    - Korjattu prosenttiluvun vuotaminen asettamalla `overflow-hidden` ja `min-w-0 flex-1 break-words`.
+    - Korvattu häiritsevä täyskorkea taustapalkki siistillä kortin alareunan 10 px mittaripalkilla (Option B).
+
+- [x] **8.2 Kanoninen virtuaalikangas (Canonical Canvas 1920x1080) ja täysi WYSIWYG-skaalaus**
+  - **Prioriteetti:** Korkea (luentosalitekniikka, vanhat projektorit ja editori pienessä ikkunassa)
+  - **Tiedostot:** `client/src/components/slide/SlideContainer.tsx`, `client/src/components/slide/SlideBody.tsx`, `client/src/components/slide/SlideInteraction.tsx`
+  - **Toimenpiteet:**
+    - Määritetty 1920x1080 kanoninen standardiresoluutio diasisällölle.
+    - Toteutettu `SlideContainer.tsx`:ssä automaattinen CSS `transform: scale(scale)` -vektoriskaalaus.
+    - Korjattu kuvan fullscreen-lightbox käyttämään Reactin `createPortal`-toimintoa `document.body`:yn.
+    - Poistettu vanhentunut JS-silmukkapohjainen `useResizeText`.
+    - Järjestetty vastausvaihtoehdot selkeäksi gridiksi (2 saraketta), jotta pitkät kliiniset lauseet mahtuvat optimaalisesti.
