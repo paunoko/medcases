@@ -338,3 +338,14 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Yhtenäistetty kaikki vihreät korostukset puhtaaseen `emerald`-palettiin (poistettu hajanaiset `green-400`/`green-500`-luokat).
     - Kalibroitu kuvakkeiden viivanpaksuudet: poistettu ylikorostetut `stroke-[3]` -määritykset ja vakioitu `stroke-[2.5]` merkeille.
     - Lisätty päänappeihin modernit sävyvarjot (`shadow-blue-600/25`, `shadow-emerald-600/25`, `shadow-purple-600/30`).
+
+- [x] **8.10 Aloitusnäkymän uudistus: yhtenäinen sijoittelu, liukuva roolipilleri ja visuaalinen syvyys**
+  - **Prioriteetti:** Keskitaso / UX & Estetiikka
+  - **Tiedostot:** `client/src/views/LandingView.tsx`, `client/src/views/StudentView.tsx`
+  - **Ongelma:** Opiskelijan huonekoodikortti ja opettajan toimintovalikko kelluivat keskellä tyhjää ruutua kaukana roolisäätimen alapuolella päällekkäisten `flex-1`- ja `justify-center`-määrittelyjen vuoksi. Roolin vaihdosta puuttui sulava siirtymä, tausta oli steriili tasaharmaa, ja opettajan kortissa oli tarpeeton toistava otsikko.
+  - **Toimenpiteet:**
+    - Sidottu roolisäädin ja aktiivinen kortti yhteen kiinteään ylä-ankkuroituun sarakkeeseen (`max-w-md w-full pt-8 sm:pt-14 gap-5`), poistaen epäluonnollisen suuren tyhjän tilan sliderin ja kortin välistä.
+    - Rakennettu roolisäätimeen sulavasti liukuva taustapilleri (`RoleSlider`, `transition-all duration-300 ease-out`), jossa sininen ja violetti korostus liukuu saumattomasti tilan vaihtuessa.
+    - Poistettu opettajan kortista redundantti "Opettajan toiminnot" -otsikko; kolme selkeää toimintopainiketta asettuvat suoraan kortin kärkeen.
+    - Harmonisoitu opiskelijan huonekoodikortin mitat ja muotoilu vastaamaan täsmälleen opettajan korttia (`w-full`, `rounded-3xl`, `shadow-xl shadow-slate-200/60`, `animate-fade-in`), säilyttäen selkeä vakiintunut terminologia ("Huonekoodi").
+    - Lisätty hienovarainen lääketieteellisen moderni taustaliukuväri (`from-slate-50 via-blue-50/20 to-slate-100/60`) ja pehmeä valokehä (`ambient glow blur`).

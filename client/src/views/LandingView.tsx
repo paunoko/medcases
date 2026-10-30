@@ -55,6 +55,55 @@ const LanguageSlider = () => {
     );
 };
 
+const RoleSlider = ({
+    activeTab,
+    onChange
+}: {
+    activeTab: 'student' | 'teacher';
+    onChange: (tab: 'student' | 'teacher') => void;
+}) => {
+    const { t } = useTranslation();
+
+    return (
+        <div className="w-full bg-gray-200/80 p-1.5 rounded-2xl flex items-center relative shadow-inner select-none h-14 overflow-hidden">
+            {/* Sliding Pill Indicator */}
+            <div className="absolute inset-1.5 z-0">
+                <div
+                    className={`absolute h-full w-1/2 rounded-xl transition-all duration-300 ease-out shadow-md ${
+                        activeTab === 'student'
+                            ? 'left-0 bg-blue-600 shadow-blue-600/30'
+                            : 'left-1/2 bg-purple-600 shadow-purple-600/30'
+                    }`}
+                />
+            </div>
+
+            {/* Student Tab Button */}
+            <button
+                type="button"
+                onClick={() => onChange('student')}
+                className={`flex-1 relative z-10 h-full flex items-center justify-center gap-2.5 font-extrabold text-sm sm:text-base transition-colors duration-300 rounded-xl cursor-pointer select-none ${
+                    activeTab === 'student' ? 'text-white' : 'text-gray-600 hover:text-gray-900'
+                }`}
+            >
+                <GraduationCap size={20} className={activeTab === 'student' ? 'text-white' : 'text-gray-500'} />
+                <span>{t('landing.imStudent')}</span>
+            </button>
+
+            {/* Teacher Tab Button */}
+            <button
+                type="button"
+                onClick={() => onChange('teacher')}
+                className={`flex-1 relative z-10 h-full flex items-center justify-center gap-2.5 font-extrabold text-sm sm:text-base transition-colors duration-300 rounded-xl cursor-pointer select-none ${
+                    activeTab === 'teacher' ? 'text-white' : 'text-gray-600 hover:text-gray-900'
+                }`}
+            >
+                <Presentation size={20} className={activeTab === 'teacher' ? 'text-white' : 'text-gray-500'} />
+                <span>{t('landing.imTeacher')}</span>
+            </button>
+        </div>
+    );
+};
+
 export const LandingView = () => {
     const { t } = useTranslation();
     const location = useLocation();
@@ -80,10 +129,13 @@ export const LandingView = () => {
     }, [showAbout]);
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-gradient-to-b from-slate-50 via-blue-50/20 to-slate-100/60 flex flex-col relative overflow-hidden">
+            {/* Ambient background glow decoration */}
+            <div className="absolute top-16 left-1/2 -translate-x-1/2 w-[540px] h-[540px] bg-blue-100/35 rounded-full blur-3xl pointer-events-none -z-0" />
+
             {/* TOP HEADER - Hidden when student is actively in a presentation session */}
             {!inSession && (
-                <header className="w-full bg-white border-b border-gray-200 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 z-20">
+                <header className="w-full bg-white/90 backdrop-blur-md border-b border-gray-200/80 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 z-20 shadow-xs">
                     {/* Brand */}
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
@@ -115,113 +167,90 @@ export const LandingView = () => {
             )}
 
             {/* MAIN CONTENT */}
-            <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 w-full">
-                {/* Tabs - Hidden if student is in session */}
-                {!inSession && (
-                    <div className="w-full max-w-sm mb-6 mt-2">
-                        <div className="bg-gray-200/80 p-1.5 rounded-2xl flex shadow-inner">
-                            <button
-                                onClick={() => setActiveTab('student')}
-                                className={`flex-1 py-3 px-4 rounded-xl font-extrabold text-base transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                                    activeTab === 'student'
-                                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                                        : 'text-gray-600 hover:text-gray-900'
-                                }`}
-                            >
-                                <GraduationCap size={20} />
-                                <span>{t('landing.imStudent')}</span>
-                            </button>
-                            <button
-                                onClick={() => setActiveTab('teacher')}
-                                className={`flex-1 py-3 px-4 rounded-xl font-extrabold text-base transition-all flex items-center justify-center gap-2 cursor-pointer ${
-                                    activeTab === 'teacher'
-                                        ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
-                                        : 'text-gray-600 hover:text-gray-900'
-                                }`}
-                            >
-                                <Presentation size={20} />
-                                <span>{t('landing.imTeacher')}</span>
-                            </button>
+            <main
+                className={`flex-1 flex flex-col items-center w-full relative z-10 ${
+                    inSession ? 'justify-center p-4' : 'justify-start pt-8 sm:pt-14 px-4 pb-12'
+                }`}
+            >
+                {!inSession ? (
+                    <div className="w-full max-w-md flex flex-col items-center gap-5">
+                        {/* Role Slider */}
+                        <RoleSlider activeTab={activeTab} onChange={setActiveTab} />
+
+                        {/* Content Section */}
+                        <div className="w-full">
+                            {activeTab === 'student' ? (
+                                <StudentView onSessionChange={setInSession} />
+                            ) : (
+                                <div className="w-full bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-gray-100 space-y-3.5 animate-fade-in">
+                                    <button
+                                        onClick={() => navigate('/teacher')}
+                                        className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-emerald-500 bg-white hover:bg-emerald-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                                    >
+                                        <div className="flex items-center gap-3.5">
+                                            <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                                <MonitorPlay size={26} />
+                                            </div>
+                                            <div>
+                                                <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                    {t('landing.presentCase')}
+                                                </div>
+                                                <div className="text-xs text-gray-500 mt-0.5 font-medium">
+                                                    {t('landing.presentCaseDesc')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ChevronRight size={20} className="text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                    </button>
+
+                                    <button
+                                        onClick={() => navigate('/editor')}
+                                        className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-500 bg-white hover:bg-blue-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                                    >
+                                        <div className="flex items-center gap-3.5">
+                                            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                                <PlusCircle size={26} />
+                                            </div>
+                                            <div>
+                                                <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                    {t('landing.createNew')}
+                                                </div>
+                                                <div className="text-xs text-gray-500 mt-0.5 font-medium">
+                                                    {t('landing.createNewDesc')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ChevronRight size={20} className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                    </button>
+
+                                    <button
+                                        onClick={() => navigate('/editor?mode=edit')}
+                                        className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-purple-500 bg-white hover:bg-purple-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                                    >
+                                        <div className="flex items-center gap-3.5">
+                                            <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                                <Pencil size={26} />
+                                            </div>
+                                            <div>
+                                                <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                    {t('landing.editExisting')}
+                                                </div>
+                                                <div className="text-xs text-gray-500 mt-0.5 font-medium">
+                                                    {t('landing.editExistingDesc')}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ChevronRight size={20} className="text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
+                ) : (
+                    <div className="w-full flex-1 flex flex-col items-center justify-center">
+                        <StudentView onSessionChange={setInSession} />
+                    </div>
                 )}
-
-                {/* Content Section */}
-                <div className="w-full flex-1 flex flex-col items-center justify-center">
-                    {activeTab === 'student' ? (
-                        <div className="w-full flex-1 flex flex-col items-center justify-center">
-                            <StudentView onSessionChange={setInSession} />
-                        </div>
-                    ) : (
-                        <div className="w-full max-w-md p-2 animate-fade-in">
-                            <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xl border border-gray-100 space-y-4">
-                                <h2 className="text-xl font-extrabold text-center mb-6 text-gray-900">
-                                    {t('landing.teacherActions')}
-                                </h2>
-
-                                <button
-                                    onClick={() => navigate('/teacher')}
-                                    className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-emerald-500 bg-white hover:bg-emerald-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
-                                >
-                                    <div className="flex items-center gap-3.5">
-                                        <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                            <MonitorPlay size={26} />
-                                        </div>
-                                        <div>
-                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
-                                                {t('landing.presentCase')}
-                                            </div>
-                                            <div className="text-xs text-gray-500 mt-0.5 font-medium">
-                                                {t('landing.presentCaseDesc')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all shrink-0" />
-                                </button>
-
-                                <button
-                                    onClick={() => navigate('/editor')}
-                                    className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-500 bg-white hover:bg-blue-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
-                                >
-                                    <div className="flex items-center gap-3.5">
-                                        <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                            <PlusCircle size={26} />
-                                        </div>
-                                        <div>
-                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
-                                                {t('landing.createNew')}
-                                            </div>
-                                            <div className="text-xs text-gray-500 mt-0.5 font-medium">
-                                                {t('landing.createNewDesc')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all shrink-0" />
-                                </button>
-
-                                <button
-                                    onClick={() => navigate('/editor?mode=edit')}
-                                    className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-purple-500 bg-white hover:bg-purple-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
-                                >
-                                    <div className="flex items-center gap-3.5">
-                                        <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                            <Pencil size={26} />
-                                        </div>
-                                        <div>
-                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
-                                                {t('landing.editExisting')}
-                                            </div>
-                                            <div className="text-xs text-gray-500 mt-0.5 font-medium">
-                                                {t('landing.editExistingDesc')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all shrink-0" />
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
             </main>
 
             {/* "MIKÄ MEDCASES ON?" INFO MODAL */}

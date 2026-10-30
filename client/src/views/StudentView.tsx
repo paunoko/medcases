@@ -28,11 +28,11 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
     setSelectedOptions([]);
   }, [activeSlide?.slideId]);
 
-  // 1. LOGIN / PIN ENTRY
+  // 1. LOGIN / ROOM CODE ENTRY
   if (!joinedRoomId) {
     return (
-      <div className="min-h-full flex flex-col items-center justify-center p-4">
-        <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl w-full max-w-sm space-y-5 border border-gray-100">
+      <div className="w-full flex flex-col items-center animate-fade-in">
+        <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 w-full space-y-5 border border-gray-100">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm font-semibold text-center">
               {t(`errors.${error}`, { defaultValue: error })}
@@ -47,7 +47,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
               type="tel"
               maxLength={4}
               autoFocus
-              className="w-full text-center text-4xl font-mono font-black tracking-widest py-3 px-4 border-2 border-gray-200 rounded-xl focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-blue-950 placeholder:text-gray-300"
+              className="w-full text-center text-4xl font-mono font-black tracking-widest py-3 px-4 border-2 border-gray-200 rounded-2xl focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-blue-950 placeholder:text-gray-300"
               value={code}
               onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
               placeholder="0000"
