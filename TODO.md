@@ -299,3 +299,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Poistettu kirjoitettu `+`-merkki käännöksistä (`addNotes`, `addOption`, `addImage`), jolloin kuvakkeen kanssa ei synny tuplamerkintää (`+ + Lisää`).
     - Lisätty yhtenäinen `<Plus size={20} />` -kuvake "Lisää vaihtoehto" -painikkeeseen.
     - Vaihdettu avoimen kysymyksen esikatselun dummy-tekstit lääketieteellisistä termeistä neutraaleihin Lorem ipsum -fraaseihin.
+
+- [x] **8.6 Editorin yläpalkin poisto, toimintojen integrointi sivupalkkiin ja uuden dian lisäyspainikkeen siirto**
+  - **Prioriteetti:** Keskitaso / UX & Ergonomia
+  - **Tiedostot:** `client/src/views/EditorView.tsx`
+  - **Toimenpiteet:**
+    - Poistettu editorin erillinen yläpalkki ja staattinen "MEDCASES EDITOR" -otsikko vapauttaen merkittävästi pystytilaa 16:9-esityskankaalle.
+    - Siirretty ja yhdistetty toiminnot (Home, Avaa, Tallenna, Esikatselu, Sivupalkin sulkeminen) oikean sivupalkin eleganttiin ja selkeään yläpalkkiin.
+    - Poistettu ahdas sulkemisnappi tapauksen nimen kentästä ja selkeytetty tapauksen nimen muokkausta.
+    - Siirretty "+ Uusi dia" -painike ruudun alalaidasta suoraan viimeisen dian perään dialistassa ja lisätty ulkopuolisen klikkauksen tunnistava alasvetovalikko.
+    - Lisätty sivupalkin ollessa suljettuna tyylikäs kelluva ohjauspalkki (Home, Avaa, Esikatselu, Tallenna, Avaa sivupalkki), jolloin täyden ruudun tilassa kaikki työkalut säilyvät vaivattomasti käden ulottuvilla.
