@@ -81,18 +81,13 @@ export const CaseFileDropzone: React.FC<CaseFileDropzoneProps> = ({
                 {isDragging ? <FolderOpen size={28} /> : <FileUp size={28} />}
             </div>
 
-            <div className="text-center">
-                <p className="font-extrabold text-gray-900 text-base leading-snug">
-                    {t('teacher.dragFileHere', { defaultValue: 'Raahaa .medcase-tiedosto tähän' })}
-                </p>
-                <p className="text-xs text-gray-500 mt-1 font-medium">
-                    {t('teacher.orSelectFromDevice', { defaultValue: 'tai valitse tiedosto koneelta' })}
-                </p>
-            </div>
+            <p className="font-extrabold text-gray-900 text-base leading-snug">
+                {t('teacher.dragFileHere', { defaultValue: 'Raahaa .medcase-tiedosto tähän' })}
+            </p>
 
             <button
                 type="button"
-                className={`mt-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white shadow-md transition-all active:scale-[0.98] pointer-events-none ${
+                className={`mt-1 px-5 py-2.5 rounded-xl font-bold text-sm text-white shadow-md transition-all active:scale-[0.98] pointer-events-none ${
                     isEmerald
                         ? 'bg-emerald-600 shadow-emerald-600/25'
                         : 'bg-blue-600 shadow-blue-600/25'

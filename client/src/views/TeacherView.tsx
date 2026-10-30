@@ -13,8 +13,7 @@ import {
     Minimize, 
     WifiOff, 
     LogOut,
-    FolderOpen,
-    MonitorPlay
+    FolderOpen
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useUI } from '../context/UIContext';
@@ -84,11 +83,6 @@ export const TeacherView = () => {
                 }}
                 onBack={() => navigate('/', { state: { tab: 'teacher' } })}
                 variant="emerald"
-                badgeIcon={
-                    <div className="w-14 h-14 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center shadow-sm">
-                        <MonitorPlay size={28} />
-                    </div>
-                }
             />
         );
     }

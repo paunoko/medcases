@@ -9,7 +9,6 @@ interface FilePickerViewProps {
     onFileSelected: (file: File) => void;
     onBack: () => void;
     variant?: 'emerald' | 'blue';
-    badgeIcon?: React.ReactNode;
 }
 
 export const FilePickerView: React.FC<FilePickerViewProps> = ({
@@ -17,8 +16,7 @@ export const FilePickerView: React.FC<FilePickerViewProps> = ({
     subtitle,
     onFileSelected,
     onBack,
-    variant = 'emerald',
-    badgeIcon
+    variant = 'emerald'
 }) => {
     const { t } = useTranslation();
 
@@ -33,12 +31,6 @@ export const FilePickerView: React.FC<FilePickerViewProps> = ({
             {/* MAIN CONTENT */}
             <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 w-full relative z-10">
                 <div className="w-full max-w-lg bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-gray-100 flex flex-col items-center text-center animate-fade-in">
-                    {badgeIcon && (
-                        <div className="mb-4">
-                            {badgeIcon}
-                        </div>
-                    )}
-
                     <h2 className="text-2xl font-black text-gray-900 tracking-tight leading-snug">
                         {title}
                     </h2>

@@ -244,11 +244,6 @@ export const EditorView = () => {
         onFileSelected={onFileLoad}
         onBack={() => navigate('/', { state: { tab: 'teacher' } })}
         variant="blue"
-        badgeIcon={
-          <div className="w-14 h-14 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center shadow-sm">
-            <Pencil size={28} />
-          </div>
-        }
       />
     );
   }
