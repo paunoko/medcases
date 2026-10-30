@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Plus } from 'lucide-react';
 import type { CaseSlide, Option } from '../../types';
 import { OptionCard } from './OptionCard';
 import { SlideNotes } from './SlideNotes';
@@ -154,9 +155,10 @@ export const SlideInteraction: React.FC<Props> = ({
           {isEdit && slide.type === 'MULTIPLE_CHOICE' && (
             <button
               onClick={() => onUpdate?.('options', [...(slide.options || []), { id: Math.random().toString(), text: '', isCorrect: false }])}
-              className="p-5 border-2 sm:border-3 border-dashed border-gray-300 rounded-2xl w-full min-h-[104px] text-gray-500 font-bold text-xl hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center bg-gray-50/70 hover:bg-blue-50 cursor-pointer"
+              className="p-5 border-2 sm:border-3 border-dashed border-gray-300 rounded-2xl w-full min-h-[104px] text-gray-500 font-bold text-xl hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-2 bg-gray-50/70 hover:bg-blue-50 cursor-pointer"
             >
-              {t('editor.addOption')}
+              <Plus size={20} />
+              <span>{t('editor.addOption')}</span>
             </button>
           )}
 

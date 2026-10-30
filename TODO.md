@@ -291,3 +291,11 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Yhtenäistetty terminologia kauttaaltaan: kaikissa kysymysmuodoissa aina "Huomioita", luovuttu erillisestä sanasta "Mallivastaus".
     - Luotu erillinen jaettu komponentti `SlideNotes.tsx`, joka yhdenmukaistaa ulkoasun ja lämpimän huomiovärin (`bg-amber-50/80 border-amber-300`) kaikkiin kysymystyyppeihin.
     - Rakennettu editorin esikatselutilaan luentosalisimulaatio: monivalinnassa/kyllä-ei:ssä generoidaan realistiset äänet prosenttipalkkien ja vihreän oikean vastauksen animoimiseksi, ja avoimessa kysymyksessä vastaukset ilmestyvät porrastetusti dynaamisilla viiveillä.
+
+- [x] **8.5 Painiketekstien siivous (tuplaplussien poisto) ja Lorem ipsum -esimerkit esikatseluun**
+  - **Prioriteetti:** Viimeistely / UX
+  - **Tiedostot:** `client/src/i18n/locales/`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/EditorView.tsx`
+  - **Toimenpiteet:**
+    - Poistettu kirjoitettu `+`-merkki käännöksistä (`addNotes`, `addOption`, `addImage`), jolloin kuvakkeen kanssa ei synny tuplamerkintää (`+ + Lisää`).
+    - Lisätty yhtenäinen `<Plus size={20} />` -kuvake "Lisää vaihtoehto" -painikkeeseen.
+    - Vaihdettu avoimen kysymyksen esikatselun dummy-tekstit lääketieteellisistä termeistä neutraaleihin Lorem ipsum -fraaseihin.

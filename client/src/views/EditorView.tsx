@@ -99,11 +99,11 @@ export const EditorView = () => {
       setDummyAnswers(answers);
     } else if (activeSlide.type === 'OPEN_TEXT') {
       const sampleBank = [
-        'Akuutti sepelvaltimotauti (STEMI)',
-        'Aortadissektio',
-        'Keuhkoembolia',
-        'Perikardiitti',
-        'Jänniteilmarinta'
+        'Lorem ipsum dolor',
+        'Consectetur adipiscing',
+        'Sed do eiusmod tempor',
+        'Incididunt ut labore',
+        'Dolore magna aliqua'
       ];
 
       setDummyAnswers([{ socketId: 'dummy-0', answer: sampleBank[0] }]);
