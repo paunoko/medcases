@@ -29,6 +29,7 @@ export interface MultipleChoiceSlide {
   question: string; // The actual question
   options: Option[];
   allowMultiple?: boolean;
+  explanation?: string; // Debrief notes / explanation revealed after voting
 }
 
 // 3. True/False (Boolean)
@@ -40,6 +41,7 @@ export interface BooleanSlide {
   imageFileName?: string;
   question: string;
   correctAnswer: boolean;
+  explanation?: string; // Debrief notes / explanation revealed after voting
 }
 
 // 4. Open text
@@ -50,7 +52,8 @@ export interface OpenTextSlide {
   content: string;
   imageFileName?: string;
   question: string;
-  modelAnswer?: string; // Model answer for the teacher
+  modelAnswer?: string; // Model answer for the teacher / discussion
+  explanation?: string; // Debrief notes / explanation revealed after voting
 }
 
 // Union type that aggregates all slides

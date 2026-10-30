@@ -271,3 +271,14 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korjattu kuvan fullscreen-lightbox käyttämään Reactin `createPortal`-toimintoa `document.body`:yn.
     - Poistettu vanhentunut JS-silmukkapohjainen `useResizeText`.
     - Järjestetty vastausvaihtoehdot selkeäksi gridiksi (2 saraketta), jotta pitkät kliiniset lauseet mahtuvat optimaalisesti.
+
+- [x] **8.3 Opiskelija-terminologia, sliden siivous, jaettu Huomioita-kenttä ja esikatselun paljastus**
+  - **Prioriteetti:** Keskitaso / Viimeistely
+  - **Tiedostot:** `client/src/types.ts`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/views/EditorView.tsx`, `client/src/i18n/locales/`, `data-description.md`
+  - **Toimenpiteet:**
+    - Poistettu turha toistava "Piilota/Paljasta vastaukset" -painike suoraan valkokankaan diasta.
+    - Korvattu termi "oppilas" sanalla "opiskelija" kielitiedostoissa.
+    - Tarkennettu mallivastauksen ja selitysten opasteita ("paljastetaan valkokankaalle vastauksen yhteydessä").
+    - Lisätty `explanation`-kenttä kaikkiin kysymystyyppeihin (Monivalinta, Kyllä/Ei, Avoin kysymys) WYSIWYG-filosofiaa noudattaen: huomaamaton lisäyspainike, visuaalinen "NÄKYY VASTA PALJASTETTAESSA" -kehys ja automaattinen `💡 Huomioita / Selitys` -laatikko paljastuksen yhteydessä.
+    - Piilotettu "Odotetaan vastauksia..." -teksti avoimessa kysymyksessä, kun vastaukset on jo paljastettu.
+    - Lisätty editorin esikatseluun live-paljastustesti (`Space` tai kelluva kytkin).

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
-import { Home, Pencil, Eye, PanelRightClose, PanelRightOpen, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
+import { Home, Pencil, Eye, EyeOff, PanelRightClose, PanelRightOpen, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 import { SlideRenderer } from '../components/SlideRenderer';
 import { SlideContainer } from '../components/slide/SlideContainer';
@@ -39,6 +39,7 @@ export const EditorView = () => {
   const [toast, setToast] = useState<{ show: boolean; filename: string } | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
+  const [previewRevealed, setPreviewRevealed] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const {
@@ -48,6 +49,10 @@ export const EditorView = () => {
   } = useCaseEditor();
 
   const activeSlide = activeSlideIndex !== null ? caseData.slides[activeSlideIndex] : null;
+
+  useEffect(() => {
+    setPreviewRevealed(false);
+  }, [activeSlideIndex, isPreview]);
 
   const onFileLoad = async (file: File) => {
     await handleLoad(file);
@@ -85,11 +90,16 @@ export const EditorView = () => {
         onSave();
       } else if (e.key === 'Escape' && showAddMenu) {
         setShowAddMenu(false);
+      } else if (isPreview && (e.key === ' ' || e.key === 'Enter') && activeSlide?.type !== 'INFO') {
+        if (!(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
+          e.preventDefault();
+          setPreviewRevealed(prev => !prev);
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onSave, showAddMenu]);
+  }, [onSave, showAddMenu, isPreview, activeSlide]);
 
   const handleToastDismiss = () => {
     navigate('/', { state: { tab: 'teacher' } });
@@ -208,10 +218,28 @@ export const EditorView = () => {
           <div className="flex-1 relative transition-all duration-300 min-h-0">
             {activeSlide ? (
               isPreview ? (
-                <SlideRenderer
-                  slide={activeSlide}
-                  imageMap={imagePreviews}
-                />
+                <>
+                  <SlideRenderer
+                    slide={activeSlide}
+                    imageMap={imagePreviews}
+                    isRevealed={previewRevealed}
+                  />
+                  {activeSlide.type !== 'INFO' && (
+                    <div className="absolute top-4 left-4 z-20 flex items-center gap-2 bg-gray-900/90 backdrop-blur-md border border-gray-700/80 p-1.5 rounded-2xl shadow-2xl">
+                      <button
+                        onClick={() => setPreviewRevealed(prev => !prev)}
+                        className={`px-3.5 py-1.5 rounded-xl font-bold text-xs shadow-md flex items-center gap-1.5 transition-colors cursor-pointer ${
+                          previewRevealed
+                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
+                            : 'bg-blue-600 hover:bg-blue-500 text-white'
+                        }`}
+                      >
+                        {previewRevealed ? <EyeOff size={16} /> : <Eye size={16} />}
+                        <span>{previewRevealed ? t('teacher.tryHide') : t('teacher.tryReveal')}</span>
+                      </button>
+                    </div>
+                  )}
+                </>
               ) : (
                 <SlideContainer>
                   <SlideTitle

@@ -57,6 +57,7 @@ Presents a multiple-choice question to the student with several options.
   - `id` (String, Required): Unique identifier for the option.
   - `text` (String, Required): The text of the choice.
   - `isCorrect` (Boolean, Optional/Recommended): Marks whether this option is the correct answer. This indicates the correct choice for the teacher's view and model answers.
+- `explanation` (String, Optional): Debrief notes, rationale, or discussion points revealed on the projector when the teacher locks and reveals answers.
 
 ---
 
@@ -66,6 +67,7 @@ Presents a simple True/False or Yes/No binary question.
 **Specific fields:**
 - `question` (String, Required): The question text being asked.
 - `correctAnswer` (Boolean, Required): The correct answer to the question (`true` or `false`).
+- `explanation` (String, Optional): Debrief notes, rationale, or discussion points revealed on the projector when the teacher locks and reveals answers.
 
 ---
 
@@ -75,6 +77,7 @@ Presents a question where the student answers by typing free-form text.
 **Specific fields:**
 - `question` (String, Required): The question text being asked.
 - `modelAnswer` (String, Optional): A model standard answer that is provided to the teacher for reference when grading or leading the discussion.
+- `explanation` (String, Optional): Debrief notes, rationale, or discussion points revealed on the projector when answers are unlocked.
 
 ---
 

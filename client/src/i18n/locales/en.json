@@ -82,7 +82,10 @@
     "enlargeImage": "Enlarge image",
     "closeImageHint": "Click anywhere or press Esc to close",
     "fullscreen": "Fullscreen",
-    "exitFullscreen": "Exit fullscreen"
+    "exitFullscreen": "Exit fullscreen",
+    "tryReveal": "Try reveal",
+    "tryHide": "Hide reveal",
+    "explanationTitle": "Notes / Discussion points:"
   },
   "editor": {
     "hideSidebar": "Hide sidebar",
@@ -127,8 +130,14 @@
     "correctAnswer": "Correct answer:",
     "yesTrue": "Yes",
     "noFalse": "No",
-    "modelAnswerLabel": "Teacher's model answer (shown to students):",
-    "modelAnswerPlaceholder": "Write the model answer...",
+    "modelAnswerLabel": "Model answer & notes (revealed with answer):",
+    "modelAnswerPlaceholder": "Write model answer or discussion points here. This text stays hidden during answering and appears on the projector only when you click 'Lock & reveal'.",
+    "explanationLabel": "Notes & explanation (revealed with answer):",
+    "explanationPlaceholder": "Write rationales for the correct answer or teaching points revealed when answers are unlocked...",
+    "addExplanation": "+ Add notes for discussion",
+    "removeExplanation": "Remove notes",
+    "explanationHint": "SHOWN ONLY UPON REVEAL",
+    "explanationTitle": "Notes / Discussion points:",
     "waitingForAnswers": "Waiting for answers...",
     "modelAnswerTitle": "Model Answer / Notes:",
     "noModelAnswer": "No model answer defined.",

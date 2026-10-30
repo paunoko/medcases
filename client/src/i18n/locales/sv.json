@@ -82,7 +82,10 @@
     "enlargeImage": "Förstora bild",
     "closeImageHint": "Klicka var som helst eller tryck på Esc för att stänga",
     "fullscreen": "Helskärm",
-    "exitFullscreen": "Lämna helskärm"
+    "exitFullscreen": "Lämna helskärm",
+    "tryReveal": "Prova avslöja",
+    "tryHide": "Dölj avslöjande",
+    "explanationTitle": "Anteckningar / För diskussion:"
   },
   "editor": {
     "hideSidebar": "Dölj sidopanel",
@@ -127,8 +130,14 @@
     "correctAnswer": "Rätt svar:",
     "yesTrue": "Ja",
     "noFalse": "Nej",
-    "modelAnswerLabel": "Lärarens modellsvar (visas för studenter):",
-    "modelAnswerPlaceholder": "Skriv modellsvar...",
+    "modelAnswerLabel": "Modellsvar & anteckningar (visas med svaret):",
+    "modelAnswerPlaceholder": "Skriv modellsvar eller diskussionspunkter här. Texten hålls dold under svarstiden och visas på projektorn först när du klickar på 'Lås & visa'.",
+    "explanationLabel": "Anteckningar & förklaring (visas med svaret):",
+    "explanationPlaceholder": "Skriv motivering för rätt svar eller undervisningsanteckningar som visas när svaren avslöjas...",
+    "addExplanation": "+ Lägg till anteckningar för diskussion",
+    "removeExplanation": "Ta bort anteckningar",
+    "explanationHint": "VISAS FÖRST NÄR SVAREN AVSLÖJAS",
+    "explanationTitle": "Anteckningar / För diskussion:",
     "waitingForAnswers": "Väntar på svar...",
     "modelAnswerTitle": "Modellsvar / Anteckningar:",
     "noModelAnswer": "Inget modellsvar definierat.",
