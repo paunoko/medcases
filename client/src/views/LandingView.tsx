@@ -100,6 +100,7 @@ export const LandingView = () => {
 
     useEffect(() => {
         if (location.state?.tab === 'student' || location.state?.tab === 'teacher') {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setActiveTab(location.state.tab);
             try {
                 localStorage.setItem(ROLE_STORAGE_KEY, location.state.tab);

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { CaseSlide } from '../types';
+import type { CaseSlide, StudentAnswer } from '../types';
 import { SlideContainer } from './slide/SlideContainer';
 import { SlideTitle } from './slide/SlideTitle';
 import { SlideBody } from './slide/SlideBody';
@@ -8,7 +8,7 @@ import { SlideInteraction } from './slide/SlideInteraction';
 interface Props {
     slide: CaseSlide;
     imageMap?: Record<string, string>; // Filename -> Blob URL
-    answers?: any[]; // Student answers (only in teacher view)
+    answers?: StudentAnswer[]; // Student answers (only in teacher view)
     isRevealed?: boolean;
     onToggleReveal?: () => void;
 }

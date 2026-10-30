@@ -366,3 +366,44 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korjattu istunnon lopetuksen paluu: "Lopeta istunto" ohjaa nyt siististi suoraan sovelluksen alkunäkymään opettajan välilehdelle (`navigate('/', { state: { tab: 'teacher' } })`), sen sijaan että näkymä jäisi ensimmäisen tapauksen valintanäkymään.
     - Yksinkertaistettu tiedostonavausnäkymä ja pudotuslaatikko (`FilePickerView`, `CaseFileDropzone`): poistettu päällekkäinen kuvake otsikon yläpuolelta (jolloin vain raahauslaatikon interaktiivinen latauskuvake jää näkyviin) sekä karsittu toistuva "tai valitse tiedosto koneelta" -teksti painikkeen yläpuolelta.
     - Luotu MedCases-brändin mukainen favicon/bookmark-ikoni (`client/public/favicon.svg`, `favicon.ico`, `apple-touch-icon.png`): korvattu Viten oletuslogo sinisellä pyöristetyllä EKG-sydänkäyräkuvakkeella (`Activity`), joka vastaa täsmälleen MedCases-otsikkopalkin logoa kaikissa tarkkuuksissa ja selaimen kirjanmerkeissä.
+
+---
+
+## 9. Repositorion auditointi, versionnosto v2.0.0 ja CI/CD-laatuputki
+
+- [x] **9.1 Kattava repositorion auditointi ja tietoturvakorjaukset**
+  - **Prioriteetti:** Korkea / Laatu & Ylläpidettävyys
+  - **Tiedostot:** `package.json`, `client/package.json`, `server/package.json`, `server/src/index.ts`, `CHANGELOG.md`
+  - **Toimenpiteet:**
+    - Paikattu kaikki 24 npm-haavoittuvuutta transitiivisissa riippuvuuksissa (`npm audit fix` ➔ 0 haavoittuvuutta).
+    - Poistettu duplikaattityyppi `@types/filesaver` ja siivottu käyttämättömät mallipohjatiedostot (`App.css`, `react.svg`).
+    - Yhdenmukaistettu lisenssimerkinnät (`GPL-3.0-only`) ja tekijätiedot läpi koko repositorion.
+    - Korjattu palvelimen portin konfigurointi lukemaan `process.env.PORT || '3000'`.
+
+- [x] **9.2 Suorituskyky & koodinpätkintä (Code Splitting) sekä ESLint-siivous**
+  - **Prioriteetti:** Korkea / Mobiilisuorituskyky
+  - **Tiedostot:** `client/src/App.tsx`, `client/src/views/`, `client/src/hooks/`, `client/src/components/slide/`
+  - **Toimenpiteet:**
+    - Eristetty `TeacherView` ja `EditorView` reittitason dynaamisella latauksella (`React.lazy()`). Pääasiallinen bundle pieneni 610 kB:sta 384 kB:aan, jolloin opiskelijoiden puhelimet lataavat vain vastausruudun tarvitsemat kirjastot.
+    - Korjattu kaikki 47 ESLint- ja React 19 -huomautusta puhtaiksi (0 errors, 0 warnings). Korjattu mm. ref-päivitykset renderissä, tyhjät catch-lohkot ja poistettu tarpeettomat `any`-tyypit.
+
+- [x] **9.3 Ruotsinkielisten käännösten hionta (`sv.json`)**
+  - **Prioriteetti:** Keskitaso / Käytettävyys
+  - **Tiedostot:** `client/src/i18n/locales/sv.json`
+  - **Toimenpiteet:**
+    - Korjattu anglismit ja epäluonnolliset ilmaukset ("Välj det första patientfallet", "Avsluta redigering", "Avsluta utan att spara", "diabilder").
+
+- [x] **9.4 Testiautomaatio (Vitest) ja GitHub Actions CI**
+  - **Prioriteetti:** Korkea / Regressiosuojaus
+  - **Tiedostot:** `client/src/utils/sanitizer.test.ts`, `client/src/utils/fileHelpers.test.ts`, `.github/workflows/ci.yml`
+  - **Toimenpiteet:**
+    - Asennettu Vitest ja luotu kattavat yksikkötestit opiskelijan datan sanitoinnille (varmistetaan ettei oikea vastaus vuoda opiskelijalle) sekä `.medcase`-tiedostovalidoinnille.
+    - Luotu GitHub Actions CI -työnkulku, joka ajaa linttauksen, testit ja buildit automaattisesti joka pushilla ja PR:llä.
+
+- [x] **9.5 Repositorion virallinen julkaisuversio 2.0.0**
+  - **Prioriteetti:** Hallinnollinen / Julkaisuhallinta
+  - **Tiedostot:** `package.json`, `client/package.json`, `server/package.json`, `CHANGELOG.md`
+  - **Toimenpiteet:**
+    - Nostettu versio 1.0.0:sta versioon 2.0.0.
+    - Luotu `CHANGELOG.md` noudattaen Keep a Changelog- ja SemVer-standardeja.
+    - Luotu git-tagi `v2.0.0`.

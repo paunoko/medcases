@@ -33,6 +33,7 @@ export const useStudentSession = () => {
         const newSocket = io(SOCKET_URL, {
             path: `${import.meta.env.BASE_URL}/socket.io`.replace('//', '/')
         });
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSocket(newSocket);
 
         newSocket.on('connect', () => { 
@@ -50,7 +51,7 @@ export const useStudentSession = () => {
             setError(code || message || 'Virhe');
             setJoinedRoomId(null);
             joinedRoomIdRef.current = null;
-            try { sessionStorage.removeItem(STUDENT_ROOM_KEY); } catch {}
+            try { sessionStorage.removeItem(STUDENT_ROOM_KEY); } catch { /* ignore */ }
         });
 
         newSocket.on('SLIDE_UPDATE', (payload: StudentPayload) => {
@@ -77,7 +78,7 @@ export const useStudentSession = () => {
             setActiveSlide(null);
             setIsWaiting(false);
             setHasAnswered(false);
-            try { sessionStorage.removeItem(STUDENT_ROOM_KEY); } catch {}
+            try { sessionStorage.removeItem(STUDENT_ROOM_KEY); } catch { /* ignore */ }
         });
 
         return () => { newSocket.disconnect(); };
@@ -88,7 +89,7 @@ export const useStudentSession = () => {
         socket.emit('JOIN_ROOM', { roomId });
         setJoinedRoomId(roomId);
         joinedRoomIdRef.current = roomId;
-        try { sessionStorage.setItem(STUDENT_ROOM_KEY, roomId); } catch {}
+        try { sessionStorage.setItem(STUDENT_ROOM_KEY, roomId); } catch { /* ignore */ }
     };
 
     const submitAnswer = (answer: string | string[]) => {

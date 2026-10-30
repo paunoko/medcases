@@ -43,7 +43,7 @@ export const useCaseEditor = () => {
     // --- ACTIONS ---
 
     const addSlide = (type: CaseSlide['type']) => {
-        const newSlide: any = {
+        const newSlide = {
             id: uuid(),
             type,
             title: '',
@@ -53,7 +53,7 @@ export const useCaseEditor = () => {
             allowMultiple: type === 'MULTIPLE_CHOICE' ? false : undefined,
             correctAnswer: type === 'TRUE_FALSE' ? true : undefined,
             modelAnswer: type === 'OPEN_TEXT' ? '' : undefined
-        };
+        } as unknown as CaseSlide;
 
         setCaseData(prev => ({ ...prev, slides: [...prev.slides, newSlide] }));
         setActiveSlideIndex(caseData.slides.length);
@@ -92,7 +92,7 @@ export const useCaseEditor = () => {
         setHasUnsavedChanges(true);
     };
 
-    const updateSlide = (index: number, field: string, value: any) => {
+    const updateSlide = (index: number, field: string, value: unknown) => {
         setCaseData(prev => {
             const newSlides = [...prev.slides];
             newSlides[index] = { ...newSlides[index], [field]: value };

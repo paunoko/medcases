@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
@@ -30,6 +30,8 @@ import { restrictToVerticalAxis, restrictToWindowEdges } from '@dnd-kit/modifier
 
 import { SortableSlideItem } from '../components/slide/SortableSlideItem';
 
+import type { StudentAnswer } from '../types';
+
 export const EditorView = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
@@ -42,7 +44,7 @@ export const EditorView = () => {
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [previewRevealed, setPreviewRevealed] = useState(false);
-  const [dummyAnswers, setDummyAnswers] = useState<any[]>([]);
+  const [dummyAnswers, setDummyAnswers] = useState<StudentAnswer[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const addMenuRef = useRef<HTMLDivElement>(null);
 
@@ -57,12 +59,14 @@ export const EditorView = () => {
     : null;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setPreviewRevealed(false);
   }, [activeSlideIndex, isPreview]);
 
   // Generate realistic dummy simulation answers in Preview mode
   useEffect(() => {
     if (!isPreview || !activeSlide) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDummyAnswers([]);
       return;
     }
@@ -70,18 +74,18 @@ export const EditorView = () => {
     if (activeSlide.type === 'MULTIPLE_CHOICE' || activeSlide.type === 'TRUE_FALSE') {
       const opts = activeSlide.type === 'TRUE_FALSE'
         ? [{ id: 'true', isCorrect: activeSlide.correctAnswer }, { id: 'false', isCorrect: !activeSlide.correctAnswer }]
-        : (activeSlide as any).options || [];
+        : activeSlide.options;
 
-      const validOpts = opts.filter((o: any) => o && o.id);
+      const validOpts = opts.filter((o) => o && o.id);
       if (validOpts.length === 0) {
         setDummyAnswers([]);
         return;
       }
 
-      const answers: any[] = [];
+      const answers: StudentAnswer[] = [];
       const totalVotes = 25;
-      const correctOpts = validOpts.filter((o: any) => o.isCorrect);
-      const incorrectOpts = validOpts.filter((o: any) => !o.isCorrect);
+      const correctOpts = validOpts.filter((o) => o.isCorrect);
+      const incorrectOpts = validOpts.filter((o) => !o.isCorrect);
 
       if (correctOpts.length > 0) {
         const correctVotesTotal = Math.round(totalVotes * 0.64);
@@ -90,7 +94,7 @@ export const EditorView = () => {
         for (let i = 0; i < correctVotesTotal; i++) {
           const targetOpt = correctOpts[i % correctOpts.length];
           if (targetOpt?.id) {
-            answers.push({ socketId: `dummy-c-${i}`, answer: targetOpt.id });
+            answers.push({ slideId: activeSlide.id, answer: targetOpt.id });
           }
         }
 
@@ -98,14 +102,14 @@ export const EditorView = () => {
           for (let i = 0; i < remainingVotes; i++) {
             const targetOpt = incorrectOpts[i % incorrectOpts.length];
             if (targetOpt?.id) {
-              answers.push({ socketId: `dummy-i-${i}`, answer: targetOpt.id });
+              answers.push({ slideId: activeSlide.id, answer: targetOpt.id });
             }
           }
         } else {
           for (let i = 0; i < remainingVotes; i++) {
             const targetOpt = validOpts[i % validOpts.length];
             if (targetOpt?.id) {
-              answers.push({ socketId: `dummy-r-${i}`, answer: targetOpt.id });
+              answers.push({ slideId: activeSlide.id, answer: targetOpt.id });
             }
           }
         }
@@ -114,7 +118,7 @@ export const EditorView = () => {
         for (let i = 0; i < totalVotes; i++) {
           const targetOpt = validOpts[i % validOpts.length];
           if (targetOpt?.id) {
-            answers.push({ socketId: `dummy-all-${i}`, answer: targetOpt.id });
+            answers.push({ slideId: activeSlide.id, answer: targetOpt.id });
           }
         }
       }
@@ -129,13 +133,13 @@ export const EditorView = () => {
         'Dolore magna aliqua'
       ];
 
-      setDummyAnswers([{ socketId: 'dummy-0', answer: sampleBank[0] }]);
+      setDummyAnswers([{ slideId: activeSlide.id, answer: sampleBank[0] }]);
 
-      const timeouts: any[] = [];
+      const timeouts: ReturnType<typeof setTimeout>[] = [];
       sampleBank.slice(1).forEach((ans, index) => {
         const delay = 1000 + (index * 1300) + Math.floor(Math.random() * 300);
         const tId = setTimeout(() => {
-          setDummyAnswers(prev => [...prev, { socketId: `dummy-${index + 1}`, answer: ans }]);
+          setDummyAnswers(prev => [...prev, { slideId: activeSlide.id, answer: ans }]);
         }, delay);
         timeouts.push(tId);
       });
@@ -186,10 +190,10 @@ export const EditorView = () => {
     e.target.value = '';
   };
 
-  const onSave = async () => {
+  const onSave = useCallback(async () => {
     const filename = await handleSave();
     setSaveModal({ isOpen: true, filename });
-  };
+  }, [handleSave]);
 
   // Keyboard shortcut Ctrl+S / Cmd+S to save, Escape to close menus
   useEffect(() => {

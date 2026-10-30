@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
-import type { PatientCase, StudentPayload } from '../types';
+import type { PatientCase, StudentPayload, StudentAnswer } from '../types';
 import { createStudentPayload } from '../utils/sanitizer';
 
 // Use relative path in production, localhost in dev
@@ -17,7 +17,9 @@ interface StoredTeacherSession {
 export const useTeacherSession = (initialCase: PatientCase | null) => {
     const [patientCase, setPatientCase] = useState<PatientCase | null>(initialCase);
     const patientCaseRef = useRef<PatientCase | null>(initialCase);
-    patientCaseRef.current = patientCase;
+    useEffect(() => {
+        patientCaseRef.current = patientCase;
+    }, [patientCase]);
 
     const getInitialSavedSession = (): StoredTeacherSession | null => {
         if (!initialCase?.meta.id) return null;
@@ -45,7 +47,7 @@ export const useTeacherSession = (initialCase: PatientCase | null) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slideStates, setSlideStates] = useState<Record<string, 'ANSWERING' | 'REVEALED'>>({});
     const [openTextRevealed, setOpenTextRevealed] = useState<Record<string, boolean>>({});
-    const [answers, setAnswers] = useState<any[]>([]);
+    const [answers, setAnswers] = useState<StudentAnswer[]>([]);
 
     const currentSlide = patientCase?.slides[currentIndex];
     const slideState = currentSlide ? (slideStates[currentSlide.id] || 'ANSWERING') : 'ANSWERING';
@@ -65,6 +67,7 @@ export const useTeacherSession = (initialCase: PatientCase | null) => {
             path: `${import.meta.env.BASE_URL}/socket.io`.replace('//', '/')
         });
         socketRef.current = newSocket;
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setSocket(newSocket);
 
         newSocket.on('connect', () => {
@@ -112,13 +115,15 @@ export const useTeacherSession = (initialCase: PatientCase | null) => {
              }
         });
 
-        newSocket.on('STUDENT_COUNT', ({ count }) => setStudentCount(count));
-        newSocket.on('ANSWERS_UPDATE', (updatedAnswers) => setAnswers(updatedAnswers));
+        newSocket.on('STUDENT_COUNT', ({ count }: { count: number }) => setStudentCount(count));
+        newSocket.on('ANSWERS_UPDATE', (updatedAnswers: StudentAnswer[]) => setAnswers(updatedAnswers));
         newSocket.on('ERROR', ({ code, message }: { code?: string; message?: string }) => {
              setError(code || message || 'Virhe');
              try {
                  sessionStorage.removeItem(TEACHER_SESSION_KEY);
-             } catch {}
+             } catch {
+                 /* ignore */
+             }
              setRoomId(null);
              roomInfoRef.current = null;
         });
@@ -204,7 +209,9 @@ export const useTeacherSession = (initialCase: PatientCase | null) => {
     const endSession = () => {
         try {
             sessionStorage.removeItem(TEACHER_SESSION_KEY);
-        } catch {}
+        } catch {
+            /* ignore */
+        }
         if (!socketRef.current || !roomId) return;
         socketRef.current.emit('END_SESSION', { roomId });
         setRoomId(null);

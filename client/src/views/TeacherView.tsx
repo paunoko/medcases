@@ -51,7 +51,9 @@ export const TeacherView = () => {
         }
         try {
             sessionStorage.removeItem(TEACHER_SESSION_KEY);
-        } catch {}
+        } catch {
+            /* ignore storage error */
+        }
         revokeImageUrls(imagesRef.current);
         setImages({});
         setCaseData(null);
@@ -104,7 +106,9 @@ const Dashboard = ({
     const { showConfirm, showAlert } = useUI();
     const [images, setImages] = useState<Record<string, string>>(initialImages);
     const imagesRef = useRef<Record<string, string>>(initialImages);
-    imagesRef.current = images;
+    useEffect(() => {
+        imagesRef.current = images;
+    }, [images]);
 
     const session = useTeacherSession(initialCaseData);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);

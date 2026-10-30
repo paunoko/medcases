@@ -30,7 +30,8 @@ export const saveCaseToZip = async (
     // 1. Prepare normalized slides with slide{index + 1}.{ext} image names
     const normalizedSlides = caseData.slides.map((slide, index) => {
         if (!slide.imageFileName || !imageFiles[slide.imageFileName]) {
-            const { imageFileName: _, ...rest } = slide;
+            const rest = { ...slide };
+            delete rest.imageFileName;
             return rest;
         }
         const ext = slide.imageFileName.split('.').pop()?.toLowerCase() || 'png';
@@ -80,9 +81,9 @@ export const saveCaseToZip = async (
 
 export class CaseValidationError extends Error {
     code: string;
-    params?: Record<string, any>;
+    params?: Record<string, unknown>;
 
-    constructor(code: string, defaultMessage: string, params?: Record<string, any>) {
+    constructor(code: string, defaultMessage: string, params?: Record<string, unknown>) {
         super(defaultMessage);
         this.name = 'CaseValidationError';
         this.code = code;

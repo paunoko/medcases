@@ -24,6 +24,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
 
   // Reset inputs when slide changes
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTextAns('');
     setSelectedOptions([]);
   }, [activeSlide?.slideId]);

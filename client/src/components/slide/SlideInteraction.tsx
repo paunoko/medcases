@@ -1,16 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Plus } from 'lucide-react';
-import type { CaseSlide, Option } from '../../types';
+import type { CaseSlide, Option, StudentAnswer } from '../../types';
 import { OptionCard } from './OptionCard';
 import { SlideNotes } from './SlideNotes';
 
 interface Props {
   slide: CaseSlide;
   mode: 'view' | 'edit';
-  answers?: any[];
+  answers?: StudentAnswer[];
   isRevealed?: boolean;
-  onUpdate?: (field: string, value: any) => void;
+  onUpdate?: (field: string, value: unknown) => void;
   onToggleReveal?: () => void;
 }
 
@@ -53,7 +53,7 @@ export const SlideInteraction: React.FC<Props> = ({
       ) : (
         slide.question && (
           <div className="flex flex-col gap-2">
-            {slide.type === 'MULTIPLE_CHOICE' && (slide as any).allowMultiple && (
+            {slide.type === 'MULTIPLE_CHOICE' && slide.allowMultiple && (
               <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-base font-extrabold uppercase tracking-wider bg-blue-100 text-blue-800 w-fit">
                 {t('student.multipleChoiceHint')}
               </div>
@@ -77,10 +77,10 @@ export const SlideInteraction: React.FC<Props> = ({
             <input
               type="checkbox"
               className="w-6 h-6 rounded accent-blue-600 cursor-pointer"
-              checked={!!(slide as any).allowMultiple}
+              checked={!!slide.allowMultiple}
               onChange={e => {
                 const allowMultiple = e.target.checked;
-                let opts = (slide as any).options || [];
+                let opts = slide.options || [];
                 if (!allowMultiple) {
                   let foundFirst = false;
                   opts = opts.map((opt: Option) => {
@@ -101,100 +101,104 @@ export const SlideInteraction: React.FC<Props> = ({
       )}
 
       {/* INTERACTION ELEMENTS */}
-      {(slide.type === 'MULTIPLE_CHOICE' || slide.type === 'TRUE_FALSE') && (
-        <div className="grid grid-cols-2 gap-5 w-full">
-          {/* Options List */}
-          {(slide.type === 'TRUE_FALSE' && !isEdit
-            ? [
-              { id: 'true', text: t('editor.yesTrue'), isCorrect: slide.correctAnswer },
-              { id: 'false', text: t('editor.noFalse'), isCorrect: !slide.correctAnswer }
-            ]
-            : (((slide as any).options as Option[]) || []).filter(Boolean)
-          ).map((opt: Option, i: number) => {
-            const percent = getPercentage(opt.id);
-            const isCorrect = opt.isCorrect;
+      {(slide.type === 'MULTIPLE_CHOICE' || slide.type === 'TRUE_FALSE') && (() => {
+        const optionsList: Option[] = slide.type === 'TRUE_FALSE' && !isEdit
+          ? [
+            { id: 'true', text: t('editor.yesTrue'), isCorrect: slide.correctAnswer },
+            { id: 'false', text: t('editor.noFalse'), isCorrect: !slide.correctAnswer }
+          ]
+          : (slide.type === 'MULTIPLE_CHOICE' ? slide.options || [] : []);
+        const allowMultiple = slide.type === 'MULTIPLE_CHOICE' ? !!slide.allowMultiple : false;
 
-            return (
-              <OptionCard
-                key={opt.id || i}
-                id={opt.id}
-                index={i}
-                text={opt.text}
-                isCorrect={isCorrect}
-                mode={mode}
-                slideType={slide.type as 'MULTIPLE_CHOICE' | 'TRUE_FALSE'}
-                allowMultiple={!!(slide as any).allowMultiple}
-                percent={percent}
-                isRevealed={isRevealed}
-                onTextChange={newText => {
-                  const opts = [...(slide as any).options];
-                  opts[i].text = newText;
-                  onUpdate?.('options', opts);
-                }}
-                onCorrectChange={checked => {
-                  if (!(slide as any).allowMultiple) {
-                    const opts = (slide as any).options.map((o: Option, idx: number) => ({
-                      ...o,
-                      isCorrect: idx === i
-                    }));
+        return (
+          <div className="grid grid-cols-2 gap-5 w-full">
+            {/* Options List */}
+            {optionsList.filter(Boolean).map((opt: Option, i: number) => {
+              const percent = getPercentage(opt.id);
+              const isCorrect = opt.isCorrect;
+
+              return (
+                <OptionCard
+                  key={opt.id || i}
+                  id={opt.id}
+                  index={i}
+                  text={opt.text}
+                  isCorrect={isCorrect}
+                  mode={mode}
+                  slideType={slide.type as 'MULTIPLE_CHOICE' | 'TRUE_FALSE'}
+                  allowMultiple={allowMultiple}
+                  percent={percent}
+                  isRevealed={isRevealed}
+                  onTextChange={newText => {
+                    const opts = [...optionsList];
+                    opts[i].text = newText;
                     onUpdate?.('options', opts);
-                  } else {
-                    const opts = [...(slide as any).options];
-                    opts[i].isCorrect = checked;
+                  }}
+                  onCorrectChange={checked => {
+                    if (!allowMultiple) {
+                      const opts = optionsList.map((o: Option, idx: number) => ({
+                        ...o,
+                        isCorrect: idx === i
+                      }));
+                      onUpdate?.('options', opts);
+                    } else {
+                      const opts = [...optionsList];
+                      opts[i].isCorrect = checked;
+                      onUpdate?.('options', opts);
+                    }
+                  }}
+                  onDelete={() => {
+                    const opts = optionsList.filter((_, idx: number) => idx !== i);
                     onUpdate?.('options', opts);
-                  }
-                }}
-                onDelete={() => {
-                  const opts = (slide as any).options.filter((_: any, idx: number) => idx !== i);
-                  onUpdate?.('options', opts);
-                }}
-              />
-            );
-          })}
+                  }}
+                />
+              );
+            })}
 
-          {/* Add Option Button (Edit Only) */}
-          {isEdit && slide.type === 'MULTIPLE_CHOICE' && (
-            <button
-              onClick={() => onUpdate?.('options', [...(slide.options || []), { id: Math.random().toString(), text: '', isCorrect: false }])}
-              className="p-5 border-2 sm:border-3 border-dashed border-gray-300 rounded-2xl w-full min-h-[104px] text-gray-500 font-bold text-xl hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-2 bg-gray-50/70 hover:bg-blue-50 cursor-pointer"
-            >
-              <Plus size={20} />
-              <span>{t('editor.addOption')}</span>
-            </button>
-          )}
-
-          {/* True/False Specific Edit (Correct Answer Toggle) */}
-          {isEdit && slide.type === 'TRUE_FALSE' && (
-            <div className="col-span-2 flex items-center gap-6 p-6 border-2 sm:border-3 border-gray-200 rounded-2xl bg-gray-50 w-full hover:border-blue-300 transition-colors">
-              <span className="font-bold text-2xl text-gray-700 uppercase tracking-wider">{t('editor.correctAnswer')}</span>
-              <select
-                className="flex-1 text-2xl font-bold bg-white border-2 border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:outline-none shadow-sm cursor-pointer"
-                value={slide.correctAnswer ? 'true' : 'false'}
-                onChange={e => onUpdate?.('correctAnswer', e.target.value === 'true')}
+            {/* Add Option Button (Edit Only) */}
+            {isEdit && slide.type === 'MULTIPLE_CHOICE' && (
+              <button
+                onClick={() => onUpdate?.('options', [...(slide.options || []), { id: Math.random().toString(), text: '', isCorrect: false }])}
+                className="p-5 border-2 sm:border-3 border-dashed border-gray-300 rounded-2xl w-full min-h-[104px] text-gray-500 font-bold text-xl hover:border-blue-400 hover:text-blue-600 transition-colors flex items-center justify-center gap-2 bg-gray-50/70 hover:bg-blue-50 cursor-pointer"
               >
-                <option value="true">{t('editor.yesTrue')}</option>
-                <option value="false">{t('editor.noFalse')}</option>
-              </select>
-            </div>
-          )}
+                <Plus size={20} />
+                <span>{t('editor.addOption')}</span>
+              </button>
+            )}
 
-          {/* Notes (Edit and View modes) */}
-          <div className="col-span-2">
-            <SlideNotes
-              value={(slide as any).explanation}
-              mode={mode}
-              isRevealed={isRevealed}
-              onChange={val => onUpdate?.('explanation', val)}
-            />
+            {/* True/False Specific Edit (Correct Answer Toggle) */}
+            {isEdit && slide.type === 'TRUE_FALSE' && (
+              <div className="col-span-2 flex items-center gap-6 p-6 border-2 sm:border-3 border-gray-200 rounded-2xl bg-gray-50 w-full hover:border-blue-300 transition-colors">
+                <span className="font-bold text-2xl text-gray-700 uppercase tracking-wider">{t('editor.correctAnswer')}</span>
+                <select
+                  className="flex-1 text-2xl font-bold bg-white border-2 border-gray-300 rounded-xl p-3 focus:border-blue-500 focus:outline-none shadow-sm cursor-pointer"
+                  value={slide.correctAnswer ? 'true' : 'false'}
+                  onChange={e => onUpdate?.('correctAnswer', e.target.value === 'true')}
+                >
+                  <option value="true">{t('editor.yesTrue')}</option>
+                  <option value="false">{t('editor.noFalse')}</option>
+                </select>
+              </div>
+            )}
+
+            {/* Notes (Edit and View modes) */}
+            <div className="col-span-2">
+              <SlideNotes
+                value={slide.explanation}
+                mode={mode}
+                isRevealed={isRevealed}
+                onChange={val => onUpdate?.('explanation', val)}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* OPEN TEXT */}
       {slide.type === 'OPEN_TEXT' && (
         <div className="space-y-4">
           <SlideNotes
-            value={slide.modelAnswer ?? (slide as any).explanation}
+            value={slide.modelAnswer ?? slide.explanation}
             mode={mode}
             isRevealed={isRevealed}
             onChange={val => {

@@ -57,9 +57,10 @@ flowchart LR
 
 ### For Instructors
 1. **Prepare**: Build an interactive case in the built-in Editor, or load an existing `.medcase` file.
-2. **Launch**: Click **"Avaa luokkahuone / Open Classroom"** to generate a 4-digit Room PIN and on-screen QR code.
+2. **Launch**: Click **"Esitä potilastapauksia / Present Cases"** and select your `.medcase` file. The presentation opens immediately with a 4-digit Room PIN and on-screen QR code.
 3. **Present**: Navigate through patient history, lab values, and imaging.
 4. **Interact**: When a question slide appears, students answer in real time. Click **"Lukitse ja paljasta / Lock & reveal"** (or hit `Space`) to reveal answer distributions and correct answers.
+5. **Multi-Case Sessions**: Pick subsequent patient cases directly from the presenter sidebar without students needing to reconnect.
 
 ### For Students
 1. **Join**: Open the web application on your smartphone or scan the projector QR code.

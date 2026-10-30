@@ -18,7 +18,6 @@ export interface OptionCardProps {
 }
 
 export const OptionCard: React.FC<OptionCardProps> = ({
-  id: _id,
   index,
   text,
   isCorrect = false,

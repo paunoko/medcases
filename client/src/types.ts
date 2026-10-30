@@ -84,3 +84,8 @@ export interface StudentPayload {
   allowMultiple?: boolean;
   state: 'WAITING' | 'ANSWERING' | 'REVEALED';
 }
+
+export interface StudentAnswer {
+  slideId: string;
+  answer: string | string[];
+}
