@@ -349,3 +349,4 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Poistettu opettajan kortista redundantti "Opettajan toiminnot" -otsikko; kolme selkeää toimintopainiketta asettuvat suoraan kortin kärkeen.
     - Harmonisoitu opiskelijan huonekoodikortin mitat ja muotoilu vastaamaan täsmälleen opettajan korttia (`w-full`, `rounded-3xl`, `shadow-xl shadow-slate-200/60`, `animate-fade-in`), säilyttäen selkeä vakiintunut terminologia ("Huonekoodi").
     - Lisätty hienovarainen lääketieteellisen moderni taustaliukuväri (`from-slate-50 via-blue-50/20 to-slate-100/60`) ja pehmeä valokehä (`ambient glow blur`).
+    - Lisätty käyttäjän roolivalinnan pysyväismuisti (`localStorage` avaimella `medcases_selected_role`): ensikertalaiselle oletus on opiskelija, mutta opettajan läppärillä valinta muistetaan pysyvästi ilman uudelleenvalintaa.

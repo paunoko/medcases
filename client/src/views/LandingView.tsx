@@ -104,17 +104,48 @@ const RoleSlider = ({
     );
 };
 
+const ROLE_STORAGE_KEY = 'medcases_selected_role';
+
+const getInitialRole = (locationStateTab?: unknown): 'student' | 'teacher' => {
+    if (locationStateTab === 'student' || locationStateTab === 'teacher') {
+        return locationStateTab;
+    }
+    try {
+        const saved = localStorage.getItem(ROLE_STORAGE_KEY);
+        if (saved === 'teacher' || saved === 'student') {
+            return saved;
+        }
+    } catch {
+        // Fallback for sandboxed environments / restricted storage
+    }
+    return 'student';
+};
+
 export const LandingView = () => {
     const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState<'student' | 'teacher'>('student');
+    const [activeTab, setActiveTab] = useState<'student' | 'teacher'>(() => getInitialRole(location.state?.tab));
     const [inSession, setInSession] = useState(false);
     const [showAbout, setShowAbout] = useState(false);
 
+    const handleRoleChange = (tab: 'student' | 'teacher') => {
+        setActiveTab(tab);
+        try {
+            localStorage.setItem(ROLE_STORAGE_KEY, tab);
+        } catch {
+            // Ignore storage errors
+        }
+    };
+
     useEffect(() => {
-        if (location.state?.tab) {
+        if (location.state?.tab === 'student' || location.state?.tab === 'teacher') {
             setActiveTab(location.state.tab);
+            try {
+                localStorage.setItem(ROLE_STORAGE_KEY, location.state.tab);
+            } catch {
+                // Ignore storage errors
+            }
         }
     }, [location.state]);
 
@@ -175,7 +206,7 @@ export const LandingView = () => {
                 {!inSession ? (
                     <div className="w-full max-w-md flex flex-col items-center gap-5">
                         {/* Role Slider */}
-                        <RoleSlider activeTab={activeTab} onChange={setActiveTab} />
+                        <RoleSlider activeTab={activeTab} onChange={handleRoleChange} />
 
                         {/* Content Section */}
                         <div className="w-full">
