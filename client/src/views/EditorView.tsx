@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
-import { Home, Pencil, Eye, EyeOff, PanelRightClose, PanelRightOpen, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus } from 'lucide-react';
+import { Home, Pencil, Eye, EyeOff, PanelRightClose, PanelRightOpen, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus, CheckCircle2, FileText } from 'lucide-react';
 import { useUI } from '../context/UIContext';
+import { Modal } from '../components/common/Modal';
 import { SlideRenderer } from '../components/SlideRenderer';
 import { SlideContainer } from '../components/slide/SlideContainer';
 import { SlideTitle } from '../components/slide/SlideTitle';
@@ -36,7 +37,7 @@ export const EditorView = () => {
   const isEditMode = searchParams.get('mode') === 'edit';
   const [hasLoaded, setHasLoaded] = useState(false);
 
-  const [toast, setToast] = useState<{ show: boolean; filename: string } | null>(null);
+  const [saveModal, setSaveModal] = useState<{ isOpen: boolean; filename: string } | null>(null);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [previewRevealed, setPreviewRevealed] = useState(false);
@@ -186,12 +187,7 @@ export const EditorView = () => {
 
   const onSave = async () => {
     const filename = await handleSave();
-    setToast({ show: true, filename });
-
-    // Auto-redirect after 5 seconds
-    setTimeout(() => {
-      navigate('/', { state: { tab: 'teacher' } });
-    }, 5000);
+    setSaveModal({ isOpen: true, filename });
   };
 
   // Keyboard shortcut Ctrl+S / Cmd+S to save, Escape to close menus
@@ -225,9 +221,6 @@ export const EditorView = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showAddMenu]);
 
-  const handleToastDismiss = () => {
-    navigate('/', { state: { tab: 'teacher' } });
-  };
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -543,25 +536,52 @@ export const EditorView = () => {
         </aside>
       )}
 
-      {/* TOAST */}
-      {toast?.show && (
-        <div className="fixed bottom-8 right-8 bg-gray-900 border border-gray-700 text-white p-6 rounded-2xl shadow-2xl z-50 max-w-md animate-slide-up">
-          <div className="flex items-start gap-4">
-            <Save size={40} className="animate-bounce" />
+      {/* SAVE MODAL */}
+      <Modal
+        isOpen={!!saveModal?.isOpen}
+        onClose={() => setSaveModal(null)}
+        maxWidth="md"
+        showCloseButton
+        theme="dark"
+      >
+        <div className="p-8">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="p-3.5 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+              <CheckCircle2 size={32} />
+            </div>
             <div>
-              <h3 className="font-bold text-xl mb-1 text-green-400">{t('editor.fileSaved')}</h3>
-              <p className="text-gray-300 mb-2 break-all font-mono text-sm bg-gray-800 p-2 rounded">{toast.filename}</p>
-              <p className="text-gray-400 text-sm mb-4">{t('editor.findInDownloads')}</p>
-              <button
-                onClick={handleToastDismiss}
-                className="bg-white text-gray-900 px-6 py-3 rounded-xl font-bold hover:bg-gray-100 w-full transition-colors"
-              >
-                {t('editor.backToHome')}
-              </button>
+              <h3 className="text-2xl font-bold text-white tracking-tight">{t('editor.fileSaved')}</h3>
+              <p className="text-sm text-gray-400 mt-0.5">{t('editor.findInDownloads')}</p>
             </div>
           </div>
+
+          <div className="bg-gray-950/80 border border-gray-800 p-4 rounded-2xl mb-8 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <FileText size={20} className="text-emerald-400 shrink-0" />
+              <span className="font-mono text-sm text-gray-200 truncate select-all">{saveModal?.filename}</span>
+            </div>
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg shrink-0 border border-emerald-500/20">
+              .medcase
+            </span>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => setSaveModal(null)}
+              className="flex-1 px-5 py-3.5 rounded-2xl font-bold bg-gray-800 text-gray-200 hover:bg-gray-700 hover:text-white transition-colors cursor-pointer border border-gray-700"
+            >
+              {t('editor.continueEditing')}
+            </button>
+            <button
+              onClick={() => navigate('/', { state: { tab: 'teacher' } })}
+              className="flex-1 px-5 py-3.5 rounded-2xl font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/30 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+            >
+              <span>{t('editor.goToPresentation')}</span>
+              <ArrowRight size={18} />
+            </button>
+          </div>
         </div>
-      )}
+      </Modal>
     </div>
   );
 };

@@ -11,13 +11,13 @@ import {
     QrCode, 
     ChevronLeft, 
     ChevronRight, 
-    X,
     Maximize,
     Minimize,
     WifiOff
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useUI } from '../context/UIContext';
+import { Modal } from '../components/common/Modal';
 import { loadCaseFromZip, revokeImageUrls, CaseValidationError } from '../utils/fileHelpers';
 import { SlideRenderer } from '../components/SlideRenderer';
 import { useTeacherSession, TEACHER_SESSION_KEY } from '../hooks/useTeacherSession';
@@ -44,6 +44,9 @@ export const TeacherView = () => {
     }, []);
 
     const handleExit = () => {
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        }
         try {
             sessionStorage.removeItem(TEACHER_SESSION_KEY);
         } catch {}
@@ -115,7 +118,12 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
     useEffect(() => {
         const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement);
         document.addEventListener('fullscreenchange', handleFsChange);
-        return () => document.removeEventListener('fullscreenchange', handleFsChange);
+        return () => {
+            document.removeEventListener('fullscreenchange', handleFsChange);
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            }
+        };
     }, []);
 
     const toggleFullscreen = () => {
@@ -410,6 +418,9 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                                     variant: 'destructive'
                                 });
                                 if (confirmed) {
+                                    if (document.fullscreenElement) {
+                                        document.exitFullscreen().catch(() => {});
+                                    }
                                     session.endSession();
                                     onExit();
                                 }
@@ -423,35 +434,27 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
             )}
 
             {/* QR Modal */}
-            {showQrModal && (
-                <div
-                    className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
-                    onClick={() => setShowQrModal(false)}
-                >
-                    <div
-                        className="bg-gray-800 border border-gray-700 p-8 rounded-2xl shadow-2xl max-w-sm w-full text-center relative"
-                        onClick={e => e.stopPropagation()}
-                    >
-                        <button
-                            onClick={() => setShowQrModal(false)}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer"
-                            title={t('common.close')}
-                        >
-                            <X size={20} />
-                        </button>
+            <Modal
+                isOpen={showQrModal}
+                onClose={() => setShowQrModal(false)}
+                maxWidth="sm"
+                showCloseButton
+                theme="dark"
+            >
+                <div className="p-8 text-center">
+                    <div className="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1">{t('teacher.roomCode')}</div>
+                    <div className="text-5xl font-mono font-bold text-white tracking-widest mb-6">{session.roomId}</div>
 
-                        <div className="text-sm text-gray-400 uppercase font-bold tracking-wider mb-1">{t('teacher.roomCode')}</div>
-                        <div className="text-5xl font-mono font-bold text-white tracking-widest mb-6">{session.roomId}</div>
-
-                        <div className="flex justify-center mb-6 bg-white p-4 rounded-xl shadow-lg w-fit mx-auto">
-                            <QRCodeSVG value={`${window.location.origin}${import.meta.env.BASE_URL}?room=${session.roomId}`} size={200} />
-                        </div>
-
-                        <div className="text-green-400 font-bold text-lg mb-2">{t('teacher.studentsOnline', { count: session.studentCount })}</div>
-                        <p className="text-xs text-gray-400 break-all">{`${window.location.origin}${import.meta.env.BASE_URL}?room=${session.roomId}`}</p>
+                    <div className="flex justify-center mb-6 bg-white p-4 rounded-2xl shadow-xl w-fit mx-auto">
+                        <QRCodeSVG value={`${window.location.origin}${import.meta.env.BASE_URL}?room=${session.roomId}`} size={200} />
                     </div>
+
+                    <div className="text-emerald-400 font-bold text-lg mb-2">{t('teacher.studentsOnline', { count: session.studentCount })}</div>
+                    <p className="text-xs text-gray-400 break-all select-all font-mono bg-gray-950/60 p-2.5 rounded-xl border border-gray-800">
+                        {`${window.location.origin}${import.meta.env.BASE_URL}?room=${session.roomId}`}
+                    </p>
                 </div>
-            )}
+            </Modal>
         </div>
     );
 };

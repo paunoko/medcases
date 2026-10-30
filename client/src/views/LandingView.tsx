@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { StudentView } from './StudentView';
+import { Modal } from '../components/common/Modal';
 import { 
     GraduationCap, 
     Presentation, 
@@ -10,7 +11,6 @@ import {
     Pencil, 
     ChevronRight, 
     HelpCircle, 
-    X, 
     Activity, 
     ShieldCheck 
 } from 'lucide-react';
@@ -225,74 +225,64 @@ export const LandingView = () => {
             </main>
 
             {/* "MIKÄ MEDCASES ON?" INFO MODAL */}
-            {showAbout && (
-                <div 
-                    className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
-                    onClick={() => setShowAbout(false)}
-                >
-                    <div 
-                        className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative border border-gray-100 animate-scale-in max-h-[90vh] overflow-y-auto"
-                        onClick={e => e.stopPropagation()}
-                    >
-                        <button
-                            onClick={() => setShowAbout(false)}
-                            className="absolute top-6 right-6 text-gray-400 hover:text-gray-700 p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
-                            title={t('common.close')}
-                        >
-                            <X size={22} />
-                        </button>
-
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md">
-                                <Activity size={28} className="stroke-[2.5]" />
-                            </div>
-                            <div>
-                                <h3 className="text-2xl font-black text-blue-950 tracking-tight">MedCases</h3>
-                                <p className="text-xs font-semibold text-gray-500">{t('landing.tagline')}</p>
-                            </div>
+            <Modal
+                isOpen={showAbout}
+                onClose={() => setShowAbout(false)}
+                maxWidth="lg"
+                showCloseButton
+                theme="light"
+            >
+                <div className="p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md">
+                            <Activity size={28} className="stroke-[2.5]" />
                         </div>
-
-                        <div className="space-y-5 text-gray-700 text-sm leading-relaxed">
-                            <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100">
-                                <div className="flex items-center gap-2 font-bold text-blue-950 mb-1 text-base">
-                                    <GraduationCap size={20} className="text-blue-600" />
-                                    <span>{t('landing.aboutStudentTitle')}</span>
-                                </div>
-                                <p className="text-gray-600">
-                                    {t('landing.aboutStudentText')}
-                                </p>
-                            </div>
-
-                            <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-100">
-                                <div className="flex items-center gap-2 font-bold text-purple-950 mb-1 text-base">
-                                    <Presentation size={20} className="text-purple-600" />
-                                    <span>{t('landing.aboutTeacherTitle')}</span>
-                                </div>
-                                <p className="text-gray-600">
-                                    {t('landing.aboutTeacherText')}
-                                </p>
-                            </div>
-
-                            <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100">
-                                <div className="flex items-center gap-2 font-bold text-emerald-950 mb-1 text-base">
-                                    <ShieldCheck size={20} className="text-emerald-600" />
-                                    <span>{t('landing.aboutPrivacyTitle')}</span>
-                                </div>
-                                <p className="text-gray-600">
-                                    {t('landing.aboutPrivacyText')}
-                                </p>
-                            </div>
+                        <div>
+                            <h3 className="text-2xl font-black text-blue-950 tracking-tight">MedCases</h3>
+                            <p className="text-xs font-semibold text-gray-500">{t('landing.tagline')}</p>
                         </div>
-
-                        <button
-                            onClick={() => setShowAbout(false)}
-                            className="mt-6 w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl transition-colors cursor-pointer"
-                        >
-                            {t('common.close')}
-                        </button>
                     </div>
+
+                    <div className="space-y-5 text-gray-700 text-sm leading-relaxed">
+                        <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100">
+                            <div className="flex items-center gap-2 font-bold text-blue-950 mb-1 text-base">
+                                <GraduationCap size={20} className="text-blue-600" />
+                                <span>{t('landing.aboutStudentTitle')}</span>
+                            </div>
+                            <p className="text-gray-600">
+                                {t('landing.aboutStudentText')}
+                            </p>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-100">
+                            <div className="flex items-center gap-2 font-bold text-purple-950 mb-1 text-base">
+                                <Presentation size={20} className="text-purple-600" />
+                                <span>{t('landing.aboutTeacherTitle')}</span>
+                            </div>
+                            <p className="text-gray-600">
+                                {t('landing.aboutTeacherText')}
+                            </p>
+                        </div>
+
+                        <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100">
+                            <div className="flex items-center gap-2 font-bold text-emerald-950 mb-1 text-base">
+                                <ShieldCheck size={20} className="text-emerald-600" />
+                                <span>{t('landing.aboutPrivacyTitle')}</span>
+                            </div>
+                            <p className="text-gray-600">
+                                {t('landing.aboutPrivacyText')}
+                            </p>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={() => setShowAbout(false)}
+                        className="mt-6 w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl transition-colors cursor-pointer"
+                    >
+                        {t('common.close')}
+                    </button>
                 </div>
-            )}
+            </Modal>
         </div>
     );
 };

@@ -318,3 +318,12 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korjattu `EditorView.tsx`:n esikatselun ääntenjakologiikka jakamaan äänet turvallisesti kaikille vaihtoehdoille, jos oikeaa vastausta ei ole valittu.
     - Lisätty defenssiiviset `undefined`- ja `filter(Boolean)` -suojaukset `SlideInteraction.tsx`:n vaihtoehtoihin ja `getPercentage`-laskentaan.
     - Luotu koko sovelluksen kattava `ErrorBoundary`-komponentti estämään valkoisen ruudun tilanteet ja tarjoamaan selkeä toipumisnäkymä.
+
+- [x] **8.8 Yhtenäinen Modal-komponentti, tallennuskuittauksen uudistus ja automaattinen poistuminen koko näytöstä**
+  - **Prioriteetti:** Korkea / UX & Käytettävyys
+  - **Tiedostot:** `client/src/components/common/Modal.tsx`, `client/src/context/UIContext.tsx`, `client/src/views/EditorView.tsx`, `client/src/views/TeacherView.tsx`, `client/src/views/LandingView.tsx`, `client/src/i18n/locales/`
+  - **Toimenpiteet:**
+    - Luotu keskitetty ja saavutettava `Modal`-komponentti (`client/src/components/common/Modal.tsx`), joka tarjoaa yhtenäisen taustasumennuksen (`backdrop-blur-sm`), pehmeät animaatiot, `Esc`-sulkeutumisen ja taustarullauksen lukituksen.
+    - Korvattu editorin häiritsevä alakulman toast-ilmoitus ja 5 sekunnin pakkoulosheitto rauhallisella, keskitetyllä tallennusdialogilla ("Jatka muokkausta" ja "Siirry esitykseen").
+    - Kytketty `UIContext` (`showAlert` ja `showConfirm`), opettajan QR-koodi-ikkuna sekä etusivun infoikkuna käyttämään samaa `Modal`-komponenttia.
+    - Lisätty opettajan esitysnäkymään automaattinen koko näytön tilasta (`exitFullscreen`) poistuminen istunnon päättyessä tai näkymästä poistuttaessa.
