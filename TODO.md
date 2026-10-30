@@ -407,3 +407,10 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Nostettu versio 1.0.0:sta versioon 2.0.0.
     - Luotu `CHANGELOG.md` noudattaen Keep a Changelog- ja SemVer-standardeja.
     - Luotu git-tagi `v2.0.0`.
+
+- [x] **9.6 Päänäkymien modulaarisuus: Sivupalkkien komponentointi (`TeacherSidebar` & `EditorSidebar`)**
+  - **Prioriteetti:** Keskitaso / Arkkitehtuuri & Ylläpidettävyys
+  - **Tiedostot:** `client/src/components/teacher/TeacherSidebar.tsx`, `client/src/components/editor/EditorSidebar.tsx`, `client/src/views/TeacherView.tsx`, `client/src/views/EditorView.tsx`
+  - **Toimenpiteet:**
+    - Eristetty opettajan ohjaussivupalkki (huonekoodi, QR, vastausten paljastus, navigointi, lopetus) omaksi `TeacherSidebar`-komponentikseen (`TeacherView.tsx` tiivistyi 540 -> 404 riviin).
+    - Eristetty editorin dianvalinta, dnd-kit-vedä-ja-pudota sekä lisäysvalikko `EditorSidebar`-komponentikseen (`EditorView.tsx` tiivistyi 575 -> 397 riviin).

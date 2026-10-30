@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
-import { Home, Pencil, Eye, EyeOff, PanelRightClose, PanelRightOpen, FolderOpen, Save, ArrowRight, Info, CheckSquare, Scale, PenTool, Plus, CheckCircle2, FileText } from 'lucide-react';
+import { Home, Pencil, Eye, EyeOff, PanelRightOpen, FolderOpen, Save, ArrowRight, CheckCircle2, FileText } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 import { Modal } from '../components/common/Modal';
 import { FilePickerView } from '../components/common/FilePickerView';
@@ -11,24 +11,7 @@ import { SlideContainer } from '../components/slide/SlideContainer';
 import { SlideTitle } from '../components/slide/SlideTitle';
 import { SlideBody } from '../components/slide/SlideBody';
 import { SlideInteraction } from '../components/slide/SlideInteraction';
-
-import { 
-  DndContext, 
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent
-} from '@dnd-kit/core';
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { restrictToVerticalAxis, restrictToWindowEdges } from '@dnd-kit/modifiers';
-
-import { SortableSlideItem } from '../components/slide/SortableSlideItem';
+import { EditorSidebar } from '../components/editor/EditorSidebar';
 
 import type { StudentAnswer } from '../types';
 
@@ -41,12 +24,10 @@ export const EditorView = () => {
   const [hasLoaded, setHasLoaded] = useState(false);
 
   const [saveModal, setSaveModal] = useState<{ isOpen: boolean; filename: string } | null>(null);
-  const [showAddMenu, setShowAddMenu] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [previewRevealed, setPreviewRevealed] = useState(false);
   const [dummyAnswers, setDummyAnswers] = useState<StudentAnswer[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const addMenuRef = useRef<HTMLDivElement>(null);
 
   const {
     caseData, updateMeta, activeSlideIndex, setActiveSlideIndex, imagePreviews,
@@ -195,14 +176,12 @@ export const EditorView = () => {
     setSaveModal({ isOpen: true, filename });
   }, [handleSave]);
 
-  // Keyboard shortcut Ctrl+S / Cmd+S to save, Escape to close menus
+  // Keyboard shortcut Ctrl+S / Cmd+S to save, Space/Enter in preview to toggle reveal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
         e.preventDefault();
         onSave();
-      } else if (e.key === 'Escape' && showAddMenu) {
-        setShowAddMenu(false);
       } else if (isPreview && (e.key === ' ' || e.key === 'Enter') && activeSlide?.type !== 'INFO') {
         if (!(e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement)) {
           e.preventDefault();
@@ -212,34 +191,7 @@ export const EditorView = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onSave, showAddMenu, isPreview, activeSlide]);
-
-  // Close add slide dropdown when clicking outside
-  useEffect(() => {
-    if (!showAddMenu) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      if (addMenuRef.current && !addMenuRef.current.contains(e.target as Node)) {
-        setShowAddMenu(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [showAddMenu]);
-
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      reorderSlides(active.id as string, over.id as string);
-    }
-  };
+  }, [onSave, isPreview, activeSlide]);
 
   if (isEditMode && !hasLoaded) {
     return (
@@ -377,152 +329,23 @@ export const EditorView = () => {
       </main>
 
       {/* RIGHT: Settings and Slides */}
-      {isSidebarOpen && (
-        <aside className="w-80 shrink-0 bg-gray-800 flex flex-col border-l border-gray-700 min-h-0 h-full">
-          {/* Top action header: navigation, file ops, preview & save, sidebar toggle */}
-          <div className="p-3 border-b border-gray-700 flex flex-col gap-2.5 shrink-0 bg-gray-800/95">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1">
-                <button
-                  onClick={handleHome}
-                  className="p-2 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg transition-colors cursor-pointer"
-                  title={t('common.home')}
-                >
-                  <Home size={18} />
-                </button>
-
-                <label
-                  className="p-2 hover:bg-gray-700 text-gray-300 hover:text-white rounded-lg transition-colors cursor-pointer"
-                  title={t('editor.open')}
-                >
-                  <FolderOpen size={18} />
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept=".medcase,.zip"
-                    onChange={onFileInputChange}
-                  />
-                </label>
-              </div>
-
-              <button
-                onClick={() => setIsSidebarOpen(false)}
-                className="p-2 hover:bg-gray-700 text-gray-400 hover:text-white rounded-lg transition-colors cursor-pointer"
-                title={t('editor.hideSidebar')}
-              >
-                <PanelRightClose size={18} />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => setIsPreview(!isPreview)}
-                className={`px-3 py-2 rounded-xl font-bold text-xs shadow transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer ${
-                  isPreview
-                    ? 'bg-blue-600 hover:bg-blue-500 text-white ring-1 ring-blue-400 shadow-blue-600/25'
-                    : 'bg-gray-700 hover:bg-gray-650 text-gray-200'
-                }`}
-                title={isPreview ? t('editor.editMode') : t('editor.previewMode')}
-              >
-                {isPreview ? <Pencil size={15} /> : <Eye size={15} />}
-                <span className="truncate">{isPreview ? t('editor.editMode') : t('editor.previewMode')}</span>
-              </button>
-
-              <button
-                onClick={onSave}
-                className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-950/30 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
-                title={t('editor.save')}
-              >
-                <Save size={15} />
-                <span className="truncate">{t('editor.save')}</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Case Name Input */}
-          <div className="px-4 py-3 border-b border-gray-700 shrink-0 bg-gray-800">
-            <label className="block text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">
-              {t('editor.caseName')}
-            </label>
-            <input
-              className="w-full bg-gray-900 border border-gray-600 focus:border-blue-500 text-white font-semibold px-3 py-2 rounded-lg focus:outline-none transition-colors text-sm"
-              placeholder={t('editor.caseNamePlaceholder')}
-              value={caseData.meta.title}
-              onChange={e => updateMeta('title', e.target.value)}
-            />
-          </div>
-
-          {/* Slides List with "+ New Slide" at end */}
-          <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 custom-scrollbar min-h-0">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleDragEnd}
-              modifiers={[restrictToVerticalAxis, restrictToWindowEdges]}
-            >
-              <SortableContext
-                items={caseData.slides.map(s => s.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                {caseData.slides.map((slide, idx) => (
-                  <SortableSlideItem
-                    key={slide.id}
-                    slide={slide}
-                    index={idx}
-                    isActive={idx === activeSlideIndex}
-                    onSelect={setActiveSlideIndex}
-                    onDelete={deleteSlide}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-
-            {/* "+ New Slide" button directly below slides */}
-            <div ref={addMenuRef} className="relative pt-1 pb-4">
-              <button
-                onClick={() => setShowAddMenu(!showAddMenu)}
-                className="w-full border-2 border-dashed border-gray-600 hover:border-blue-400 bg-gray-800/80 hover:bg-blue-600/10 text-gray-300 hover:text-white py-3 px-4 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 transition-all cursor-pointer group shadow-sm"
-              >
-                <Plus size={18} className="text-gray-400 group-hover:text-blue-400 transition-colors" />
-                <span>{t('editor.newSlide')}</span>
-              </button>
-
-              {showAddMenu && (
-                <div className="mt-2 bg-gray-700 border border-gray-600 rounded-xl shadow-2xl overflow-hidden z-20">
-                  <button
-                    onClick={() => { addSlide('INFO'); setShowAddMenu(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-600 font-semibold text-sm text-gray-200 hover:text-white transition-colors border-b border-gray-600/80 cursor-pointer text-left"
-                  >
-                    <Info size={18} className="text-blue-400 shrink-0" />
-                    <span>{t('editor.infoSlide')}</span>
-                  </button>
-                  <button
-                    onClick={() => { addSlide('MULTIPLE_CHOICE'); setShowAddMenu(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-600 font-semibold text-sm text-gray-200 hover:text-white transition-colors border-b border-gray-600/80 cursor-pointer text-left"
-                  >
-                    <CheckSquare size={18} className="text-amber-400 shrink-0" />
-                    <span>{t('editor.multipleChoice')}</span>
-                  </button>
-                  <button
-                    onClick={() => { addSlide('TRUE_FALSE'); setShowAddMenu(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-600 font-semibold text-sm text-gray-200 hover:text-white transition-colors border-b border-gray-600/80 cursor-pointer text-left"
-                  >
-                    <Scale size={18} className="text-purple-400 shrink-0" />
-                    <span>{t('editor.trueFalse')}</span>
-                  </button>
-                  <button
-                    onClick={() => { addSlide('OPEN_TEXT'); setShowAddMenu(false); }}
-                    className="w-full flex items-center gap-3 px-4 py-3 hover:bg-gray-600 font-semibold text-sm text-gray-200 hover:text-white transition-colors cursor-pointer text-left"
-                  >
-                    <PenTool size={18} className="text-emerald-400 shrink-0" />
-                    <span>{t('editor.openText')}</span>
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </aside>
-      )}
+      <EditorSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onHome={handleHome}
+        onFileInputChange={onFileInputChange}
+        isPreview={isPreview}
+        onTogglePreview={() => setIsPreview(!isPreview)}
+        onSave={onSave}
+        caseTitle={caseData.meta.title}
+        onCaseTitleChange={title => updateMeta('title', title)}
+        slides={caseData.slides}
+        activeSlideIndex={activeSlideIndex}
+        onSelectSlide={setActiveSlideIndex}
+        onDeleteSlide={deleteSlide}
+        onReorderSlides={reorderSlides}
+        onAddSlide={addSlide}
+      />
 
       {/* SAVE MODAL */}
       <Modal
