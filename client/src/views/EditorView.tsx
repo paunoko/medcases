@@ -429,9 +429,9 @@ export const EditorView = () => {
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => setIsPreview(!isPreview)}
-                className={`px-3 py-2 rounded-lg font-bold text-xs shadow transition-colors flex items-center justify-center gap-1.5 cursor-pointer ${
+                className={`px-3 py-2 rounded-xl font-bold text-xs shadow transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer ${
                   isPreview
-                    ? 'bg-blue-600 hover:bg-blue-500 text-white ring-1 ring-blue-400'
+                    ? 'bg-blue-600 hover:bg-blue-500 text-white ring-1 ring-blue-400 shadow-blue-600/25'
                     : 'bg-gray-700 hover:bg-gray-650 text-gray-200'
                 }`}
                 title={isPreview ? t('editor.editMode') : t('editor.previewMode')}
@@ -442,7 +442,7 @@ export const EditorView = () => {
 
               <button
                 onClick={onSave}
-                className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-bold text-xs shadow-md transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                className="px-3 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-bold text-xs shadow-md shadow-emerald-950/30 transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
                 title={t('editor.save')}
               >
                 <Save size={15} />

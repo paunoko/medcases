@@ -327,3 +327,14 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korvattu editorin häiritsevä alakulman toast-ilmoitus ja 5 sekunnin pakkoulosheitto rauhallisella, keskitetyllä tallennusdialogilla ("Jatka muokkausta" ja "Palaa päävalikkoon").
     - Kytketty `UIContext` (`showAlert` ja `showConfirm`), opettajan QR-koodi-ikkuna sekä etusivun infoikkuna käyttämään samaa `Modal`-komponenttia.
     - Lisätty opettajan esitysnäkymään automaattinen koko näytön tilasta (`exitFullscreen`) poistuminen istunnon päättyessä tai näkymästä poistuttaessa.
+
+- [x] **8.9 Esteettinen hienosäätö: Lucide-nuolet, pyöristysten harmonisointi, smaragdivärit ja sävyvarjot**
+  - **Prioriteetti:** Viimeistely / Estetiikka
+  - **Tiedostot:** `client/src/views/TeacherView.tsx`, `client/src/views/StudentView.tsx`, `client/src/views/LandingView.tsx`, `client/src/views/EditorView.tsx`, `client/src/components/slide/OptionCard.tsx`, `client/src/components/slide/SortableSlideItem.tsx`, `client/src/i18n/locales/`
+  - **Toimenpiteet:**
+    - Korvattu raa'at unicode-nuolimerkit (`←`, `→`) kielitiedostoista puhtailla Lucide-kuvakkeilla (`ChevronLeft`, `ChevronRight`).
+    - Korvattu TeacherView'n vanhat 4 px kulmat (`rounded`) modernilla `rounded-xl` -muotoilulla ohjauspainikkeissa (edellinen/seuraava, paljastus ja lopetus).
+    - Lisätty "Lopeta istunto" -painikkeeseen esteettinen `LogOut`-kuvake ja pehmeä punainen sävytyyli.
+    - Yhtenäistetty kaikki vihreät korostukset puhtaaseen `emerald`-palettiin (poistettu hajanaiset `green-400`/`green-500`-luokat).
+    - Kalibroitu kuvakkeiden viivanpaksuudet: poistettu ylikorostetut `stroke-[3]` -määritykset ja vakioitu `stroke-[2.5]` merkeille.
+    - Lisätty päänappeihin modernit sävyvarjot (`shadow-blue-600/25`, `shadow-emerald-600/25`, `shadow-purple-600/30`).

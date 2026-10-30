@@ -13,7 +13,8 @@ import {
     ChevronRight, 
     Maximize,
     Minimize,
-    WifiOff
+    WifiOff,
+    LogOut
 } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useUI } from '../context/UIContext';
@@ -184,7 +185,7 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                 )}
                 <button
                     onClick={session.createRoom}
-                    className="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg transform transition hover:scale-105"
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white text-xl font-bold py-4 px-10 rounded-full shadow-lg shadow-emerald-950/30 transform transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 >
                     {t('teacher.openRoom')}
                 </button>
@@ -289,8 +290,8 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                     >
                         <QrCode size={16} className="text-blue-400 group-hover:scale-110 transition-transform" />
                         <span className="font-mono font-bold tracking-wider text-sm">{session.roomId}</span>
-                        <span className="flex items-center gap-1 text-[11px] bg-green-500/20 text-green-300 font-semibold px-1.5 py-0.5 rounded-full border border-green-500/30">
-                            <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                        <span className="flex items-center gap-1 text-[11px] bg-emerald-500/20 text-emerald-300 font-semibold px-1.5 py-0.5 rounded-full border border-emerald-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                             {session.studentCount}
                         </span>
                     </button>
@@ -339,19 +340,19 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                         </div>
                     </div>
 
-                    <div className="bg-gray-700 p-4 rounded-lg mb-6 text-center">
-                        <div className="text-sm text-gray-400 uppercase font-bold">{t('teacher.roomCode')}</div>
+                    <div className="bg-gray-900/60 p-4 rounded-2xl border border-gray-700/80 mb-6 text-center shadow-inner">
+                        <div className="text-xs text-gray-400 uppercase font-bold tracking-wider">{t('teacher.roomCode')}</div>
                         <div className="text-5xl font-mono font-bold text-white tracking-widest my-2">{session.roomId}</div>
 
-                        <div className="flex justify-center my-4 bg-white p-2 rounded w-fit mx-auto cursor-pointer" onClick={() => setShowQrModal(true)} title={t('teacher.roomCode')}>
+                        <div className="flex justify-center my-3 bg-white p-2.5 rounded-xl shadow-md w-fit mx-auto cursor-pointer hover:scale-105 transition-transform" onClick={() => setShowQrModal(true)} title={t('teacher.roomCode')}>
                             <QRCodeSVG value={`${window.location.origin}${import.meta.env.BASE_URL}?room=${session.roomId}`} size={128} />
                         </div>
 
-                        <div className="text-green-400 font-bold">{t('teacher.studentsOnline', { count: session.studentCount })}</div>
+                        <div className="text-emerald-400 font-bold text-sm">{t('teacher.studentsOnline', { count: session.studentCount })}</div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto mb-4">
-                        <div className="text-sm text-gray-400">
+                        <div className="text-sm font-semibold text-gray-400">
                             {t('teacher.answersCount', { count: session.answers.length })}
                         </div>
                     </div>
@@ -361,51 +362,55 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                         {session.currentSlide?.type === 'OPEN_TEXT' ? (
                             <button
                                 onClick={session.toggleOpenTextReveal}
-                                className={`py-4 rounded font-bold text-lg shadow-lg flex items-center justify-center gap-2 transition-colors cursor-pointer ${
+                                className={`py-3.5 px-4 rounded-xl font-bold text-base shadow-lg transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer ${
                                     session.isOpenTextRevealed
-                                        ? 'bg-gray-700 hover:bg-gray-600 text-gray-200'
-                                        : 'bg-blue-600 hover:bg-blue-500 text-white'
+                                        ? 'bg-gray-700 hover:bg-gray-650 text-gray-200 shadow-gray-950/20'
+                                        : 'bg-blue-600 hover:bg-blue-500 text-white shadow-blue-600/25'
                                 }`}
                             >
                                 {session.isOpenTextRevealed ? (
                                     <>
-                                        <EyeOff size={22} />
-                                        {t('teacher.hideAnswers')}
+                                        <EyeOff size={20} />
+                                        <span>{t('teacher.hideAnswers')}</span>
                                     </>
                                 ) : (
                                     <>
-                                        <Eye size={22} />
-                                        {t('teacher.revealAnswersOnly')}
+                                        <Eye size={20} />
+                                        <span>{t('teacher.revealAnswersOnly')}</span>
                                     </>
                                 )}
                             </button>
                         ) : session.slideState !== 'REVEALED' && session.currentSlide?.type !== 'INFO' ? (
                             <button
                                 onClick={session.revealAnswer}
-                                className="bg-blue-600 hover:bg-blue-500 py-4 rounded font-bold text-lg shadow-lg cursor-pointer"
+                                className="bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 px-4 rounded-xl font-bold text-base shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2 transition-all active:scale-[0.99] cursor-pointer"
                             >
-                                {t('teacher.revealAnswer')}
+                                <Eye size={20} />
+                                <span>{t('teacher.revealAnswer')}</span>
                             </button>
                         ) : session.currentSlide?.type !== 'INFO' ? (
-                            <div className="bg-gray-700 py-4 rounded text-center text-gray-400 font-bold">
-                                {t('teacher.answersVisible')}
+                            <div className="bg-emerald-600/15 border border-emerald-500/30 text-emerald-300 py-3 px-4 rounded-xl text-center text-sm font-bold flex items-center justify-center gap-2">
+                                <Eye size={18} />
+                                <span>{t('teacher.answersVisible')}</span>
                             </div>
                         ) : null}
 
-                        <div className="flex gap-2 mt-4">
+                        <div className="grid grid-cols-2 gap-2 mt-4">
                             <button
                                 onClick={session.prevSlide}
                                 disabled={session.currentIndex === 0}
-                                className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded disabled:opacity-50 cursor-pointer"
+                                className="py-3 px-3 rounded-xl font-bold text-sm bg-gray-700 hover:bg-gray-650 text-gray-200 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
                             >
-                                {t('teacher.prev')}
+                                <ChevronLeft size={18} />
+                                <span>{t('teacher.prev')}</span>
                             </button>
                             <button
                                 onClick={session.nextSlide}
                                 disabled={session.currentIndex === session.totalSlides - 1}
-                                className="flex-1 bg-gray-700 hover:bg-gray-600 py-3 rounded disabled:opacity-50 cursor-pointer"
+                                className="py-3 px-3 rounded-xl font-bold text-sm bg-gray-700 hover:bg-gray-650 text-gray-200 hover:text-white transition-all disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-1.5 shadow-sm active:scale-[0.98]"
                             >
-                                {t('teacher.next')}
+                                <span>{t('teacher.next')}</span>
+                                <ChevronRight size={18} />
                             </button>
                         </div>
 
@@ -425,9 +430,10 @@ const Dashboard = ({ caseData, images, onExit }: { caseData: PatientCase, images
                                     onExit();
                                 }
                             }}
-                            className="w-full bg-red-900/50 hover:bg-red-900 text-red-200 py-3 rounded mt-6 text-sm font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                            className="w-full py-3 px-4 rounded-xl font-bold text-xs uppercase tracking-wider bg-red-950/40 hover:bg-red-900/60 text-red-300 hover:text-red-100 border border-red-900/50 hover:border-red-700/60 transition-all cursor-pointer shadow-sm active:scale-[0.98] flex items-center justify-center gap-2 mt-4"
                         >
-                            {t('teacher.endSession')}
+                            <LogOut size={16} />
+                            <span>{t('teacher.endSession')}</span>
                         </button>
                     </div>
                 </div>

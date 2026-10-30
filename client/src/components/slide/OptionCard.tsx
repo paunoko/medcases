@@ -81,7 +81,7 @@ export const OptionCard: React.FC<OptionCardProps> = ({
             <div className="flex flex-col gap-1.5">
               {isRevealed && isCorrect && (
                 <span className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-emerald-800 bg-emerald-100/90 border border-emerald-300/80 px-2.5 py-0.5 rounded-md w-fit">
-                  <CheckCircle2 size={14} className="stroke-[3]" />
+                  <CheckCircle2 size={14} className="stroke-[2.5]" />
                   {t('teacher.correctAnswerBadge')}
                 </span>
               )}

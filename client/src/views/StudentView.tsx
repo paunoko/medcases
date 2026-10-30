@@ -57,7 +57,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
           <button
             disabled={!isConnected || code.length < 4}
             onClick={() => joinRoom(code)}
-            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl shadow-md transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
+            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl shadow-lg shadow-blue-600/25 transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
           >
             {t('student.join')}
           </button>
@@ -203,7 +203,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
                           <div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 transition-all ${
                             isSelected ? 'bg-blue-600 text-white shadow-sm' : 'border-2 border-gray-300'
                           }`}>
-                            {isSelected && <CheckCircle2 size={18} className="stroke-[3]" />}
+                            {isSelected && <CheckCircle2 size={18} className="stroke-[2.5]" />}
                           </div>
                         ) : (
                           <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-all ${
@@ -220,7 +220,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
                 <button
                   onClick={() => submitAnswer(selectedOptions)}
                   disabled={selectedOptions.length === 0}
-                  className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl mt-4 shadow-md transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
+                  className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl mt-4 shadow-lg shadow-blue-600/25 transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
                 >
                   {t('student.submitAnswer')}
                 </button>
@@ -279,7 +279,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
                 <button
                   onClick={() => textAns.trim() && submitAnswer(textAns.trim())}
                   disabled={!textAns.trim()}
-                  className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl shadow-md transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer flex items-center justify-center gap-2"
+                  className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl shadow-lg shadow-blue-600/25 transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer flex items-center justify-center gap-2"
                 >
                   <span>{t('student.send')}</span>
                   <Send size={20} />

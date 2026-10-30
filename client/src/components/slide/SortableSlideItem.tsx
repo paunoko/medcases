@@ -55,7 +55,7 @@ export const SortableSlideItem: React.FC<Props> = ({
       <div 
         {...attributes} 
         {...listeners}
-        className="text-gray-500 hover:text-gray-300 cursor-grab active:cursor-grabbing p-1 -ml-2 rounded hover:bg-gray-600 transition-colors"
+        className="text-gray-500 hover:text-gray-300 cursor-grab active:cursor-grabbing p-1 -ml-2 rounded-lg hover:bg-gray-600 transition-colors"
         onClick={e => e.stopPropagation()}
       >
         <GripVertical size={20} />
@@ -77,7 +77,7 @@ export const SortableSlideItem: React.FC<Props> = ({
                 onDelete(index);
               }
             }}
-            className="text-gray-500 hover:text-red-400 p-1 rounded hover:bg-gray-800 transition-colors"
+            className="text-gray-500 hover:text-red-400 p-1 rounded-lg hover:bg-gray-800 transition-colors"
             title={t('editor.deleteSlide')}
           >
             <Trash2 size={16} />

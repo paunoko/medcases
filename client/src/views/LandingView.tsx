@@ -124,7 +124,7 @@ export const LandingView = () => {
                                 onClick={() => setActiveTab('student')}
                                 className={`flex-1 py-3 px-4 rounded-xl font-extrabold text-base transition-all flex items-center justify-center gap-2 cursor-pointer ${
                                     activeTab === 'student'
-                                        ? 'bg-blue-600 text-white shadow-md'
+                                        ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
                                         : 'text-gray-600 hover:text-gray-900'
                                 }`}
                             >
@@ -135,7 +135,7 @@ export const LandingView = () => {
                                 onClick={() => setActiveTab('teacher')}
                                 className={`flex-1 py-3 px-4 rounded-xl font-extrabold text-base transition-all flex items-center justify-center gap-2 cursor-pointer ${
                                     activeTab === 'teacher'
-                                        ? 'bg-purple-600 text-white shadow-md'
+                                        ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
                                         : 'text-gray-600 hover:text-gray-900'
                                 }`}
                             >
