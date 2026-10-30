@@ -25,9 +25,10 @@ export const SlideInteraction: React.FC<Props> = ({
   const isEdit = mode === 'edit';
 
   // Calculate answer distribution (only if answers provided)
-  const getPercentage = (optionId: string) => {
-    if (answers.length === 0) return 0;
+  const getPercentage = (optionId?: string) => {
+    if (!optionId || !answers || answers.length === 0) return 0;
     const count = answers.filter(a => {
+      if (!a) return false;
       if (Array.isArray(a.answer)) {
         return a.answer.includes(optionId);
       }
@@ -108,8 +109,8 @@ export const SlideInteraction: React.FC<Props> = ({
               { id: 'true', text: t('editor.yesTrue'), isCorrect: slide.correctAnswer },
               { id: 'false', text: t('editor.noFalse'), isCorrect: !slide.correctAnswer }
             ]
-            : (slide.type === 'MULTIPLE_CHOICE' || slide.type === 'TRUE_FALSE' ? (slide as any).options : [])
-          )?.map((opt: Option, i: number) => {
+            : (((slide as any).options as Option[]) || []).filter(Boolean)
+          ).map((opt: Option, i: number) => {
             const percent = getPercentage(opt.id);
             const isCorrect = opt.isCorrect;
 

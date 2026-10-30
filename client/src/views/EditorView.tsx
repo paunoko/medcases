@@ -50,7 +50,9 @@ export const EditorView = () => {
     hasUnsavedChanges
   } = useCaseEditor();
 
-  const activeSlide = activeSlideIndex !== null ? caseData.slides[activeSlideIndex] : null;
+  const activeSlide = (activeSlideIndex !== null && caseData.slides[activeSlideIndex])
+    ? caseData.slides[activeSlideIndex]
+    : null;
 
   useEffect(() => {
     setPreviewRevealed(false);
@@ -68,32 +70,50 @@ export const EditorView = () => {
         ? [{ id: 'true', isCorrect: activeSlide.correctAnswer }, { id: 'false', isCorrect: !activeSlide.correctAnswer }]
         : (activeSlide as any).options || [];
 
-      if (opts.length === 0) {
+      const validOpts = opts.filter((o: any) => o && o.id);
+      if (validOpts.length === 0) {
         setDummyAnswers([]);
         return;
       }
 
       const answers: any[] = [];
       const totalVotes = 25;
-      const correctOpts = opts.filter((o: any) => o.isCorrect);
-      const incorrectOpts = opts.filter((o: any) => !o.isCorrect);
+      const correctOpts = validOpts.filter((o: any) => o.isCorrect);
+      const incorrectOpts = validOpts.filter((o: any) => !o.isCorrect);
 
-      const correctVotesTotal = correctOpts.length > 0 ? Math.round(totalVotes * 0.64) : Math.round(totalVotes / opts.length);
-      const remainingVotes = totalVotes - correctVotesTotal;
+      if (correctOpts.length > 0) {
+        const correctVotesTotal = Math.round(totalVotes * 0.64);
+        const remainingVotes = totalVotes - correctVotesTotal;
 
-      for (let i = 0; i < correctVotesTotal; i++) {
-        const targetOpt = correctOpts[i % correctOpts.length];
-        answers.push({ socketId: `dummy-c-${i}`, answer: targetOpt.id });
-      }
+        for (let i = 0; i < correctVotesTotal; i++) {
+          const targetOpt = correctOpts[i % correctOpts.length];
+          if (targetOpt?.id) {
+            answers.push({ socketId: `dummy-c-${i}`, answer: targetOpt.id });
+          }
+        }
 
-      if (incorrectOpts.length > 0) {
-        for (let i = 0; i < remainingVotes; i++) {
-          const targetOpt = incorrectOpts[i % incorrectOpts.length];
-          answers.push({ socketId: `dummy-i-${i}`, answer: targetOpt.id });
+        if (incorrectOpts.length > 0) {
+          for (let i = 0; i < remainingVotes; i++) {
+            const targetOpt = incorrectOpts[i % incorrectOpts.length];
+            if (targetOpt?.id) {
+              answers.push({ socketId: `dummy-i-${i}`, answer: targetOpt.id });
+            }
+          }
+        } else {
+          for (let i = 0; i < remainingVotes; i++) {
+            const targetOpt = validOpts[i % validOpts.length];
+            if (targetOpt?.id) {
+              answers.push({ socketId: `dummy-r-${i}`, answer: targetOpt.id });
+            }
+          }
         }
       } else {
-        for (let i = 0; i < remainingVotes; i++) {
-          answers.push({ socketId: `dummy-r-${i}`, answer: opts[i % opts.length].id });
+        // No option marked as correct yet: distribute votes across all available options
+        for (let i = 0; i < totalVotes; i++) {
+          const targetOpt = validOpts[i % validOpts.length];
+          if (targetOpt?.id) {
+            answers.push({ socketId: `dummy-all-${i}`, answer: targetOpt.id });
+          }
         }
       }
 

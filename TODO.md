@@ -309,3 +309,12 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Poistettu ahdas sulkemisnappi tapauksen nimen kentästä ja selkeytetty tapauksen nimen muokkausta.
     - Siirretty "+ Uusi dia" -painike ruudun alalaidasta suoraan viimeisen dian perään dialistassa ja lisätty ulkopuolisen klikkauksen tunnistava alasvetovalikko.
     - Lisätty sivupalkin ollessa suljettuna tyylikäs kelluva ohjauspalkki (Home, Avaa, Esikatselu, Tallenna, Avaa sivupalkki), jolloin täyden ruudun tilassa kaikki työkalut säilyvät vaivattomasti käden ulottuvilla.
+
+- [x] **8.7 Korjattu esikatselutilan kaatuminen (valkoinen ruutu) ja lisätty ErrorBoundary**
+  - **Prioriteetti:** Kriittinen / Vakaus
+  - **Tiedostot:** `client/src/views/EditorView.tsx`, `client/src/components/slide/SlideInteraction.tsx`, `client/src/components/ErrorBoundary.tsx`, `client/src/App.tsx`
+  - **Ongelma:** Esikatselun dummy-simulaatio kaatui `TypeError: Cannot read properties of undefined (reading 'id')` -virheeseen, jos monivalintakysymyksessä ei ollut vielä yhtäkään vaihtoehtoa merkitty oikeaksi (`correctOpts.length === 0`). Virhe kaatoi koko React-puun valkoiseksi ruuduksi ilman virherajaa.
+  - **Toimenpiteet:**
+    - Korjattu `EditorView.tsx`:n esikatselun ääntenjakologiikka jakamaan äänet turvallisesti kaikille vaihtoehdoille, jos oikeaa vastausta ei ole valittu.
+    - Lisätty defenssiiviset `undefined`- ja `filter(Boolean)` -suojaukset `SlideInteraction.tsx`:n vaihtoehtoihin ja `getPercentage`-laskentaan.
+    - Luotu koko sovelluksen kattava `ErrorBoundary`-komponentti estämään valkoisen ruudun tilanteet ja tarjoamaan selkeä toipumisnäkymä.
