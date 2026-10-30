@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Activity, ChevronLeft } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { CaseFileDropzone } from './CaseFileDropzone';
 import { LanguageSlider } from './LanguageSlider';
 
@@ -30,25 +30,12 @@ export const FilePickerView: React.FC<FilePickerViewProps> = ({
 
             {/* TOP HEADER */}
             <header className="w-full bg-white/90 backdrop-blur-md border-b border-gray-200/80 px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4 z-20 shadow-xs">
-                {/* Brand & Back Button */}
-                <div className="flex items-center gap-3 sm:gap-4">
-                    <button
-                        onClick={onBack}
-                        className="flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-bold text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-gray-200 transition-colors cursor-pointer select-none"
-                        title={t('common.back', { defaultValue: 'Takaisin' })}
-                    >
-                        <ChevronLeft size={18} />
-                        <span className="hidden sm:inline">{t('common.home', { defaultValue: 'Etusivulle' })}</span>
-                    </button>
-
-                    <div className="w-px h-6 bg-gray-200" />
-
-                    <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
-                            <Activity size={20} className="stroke-[2.5]" />
-                        </div>
-                        <h1 className="text-xl font-black text-blue-950 tracking-tight">MedCases</h1>
+                {/* Brand */}
+                <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white shadow-md">
+                        <Activity size={20} className="stroke-[2.5]" />
                     </div>
+                    <h1 className="text-xl font-black text-blue-950 tracking-tight">MedCases</h1>
                 </div>
 
                 {/* Right actions: Language */}

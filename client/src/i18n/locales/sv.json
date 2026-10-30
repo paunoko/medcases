@@ -27,7 +27,7 @@
     "aboutPrivacyText": "MedCases kräver inga molnkonton och samlar inte in personuppgifter. Alla patientfall sparas lokalt som .medcase-filer på din egen enhet.",
     "teacherActions": "Lärarverktyg",
     "presentCase": "Presentera patientfall",
-    "presentCaseDesc": "Öppna en .medcase-fil och visa den på skärmen.",
+    "presentCaseDesc": "Projektorläge. Presentera ett eller flera fall med samma rumskod.",
     "createNew": "Skapa nytt fall",
     "createNewDesc": "Bygg ett nytt kliniskt fall och frågor i editorn.",
     "editExisting": "Redigera fall",
