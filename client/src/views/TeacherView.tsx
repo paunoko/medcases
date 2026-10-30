@@ -56,6 +56,7 @@ export const TeacherView = () => {
         revokeImageUrls(imagesRef.current);
         setImages({});
         setCaseData(null);
+        navigate('/', { state: { tab: 'teacher' } });
     };
 
     // If no data, show upload screen
