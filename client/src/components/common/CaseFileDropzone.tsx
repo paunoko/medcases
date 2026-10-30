@@ -68,7 +68,7 @@ export const CaseFileDropzone: React.FC<CaseFileDropzoneProps> = ({
             <input
                 ref={fileInputRef}
                 type="file"
-                accept=".medcase,.zip"
+                accept=".medcase"
                 className="hidden"
                 onChange={handleFileInputChange}
             />
@@ -100,10 +100,6 @@ export const CaseFileDropzone: React.FC<CaseFileDropzoneProps> = ({
             >
                 {t('teacher.selectFile', { defaultValue: 'Valitse tiedosto koneelta' })}
             </button>
-
-            <span className="text-[11px] font-semibold text-gray-400 mt-1">
-                {t('teacher.supportedFormats', { defaultValue: 'Tuetut tiedostomuodot: .medcase, .zip' })}
-            </span>
         </div>
     );
 };

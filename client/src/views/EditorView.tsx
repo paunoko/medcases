@@ -241,7 +241,6 @@ export const EditorView = () => {
     return (
       <FilePickerView
         title={t('landing.editExisting', { defaultValue: 'Muokkaa tapausta' })}
-        subtitle={t('landing.editExistingDesc', { defaultValue: 'Avaa aiemmin tallennettu .medcase-tiedosto muokattavaksi.' })}
         onFileSelected={onFileLoad}
         onBack={() => navigate('/', { state: { tab: 'teacher' } })}
         variant="blue"

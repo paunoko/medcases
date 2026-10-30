@@ -63,7 +63,6 @@ export const TeacherView = () => {
         return (
             <FilePickerView
                 title={t('landing.presentCase', { defaultValue: 'Esitä potilastapaus' })}
-                subtitle={t('landing.presentCaseDesc', { defaultValue: 'Avaa .medcase-tiedosto ja heijasta se valkokankaalle.' })}
                 onFileSelected={async (file) => {
                     try {
                         revokeImageUrls(imagesRef.current);
