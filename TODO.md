@@ -470,6 +470,7 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
   - **Toimenpiteet:**
     - Päivitetty opiskelijan kehoteystävälliseen muotoon `"Syötä huonekoodi"` (FI), `"Ange rumskod"` (SV) ja `"Enter room code"` (EN) ilman pakotettua `uppercase`-tyyliä.
     - Lisätty `CaseFileDropzone`-komponenttiin siisti `— tai —` -erotin ja täysi tuki violetille teemavariantille (`variant="purple"`).
-    - Toteutettu opettajanäkymään sulava in-place -siirtymä: "Esitä potilastapaus"- ja "Muokkaa tapausta" -painikkeet muuntuvat kortin yläreunan aktiiviseksi otsikkopilleriksi peruutusnapilla (`← Takaisin`), ja tiedoston pudotuslaatikko aukeaa suoraan sen alle samassa kortissa ilman layout-hyppyjä tai reitinvaihtoa ennen tiedoston valintaa.
+    - Toteutettu opettajanäkymään sulava in-place -siirtymä ja pillerin liukuva morffaus: valittu pilleri liukuu pehmeästi (`transition-all duration-300`) otsikon paikalle muiden pillerien kutistuessa pois, ja pudotuslaatikko laajenee suoraan pillerin alapuolelle ilman unmount-hyppyjä.
+    - Korjattu selitetekstin typistyminen (`truncate` poistettu) ja siirretty Takaisin-painike luontevasti kortin vasempaan yläkulmaan (`← Takaisin`) sekä lisätty alas keskelle toinen `Peruuta`-painike, vapauttaen otsikkopillerin koko leveydelleen selkeää luettavuutta varten.
     - Välitetään valittu `.medcase`-tiedosto suoraan router-tilana (`state: { file }`) näkymille `TeacherView` ja `EditorView`, jolloin esitys tai editori avautuu viiveettä.
     - Korjattu varanäkymä `FilePickerView` käyttämään samaa ylämarginaalia ja leveyttä (`max-w-md`), mikäli näkymiin saavutaan suoralla URL-osoitteella.

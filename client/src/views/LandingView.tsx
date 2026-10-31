@@ -157,124 +157,150 @@ export const LandingView = () => {
                         {activeTab === 'student' ? (
                             <StudentView onSessionChange={setInSession} />
                         ) : (
-                            <div className="w-full bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-gray-100 space-y-4 animate-fade-in transition-all">
-                                {teacherAction === 'menu' ? (
-                                    <div className="space-y-3.5 animate-fade-in">
-                                        {/* 1. Esitä potilastapauksia */}
-                                        <button
-                                            onClick={() => setTeacherAction('present')}
-                                            className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-emerald-500 bg-white hover:bg-emerald-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
-                                        >
-                                            <div className="flex items-center gap-3.5">
-                                                <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                                    <MonitorPlay size={26} />
-                                                </div>
-                                                <div>
-                                                    <div className="font-extrabold text-gray-900 text-base leading-snug">
-                                                        {t('landing.presentCase')}
-                                                    </div>
-                                                    <div className="text-xs text-gray-500 mt-0.5 font-medium">
-                                                        {t('landing.presentCaseDesc')}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <ChevronRight size={20} className="text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all shrink-0" />
-                                        </button>
+                            <div className="w-full bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-gray-100 flex flex-col animate-fade-in transition-all">
+                                {/* Back navigation button in top-left */}
+                                <div
+                                    className={`transition-all duration-300 ease-out overflow-hidden flex items-center justify-between ${
+                                        teacherAction !== 'menu' ? 'max-h-10 opacity-100 mb-3' : 'max-h-0 opacity-0 mb-0 pointer-events-none'
+                                    }`}
+                                >
+                                    <button
+                                        type="button"
+                                        onClick={() => setTeacherAction('menu')}
+                                        className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-900 transition-colors cursor-pointer group py-0.5"
+                                    >
+                                        <ChevronLeft size={16} className="group-hover:-translate-x-0.5 transition-transform" />
+                                        <span>{t('common.back', { defaultValue: 'Takaisin' })}</span>
+                                    </button>
+                                </div>
 
-                                        {/* 2. Luo uusi tapaus */}
-                                        <button
-                                            onClick={() => navigate('/editor')}
-                                            className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-500 bg-white hover:bg-blue-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
-                                        >
-                                            <div className="flex items-center gap-3.5">
-                                                <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                                    <PlusCircle size={26} />
-                                                </div>
-                                                <div>
-                                                    <div className="font-extrabold text-gray-900 text-base leading-snug">
-                                                        {t('landing.createNew')}
-                                                    </div>
-                                                    <div className="text-xs text-gray-500 mt-0.5 font-medium">
-                                                        {t('landing.createNewDesc')}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <ChevronRight size={20} className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all shrink-0" />
-                                        </button>
-
-                                        {/* 3. Muokkaa tapausta */}
-                                        <button
-                                            onClick={() => setTeacherAction('edit')}
-                                            className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-purple-500 bg-white hover:bg-purple-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
-                                        >
-                                            <div className="flex items-center gap-3.5">
-                                                <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                                    <Pencil size={26} />
-                                                </div>
-                                                <div>
-                                                    <div className="font-extrabold text-gray-900 text-base leading-snug">
-                                                        {t('landing.editExisting')}
-                                                    </div>
-                                                    <div className="text-xs text-gray-500 mt-0.5 font-medium">
-                                                        {t('landing.editExistingDesc')}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <ChevronRight size={20} className="text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all shrink-0" />
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className="space-y-4 animate-fade-in">
-                                        {/* Transformed active header pill */}
-                                        <div
-                                            className={`w-full p-3.5 rounded-2xl border-2 flex items-center justify-between gap-3 shadow-sm ${
-                                                teacherAction === 'present'
-                                                    ? 'bg-emerald-50/70 border-emerald-500/80'
-                                                    : 'bg-purple-50/70 border-purple-500/80'
-                                            }`}
-                                        >
-                                            <div className="flex items-center gap-3.5 min-w-0">
-                                                <div
-                                                    className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 ${
-                                                        teacherAction === 'present'
-                                                            ? 'bg-emerald-100 text-emerald-700'
-                                                            : 'bg-purple-100 text-purple-700'
-                                                    }`}
-                                                >
-                                                    {teacherAction === 'present' ? <MonitorPlay size={24} /> : <Pencil size={24} />}
-                                                </div>
-                                                <div className="min-w-0 text-left">
-                                                    <div className="font-extrabold text-gray-900 text-base leading-snug truncate">
-                                                        {teacherAction === 'present' ? t('landing.presentCase') : t('landing.editExisting')}
-                                                    </div>
-                                                    <div className="text-xs text-gray-500 mt-0.5 font-medium truncate">
-                                                        {teacherAction === 'present' ? t('landing.presentCaseDesc') : t('landing.editExistingDesc')}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button
-                                                type="button"
-                                                onClick={() => setTeacherAction('menu')}
-                                                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-gray-600 hover:text-gray-900 bg-white/90 hover:bg-white border border-gray-200/90 shadow-sm transition-all active:scale-95 cursor-pointer shrink-0"
-                                            >
-                                                <ChevronLeft size={16} />
-                                                <span>{t('common.back')}</span>
-                                            </button>
+                                {/* 1. Esitä potilastapauksia */}
+                                <button
+                                    type="button"
+                                    disabled={teacherAction === 'present'}
+                                    onClick={() => setTeacherAction('present')}
+                                    className={`w-full text-left flex items-center justify-between gap-4 transition-all duration-300 ease-out overflow-hidden ${
+                                        teacherAction === 'edit'
+                                            ? 'max-h-0 opacity-0 mb-0 p-0 border-0 pointer-events-none'
+                                            : teacherAction === 'present'
+                                            ? 'max-h-36 opacity-100 mb-4 p-4 rounded-2xl border-2 border-emerald-500 bg-emerald-50/70 shadow-sm cursor-default'
+                                            : 'max-h-36 opacity-100 mb-3.5 p-4 rounded-2xl border-2 border-gray-100 hover:border-emerald-500 bg-white hover:bg-emerald-50/40 shadow-sm hover:shadow-md cursor-pointer group'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-3.5 min-w-0">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
+                                            teacherAction === 'present' ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-100 text-emerald-700 group-hover:scale-105'
+                                        }`}>
+                                            <MonitorPlay size={26} />
                                         </div>
-
-                                        {/* In-place CaseFileDropzone */}
-                                        <CaseFileDropzone
-                                            variant={teacherAction === 'present' ? 'emerald' : 'purple'}
-                                            onFileSelected={(file) => {
-                                                if (teacherAction === 'present') {
-                                                    navigate('/teacher', { state: { file } });
-                                                } else {
-                                                    navigate('/editor?mode=edit', { state: { file } });
-                                                }
-                                            }}
-                                        />
+                                        <div className="min-w-0">
+                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                {t('landing.presentCase')}
+                                            </div>
+                                            <div className="text-xs text-gray-500 mt-0.5 font-medium leading-relaxed">
+                                                {t('landing.presentCaseDesc')}
+                                            </div>
+                                        </div>
                                     </div>
-                                )}
+                                    <ChevronRight
+                                        size={20}
+                                        className={`text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all shrink-0 ${
+                                            teacherAction === 'present' ? 'opacity-0 w-0 -mr-4' : 'opacity-100'
+                                        }`}
+                                    />
+                                </button>
+
+                                {/* 2. Luo uusi tapaus */}
+                                <button
+                                    type="button"
+                                    disabled={teacherAction !== 'menu'}
+                                    onClick={() => navigate('/editor')}
+                                    className={`w-full text-left flex items-center justify-between gap-4 transition-all duration-300 ease-out overflow-hidden ${
+                                        teacherAction === 'menu'
+                                            ? 'max-h-36 opacity-100 mb-3.5 p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-500 bg-white hover:bg-blue-50/40 shadow-sm hover:shadow-md cursor-pointer group'
+                                            : 'max-h-0 opacity-0 mb-0 p-0 border-0 pointer-events-none'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-3.5 min-w-0">
+                                        <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                            <PlusCircle size={26} />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                {t('landing.createNew')}
+                                            </div>
+                                            <div className="text-xs text-gray-500 mt-0.5 font-medium leading-relaxed">
+                                                {t('landing.createNewDesc')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                </button>
+
+                                {/* 3. Muokkaa tapausta */}
+                                <button
+                                    type="button"
+                                    disabled={teacherAction === 'edit'}
+                                    onClick={() => setTeacherAction('edit')}
+                                    className={`w-full text-left flex items-center justify-between gap-4 transition-all duration-300 ease-out overflow-hidden ${
+                                        teacherAction === 'present'
+                                            ? 'max-h-0 opacity-0 mb-0 p-0 border-0 pointer-events-none'
+                                            : teacherAction === 'edit'
+                                            ? 'max-h-36 opacity-100 mb-4 p-4 rounded-2xl border-2 border-purple-500 bg-purple-50/70 shadow-sm cursor-default'
+                                            : 'max-h-36 opacity-100 mb-0 p-4 rounded-2xl border-2 border-gray-100 hover:border-purple-500 bg-white hover:bg-purple-50/40 shadow-sm hover:shadow-md cursor-pointer group'
+                                    }`}
+                                >
+                                    <div className="flex items-center gap-3.5 min-w-0">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 transition-transform ${
+                                            teacherAction === 'edit' ? 'bg-purple-100 text-purple-700' : 'bg-purple-100 text-purple-700 group-hover:scale-105'
+                                        }`}>
+                                            <Pencil size={26} />
+                                        </div>
+                                        <div className="min-w-0">
+                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                {t('landing.editExisting')}
+                                            </div>
+                                            <div className="text-xs text-gray-500 mt-0.5 font-medium leading-relaxed">
+                                                {t('landing.editExistingDesc')}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ChevronRight
+                                        size={20}
+                                        className={`text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all shrink-0 ${
+                                            teacherAction === 'edit' ? 'opacity-0 w-0 -mr-4' : 'opacity-100'
+                                        }`}
+                                    />
+                                </button>
+
+                                {/* In-place Dropzone Container */}
+                                <div
+                                    className={`transition-all duration-300 ease-out overflow-hidden ${
+                                        teacherAction !== 'menu' ? 'max-h-[500px] opacity-100 mt-1 pointer-events-auto' : 'max-h-0 opacity-0 mt-0 pointer-events-none'
+                                    }`}
+                                >
+                                    <CaseFileDropzone
+                                        variant={teacherAction === 'present' ? 'emerald' : 'purple'}
+                                        onFileSelected={(file) => {
+                                            if (teacherAction === 'present') {
+                                                navigate('/teacher', { state: { file } });
+                                            } else {
+                                                navigate('/editor?mode=edit', { state: { file } });
+                                            }
+                                        }}
+                                    />
+
+                                    {/* Cancel button at the bottom center */}
+                                    <div className="mt-3.5 flex justify-center">
+                                        <button
+                                            type="button"
+                                            onClick={() => setTeacherAction('menu')}
+                                            className="text-xs font-bold text-gray-400 hover:text-gray-700 transition-colors cursor-pointer py-1"
+                                        >
+                                            {t('common.cancel', { defaultValue: 'Peruuta' })}
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
