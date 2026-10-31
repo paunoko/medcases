@@ -10,8 +10,8 @@ A working `.medcase` archive must have the following internal structure:
 my-case-name.medcase/ (ZIP Archive)
 ├── case.json         # The main JSON file defining the case data
 └── images/           # Directory containing all referenced image files
-    ├── patient.jpg
-    └── ekg.png
+    ├── slide1.jpg
+    └── slide2.png
 ```
 
 ## The `case.json` Structure
@@ -36,7 +36,7 @@ Every slide object in the `slides` array shares a set of common base fields, but
 - `type` (String, Required): Determines the slide type. Must be one of: `"INFO"`, `"MULTIPLE_CHOICE"`, `"TRUE_FALSE"`, or `"OPEN_TEXT"`.
 - `title` (String, Required): The title of the slide.
 - `content` (String, Required): The main descriptive text or introduction for the slide context.
-- `imageFileName` (String, Optional): The exact filename of an image stored in the `images/` directory. If provided, the app will display this graphic.
+- `imageFileName` (String, Optional): The filename of an image stored in the `images/` directory. Standard MedCases archives normalize and name images by their 1-based slide position: `slide{index}.{ext}` (e.g., `"slide1.jpg"`, `"slide2.png"`). The built-in editor automatically standardizes image names on save. (Existing archives with custom filenames remain backward-compatible when loaded).
 
 ---
 
@@ -98,14 +98,14 @@ Here is a fully functioning example incorporating all slide types. Save this as 
       "type": "INFO",
       "title": "Esitiedot",
       "content": "Potilas saapuu ambulanssilla. Kertoo, että rintaa puristaa voimakkaasti. Kipu säteilee vasempaan käteen.",
-      "imageFileName": "patient_arrival.jpg"
+      "imageFileName": "slide1.jpg"
     },
     {
       "id": "slide-2-mcq",
       "type": "MULTIPLE_CHOICE",
       "title": "EKG:n tulkinta",
       "content": "Hoitaja ottaa oheisen 12-kytkentäisen EKG:n.",
-      "imageFileName": "ekg_v1.png",
+      "imageFileName": "slide2.png",
       "question": "Mikä on ensisijainen EKG-löydös?",
       "options": [
         { "id": "opt-1", "text": "Normaali sinusrytmi", "isCorrect": false },
