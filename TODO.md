@@ -414,3 +414,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
   - **Toimenpiteet:**
     - Eristetty opettajan ohjaussivupalkki (huonekoodi, QR, vastausten paljastus, navigointi, lopetus) omaksi `TeacherSidebar`-komponentikseen (`TeacherView.tsx` tiivistyi 540 -> 404 riviin).
     - Eristetty editorin dianvalinta, dnd-kit-vedä-ja-pudota sekä lisäysvalikko `EditorSidebar`-komponentikseen (`EditorView.tsx` tiivistyi 575 -> 397 riviin).
+
+- [x] **9.7 Editorin tyhjän tilan ja dian poiston kohdistuksen uudistus**
+  - **Prioriteetti:** Keskitaso / Editor UX
+  - **Tiedostot:** `client/src/views/EditorView.tsx`, `client/src/hooks/useCaseEditor.ts`, `client/src/hooks/useCaseEditor.test.ts`, `client/src/components/editor/EditorSidebar.tsx`, `client/src/i18n/locales/`
+  - **Toimenpiteet:**
+    - Poistettu vanha pomppiva nuoli ja teksti. Luotu uusi tyylikäs ja moderni opastekortti ("Esityksessä ei ole vielä dioja"), joka ohjaa käyttäjän huomion suoraan oikean reunan sivupalkkiin ensimmäisen dian luomiseksi.
+    - Korjattu dian poistaminen (`deleteSlide` / `calculateNextActiveSlideIndex`): aktiivisen dian poistossa fokus siirtyy heti viereiseen diaan (sama indeksipaikka tai viimeisen poistuessa edellinen dia).
+    - Tyhjä kankaan näkymä esitetään vain ja ainoastaan silloin, kun esityksessä on tasan 0 diaa. Kaikissa muissa tilanteissa esityskankaalla on aina valittuna ja esillä aktiivinen dia.
+    - Korostettu sivupalkin "+ Uusi dia" -painiketta houkuttelevalla sinisellä tehosteella esityksen ollessa tyhjä.
+    - Lisätty kattava Vitest-yksikkötestisarja `useCaseEditor.test.ts` (17/17 testiä läpi).

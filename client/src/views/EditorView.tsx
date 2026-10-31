@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
-import { Home, Pencil, Eye, EyeOff, PanelRightOpen, FolderOpen, Save, ArrowRight, CheckCircle2, FileText } from 'lucide-react';
+import { Home, Pencil, Eye, EyeOff, PanelRightOpen, FolderOpen, Save, ArrowRight, CheckCircle2, FileText, Presentation, Sparkles } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 import { Modal } from '../components/common/Modal';
 import { FilePickerView } from '../components/common/FilePickerView';
@@ -259,9 +259,36 @@ export const EditorView = () => {
               </SlideContainer>
             )
           ) : (
-            <div className="flex h-full flex-col mt-32 items-center justify-start text-gray-500 gap-6">
-              <ArrowRight size={64} className="animate-bounce" />
-              <div className="text-3xl font-bold uppercase tracking-widest text-gray-600">{t('editor.selectOrCreateSlide')}</div>
+            <div className="flex h-full w-full items-center justify-center p-6 animate-fade-in">
+              <div className="max-w-md w-full bg-gray-800/70 border border-gray-700/70 rounded-3xl p-8 sm:p-10 flex flex-col items-center text-center shadow-2xl backdrop-blur-sm">
+                <div className="p-4 rounded-2xl bg-blue-500/15 text-blue-400 border border-blue-500/25 mb-5 shadow-inner">
+                  <Presentation size={36} />
+                </div>
+
+                <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight mb-2.5">
+                  {t('editor.emptyStateTitle')}
+                </h2>
+
+                <p className="text-sm sm:text-base text-gray-400 leading-relaxed mb-6">
+                  {t('editor.emptyStateHint')}
+                </p>
+
+                <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900/80 border border-gray-700/80 text-xs sm:text-sm font-semibold text-blue-300">
+                  <Sparkles size={16} className="text-blue-400 shrink-0" />
+                  <span>{t('editor.emptyStateAction')}</span>
+                  <ArrowRight size={16} className="text-blue-400 shrink-0" />
+                </div>
+
+                {!isSidebarOpen && (
+                  <button
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="mt-6 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-sm flex items-center gap-2 cursor-pointer shadow-lg shadow-blue-600/25 transition-all active:scale-[0.98]"
+                  >
+                    <PanelRightOpen size={18} />
+                    <span>{t('editor.showSidebar')}</span>
+                  </button>
+                )}
+              </div>
             </div>
           )}
 

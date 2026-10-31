@@ -7,6 +7,30 @@ import { useUI } from '../context/UIContext';
 
 const uuid = () => Math.random().toString(36).substr(2, 9);
 
+export const calculateNextActiveSlideIndex = (
+    currentIndex: number | null,
+    deletedIndex: number,
+    newSlidesCount: number
+): number | null => {
+    if (newSlidesCount <= 0) {
+        return null;
+    }
+    if (currentIndex === null) {
+        return 0;
+    }
+    if (currentIndex === deletedIndex) {
+        // Deleted currently active slide: focus shifts to adjacent slide
+        // (the slide taking this index, or preceding slide if deleting the last one)
+        return Math.min(deletedIndex, newSlidesCount - 1);
+    }
+    if (currentIndex > deletedIndex) {
+        // Deleted a slide before active slide: shift active index left
+        return currentIndex - 1;
+    }
+    // Deleted a slide after active slide: keep active slide clamped
+    return Math.min(currentIndex, newSlidesCount - 1);
+};
+
 export const useCaseEditor = () => {
     const { t } = useTranslation();
     const { showAlert } = useUI();
@@ -79,16 +103,14 @@ export const useCaseEditor = () => {
             });
         }
 
+        const remainingSlidesCount = caseData.slides.length - 1;
+
         setCaseData(prev => {
             const newSlides = prev.slides.filter((_, i) => i !== index);
             return { ...prev, slides: newSlides };
         });
 
-        if (activeSlideIndex === index) {
-            setActiveSlideIndex(null);
-        } else if (activeSlideIndex !== null && activeSlideIndex > index) {
-            setActiveSlideIndex(activeSlideIndex - 1);
-        }
+        setActiveSlideIndex(calculateNextActiveSlideIndex(activeSlideIndex, index, remainingSlidesCount));
         setHasUnsavedChanges(true);
     };
 
@@ -201,7 +223,7 @@ export const useCaseEditor = () => {
             setCaseData(loadedData);
             setImagePreviews(images);
             setImageFiles(loadedFiles);
-            setActiveSlideIndex(0);
+            setActiveSlideIndex(loadedData.slides.length > 0 ? 0 : null);
             setHasUnsavedChanges(false);
         } catch (e) {
             console.error("Load failed", e);
@@ -216,10 +238,14 @@ export const useCaseEditor = () => {
         }
     };
 
+    const effectiveActiveIndex = (activeSlideIndex !== null && activeSlideIndex >= 0 && activeSlideIndex < caseData.slides.length)
+        ? activeSlideIndex
+        : (caseData.slides.length > 0 ? 0 : null);
+
     return {
         caseData,
         updateMeta,
-        activeSlideIndex,
+        activeSlideIndex: effectiveActiveIndex,
         setActiveSlideIndex,
         imagePreviews,
         addSlide,

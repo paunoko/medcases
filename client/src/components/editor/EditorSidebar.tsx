@@ -218,9 +218,13 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
         <div ref={addMenuRef} className="relative pt-1 pb-4">
           <button
             onClick={() => setShowAddMenu(!showAddMenu)}
-            className="w-full border-2 border-dashed border-gray-600 hover:border-blue-400 bg-gray-800/80 hover:bg-blue-600/10 text-gray-300 hover:text-white py-3 px-4 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 transition-all cursor-pointer group shadow-sm"
+            className={`w-full border-2 py-3 px-4 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 transition-all cursor-pointer group shadow-sm ${
+              slides.length === 0
+                ? 'border-blue-500/80 bg-blue-600/15 text-white hover:bg-blue-600/25 ring-2 ring-blue-500/20'
+                : 'border-dashed border-gray-600 hover:border-blue-400 bg-gray-800/80 hover:bg-blue-600/10 text-gray-300 hover:text-white'
+            }`}
           >
-            <Plus size={18} className="text-gray-400 group-hover:text-blue-400 transition-colors" />
+            <Plus size={18} className={slides.length === 0 ? 'text-blue-400' : 'text-gray-400 group-hover:text-blue-400 transition-colors'} />
             <span>{t('editor.newSlide')}</span>
           </button>
 
