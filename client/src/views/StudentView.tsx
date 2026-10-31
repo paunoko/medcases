@@ -55,7 +55,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
           )}
 
           <div>
-            <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 text-center">
+            <label className="block text-sm font-bold text-gray-500 tracking-wide mb-2 text-center">
               {t('student.roomCode')}
             </label>
             <input

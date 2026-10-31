@@ -12,7 +12,8 @@
     "open": "Avaa",
     "home": "Etusivulle",
     "close": "Sulje",
-    "ok": "OK"
+    "ok": "OK",
+    "or": "tai"
   },
   "landing": {
     "imStudent": "Olen opiskelija",
@@ -35,7 +36,7 @@
     "editExistingDesc": "Avaa aiemmin tallennettu tapaus muokattavaksi."
   },
   "student": {
-    "roomCode": "Huonekoodi",
+    "roomCode": "Syötä huonekoodi",
     "join": "Liity",
     "connecting": "Yhdistetään palvelimeen...",
     "reconnecting": "Yhteys katkennut – yhdistetään uudelleen...",

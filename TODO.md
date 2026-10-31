@@ -459,3 +459,17 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Säilytetään opiskelijan syöttämä 4-numeroinen koodi virheen sattuessa ja nollataan virheilmoitus heti, kun opiskelija alkaa korjata numeroita.
     - Tuettu liittymistä Enter-näppäimellä mobiili- ja työpöytänäppäimistöillä.
     - Korjattu `LandingView` pitämään sama `StudentView`-instanssi koodin syötön ja aktiivisen istunnon yli ilman uudelleenalustusta.
+
+- [x] **9.11 Aloitusnäkymän UX-uudistus: Opiskelijan kehote, "tai"-erotin ja opettajan in-place -tiedostonlataus**
+  - **Prioriteetti:** Korkea / Käytettävyys & Visuaalinen vakaus
+  - **Tiedostot:** `client/src/views/LandingView.tsx`, `client/src/views/StudentView.tsx`, `client/src/views/TeacherView.tsx`, `client/src/views/EditorView.tsx`, `client/src/components/common/CaseFileDropzone.tsx`, `client/src/components/common/FilePickerView.tsx`, `client/src/i18n/locales/`
+  - **Ongelmat:**
+    1. Opiskelijapuolen syötekentän teksti `"HUONEKOODI"` kapiteeleilla oli tekninen ja karu.
+    2. `.medcase`-pudotuslaatikossa ei ollut selkeää "tai"-erotinta raahauksen ja "Valitse tiedosto koneelta" -napin välillä.
+    3. Opettajan klikatessa "Esitä" tai "Muokkaa" sivu vaihtui erilliseen pystysuunnassa keskitettyyn (`justify-center`) ja eri levyiseen näkymään aiheuttaen häiritsevän visuaalisen hypyn.
+  - **Toimenpiteet:**
+    - Päivitetty opiskelijan kehoteystävälliseen muotoon `"Syötä huonekoodi"` (FI), `"Ange rumskod"` (SV) ja `"Enter room code"` (EN) ilman pakotettua `uppercase`-tyyliä.
+    - Lisätty `CaseFileDropzone`-komponenttiin siisti `— tai —` -erotin ja täysi tuki violetille teemavariantille (`variant="purple"`).
+    - Toteutettu opettajanäkymään sulava in-place -siirtymä: "Esitä potilastapaus"- ja "Muokkaa tapausta" -painikkeet muuntuvat kortin yläreunan aktiiviseksi otsikkopilleriksi peruutusnapilla (`← Takaisin`), ja tiedoston pudotuslaatikko aukeaa suoraan sen alle samassa kortissa ilman layout-hyppyjä tai reitinvaihtoa ennen tiedoston valintaa.
+    - Välitetään valittu `.medcase`-tiedosto suoraan router-tilana (`state: { file }`) näkymille `TeacherView` ja `EditorView`, jolloin esitys tai editori avautuu viiveettä.
+    - Korjattu varanäkymä `FilePickerView` käyttämään samaa ylämarginaalia ja leveyttä (`max-w-md`), mikäli näkymiin saavutaan suoralla URL-osoitteella.

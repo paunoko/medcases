@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
 import { Home, Pencil, Eye, EyeOff, PanelRightOpen, FolderOpen, Save, CheckCircle2, FileText, Presentation } from 'lucide-react';
@@ -19,6 +19,7 @@ export const EditorView = () => {
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { showConfirm } = useUI();
   const isEditMode = searchParams.get('mode') === 'edit';
   const [hasLoaded, setHasLoaded] = useState(false);
@@ -133,10 +134,18 @@ export const EditorView = () => {
     }
   }, [isPreview, activeSlide]);
 
-  const onFileLoad = async (file: File) => {
+  const onFileLoad = useCallback(async (file: File) => {
     await handleLoad(file);
     setHasLoaded(true);
-  };
+  }, [handleLoad]);
+
+  useEffect(() => {
+    const file = location.state?.file;
+    if (isEditMode && file instanceof File && !hasLoaded) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      onFileLoad(file);
+    }
+  }, [isEditMode, location.state, hasLoaded, onFileLoad]);
 
   const handleHome = async () => {
     if (hasUnsavedChanges) {
@@ -199,7 +208,7 @@ export const EditorView = () => {
         title={t('landing.editExisting', { defaultValue: 'Muokkaa tapausta' })}
         onFileSelected={onFileLoad}
         onBack={() => navigate('/', { state: { tab: 'teacher' } })}
-        variant="blue"
+        variant="purple"
       />
     );
   }

@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
     Eye, 
@@ -28,6 +28,7 @@ export const TeacherView = () => {
     const { t } = useTranslation();
     const { showAlert } = useUI();
     const navigate = useNavigate();
+    const location = useLocation();
     // State for loaded data
     const [caseData, setCaseData] = useState<PatientCase | null>(null);
     const [images, setImages] = useState<Record<string, string>>({});
@@ -59,29 +60,39 @@ export const TeacherView = () => {
         navigate('/', { state: { tab: 'teacher' } });
     };
 
+    const handleFileSelect = useCallback(async (file: File) => {
+        try {
+            revokeImageUrls(imagesRef.current);
+            const result = await loadCaseFromZip(file);
+            setImages(result.images);
+            setCaseData(result.caseData);
+        } catch (e) {
+            console.error("Load failed", e);
+            const message = e instanceof CaseValidationError
+                ? String(t(`errors.${e.code}`, e.params || { defaultValue: e.message }))
+                : (e instanceof Error ? e.message : t('teacher.uploadFailedMsg'));
+            showAlert({
+                title: t('teacher.uploadFailed'),
+                message,
+                variant: 'destructive'
+            });
+        }
+    }, [showAlert, t]);
+
+    useEffect(() => {
+        const file = location.state?.file;
+        if (file instanceof File && !caseData) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            handleFileSelect(file);
+        }
+    }, [location.state, caseData, handleFileSelect]);
+
     // If no data, show upload screen
     if (!caseData) {
         return (
             <FilePickerView
                 title={t('teacher.selectFirstCase', { defaultValue: 'Valitse ensimmäinen potilastapaus' })}
-                onFileSelected={async (file) => {
-                    try {
-                        revokeImageUrls(imagesRef.current);
-                        const result = await loadCaseFromZip(file);
-                        setImages(result.images);
-                        setCaseData(result.caseData);
-                    } catch (e) {
-                        console.error("Load failed", e);
-                        const message = e instanceof CaseValidationError
-                            ? String(t(`errors.${e.code}`, e.params || { defaultValue: e.message }))
-                            : (e instanceof Error ? e.message : t('teacher.uploadFailedMsg'));
-                        showAlert({
-                            title: t('teacher.uploadFailed'),
-                            message,
-                            variant: 'destructive'
-                        });
-                    }
-                }}
+                onFileSelected={handleFileSelect}
                 onBack={() => navigate('/', { state: { tab: 'teacher' } })}
                 variant="emerald"
             />

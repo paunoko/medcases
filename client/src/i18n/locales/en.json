@@ -12,7 +12,8 @@
     "open": "Open",
     "home": "Home",
     "close": "Close",
-    "ok": "OK"
+    "ok": "OK",
+    "or": "or"
   },
   "landing": {
     "imStudent": "I'm a student",
@@ -35,7 +36,7 @@
     "editExistingDesc": "Open a previously saved case to continue editing."
   },
   "student": {
-    "roomCode": "Room Code",
+    "roomCode": "Enter room code",
     "join": "Join",
     "connecting": "Connecting to server...",
     "reconnecting": "Connection lost – reconnecting...",

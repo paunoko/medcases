@@ -12,7 +12,8 @@
     "open": "Öppna",
     "home": "Till startsidan",
     "close": "Stäng",
-    "ok": "OK"
+    "ok": "OK",
+    "or": "eller"
   },
   "landing": {
     "imStudent": "Jag är student",
@@ -35,7 +36,7 @@
     "editExistingDesc": "Öppna ett tidigare sparat fall för att fortsätta redigera."
   },
   "student": {
-    "roomCode": "Rumskod",
+    "roomCode": "Ange rumskod",
     "join": "Gå med",
     "connecting": "Ansluter till servern...",
     "reconnecting": "Anslutningen bröts – återansluter...",

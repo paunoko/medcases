@@ -8,7 +8,7 @@ interface FilePickerViewProps {
     subtitle?: string;
     onFileSelected: (file: File) => void;
     onBack: () => void;
-    variant?: 'emerald' | 'blue';
+    variant?: 'emerald' | 'blue' | 'purple';
 }
 
 export const FilePickerView: React.FC<FilePickerViewProps> = ({
@@ -29,8 +29,8 @@ export const FilePickerView: React.FC<FilePickerViewProps> = ({
             <AppHeader showAboutButton={false} />
 
             {/* MAIN CONTENT */}
-            <main className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 w-full relative z-10">
-                <div className="w-full max-w-lg bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-gray-100 flex flex-col items-center text-center animate-fade-in">
+            <main className="flex-1 flex flex-col items-center justify-start pt-8 sm:pt-14 px-4 pb-12 w-full relative z-10">
+                <div className="w-full max-w-md bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-gray-100 flex flex-col items-center text-center animate-fade-in">
                     <h2 className="text-2xl font-black text-gray-900 tracking-tight leading-snug">
                         {title}
                     </h2>
