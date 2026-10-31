@@ -8,7 +8,7 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const {
-    isConnected, joinedRoomId, activeSlide, isWaiting, hasAnswered, error,
+    isConnected, isJoining, joinedRoomId, activeSlide, isWaiting, hasAnswered, error, clearError,
     joinRoom, submitAnswer
   } = useStudentSession();
 
@@ -29,13 +29,27 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
     setSelectedOptions([]);
   }, [activeSlide?.slideId]);
 
+  const handleCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+    setCode(val);
+    if (error) {
+      clearError();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && isConnected && code.length === 4 && !isJoining) {
+      joinRoom(code);
+    }
+  };
+
   // 1. LOGIN / ROOM CODE ENTRY
   if (!joinedRoomId) {
     return (
       <div className="w-full flex flex-col items-center animate-fade-in">
         <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 w-full space-y-5 border border-gray-100">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm font-semibold text-center">
+            <div className="bg-red-50 border border-red-200 text-red-700 p-3.5 rounded-xl text-sm font-semibold text-center animate-fade-in">
               {t(`errors.${error}`, { defaultValue: error })}
             </div>
           )}
@@ -48,19 +62,24 @@ export const StudentView = ({ onSessionChange }: { onSessionChange?: (inSession:
               type="tel"
               maxLength={4}
               autoFocus
-              className="w-full text-center text-4xl font-mono font-black tracking-widest py-3 px-4 border-2 border-gray-200 rounded-2xl focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-blue-950 placeholder:text-gray-300"
+              className="w-full text-center text-4xl font-mono font-black tracking-widest py-3 px-4 border-2 border-gray-200 rounded-2xl focus:border-blue-600 focus:ring-4 focus:ring-blue-100 outline-none transition-all text-blue-950 placeholder:text-gray-300 disabled:opacity-50"
               value={code}
-              onChange={e => setCode(e.target.value.replace(/\D/g, '').slice(0, 4))}
+              onChange={handleCodeChange}
+              onKeyDown={handleKeyDown}
               placeholder="0000"
+              disabled={isJoining}
             />
           </div>
 
           <button
-            disabled={!isConnected || code.length < 4}
+            disabled={!isConnected || code.length < 4 || isJoining}
             onClick={() => joinRoom(code)}
-            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl shadow-lg shadow-blue-600/25 transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer"
+            className="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-extrabold py-4 rounded-xl text-xl shadow-lg shadow-blue-600/25 transition-all active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none cursor-pointer flex items-center justify-center gap-2.5"
           >
-            {t('student.join')}
+            {isJoining && (
+              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+            )}
+            <span>{isJoining ? t('student.connecting') : t('student.join')}</span>
           </button>
         </div>
         {!isConnected && <p className="mt-4 text-gray-400 text-sm font-medium animate-pulse">{t('student.connecting')}</p>}

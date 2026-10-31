@@ -220,6 +220,9 @@ io.on('connection', (socket: Socket) => {
     // Notify teacher of the new count
     io.to(room.teacherSocketId).emit('STUDENT_COUNT', { count: room.studentCount });
 
+    // Explicitly confirm successful room join to the student
+    socket.emit('ROOM_JOINED', { roomId });
+
     // LATE JOIN: If class is live, send state to the student instantaneously!
     if (room.currentPayload) {
       socket.emit('SLIDE_UPDATE', room.currentPayload);

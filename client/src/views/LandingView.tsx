@@ -136,85 +136,81 @@ export const LandingView = () => {
                     inSession ? 'justify-center p-4' : 'justify-start pt-8 sm:pt-14 px-4 pb-12'
                 }`}
             >
-                {!inSession ? (
-                    <div className="w-full max-w-md flex flex-col items-center gap-5">
-                        {/* Role Slider */}
+                <div className={`w-full flex flex-col items-center ${inSession ? 'flex-1 justify-center' : 'max-w-md gap-5'}`}>
+                    {/* Role Slider - Hidden when student is actively in a presentation session */}
+                    {!inSession && (
                         <RoleSlider activeTab={activeTab} onChange={handleRoleChange} />
+                    )}
 
-                        {/* Content Section */}
-                        <div className="w-full">
-                            {activeTab === 'student' ? (
-                                <StudentView onSessionChange={setInSession} />
-                            ) : (
-                                <div className="w-full bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-gray-100 space-y-3.5 animate-fade-in">
-                                    <button
-                                        onClick={() => navigate('/teacher')}
-                                        className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-emerald-500 bg-white hover:bg-emerald-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
-                                    >
-                                        <div className="flex items-center gap-3.5">
-                                            <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                                <MonitorPlay size={26} />
+                    {/* Content Section */}
+                    <div className={`w-full ${inSession ? 'flex-1 flex flex-col items-center justify-center' : ''}`}>
+                        {activeTab === 'student' ? (
+                            <StudentView onSessionChange={setInSession} />
+                        ) : (
+                            <div className="w-full bg-white p-6 sm:p-8 rounded-3xl shadow-xl shadow-slate-200/60 border border-gray-100 space-y-3.5 animate-fade-in">
+                                <button
+                                    onClick={() => navigate('/teacher')}
+                                    className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-emerald-500 bg-white hover:bg-emerald-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3.5">
+                                        <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                            <MonitorPlay size={26} />
+                                        </div>
+                                        <div>
+                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                {t('landing.presentCase')}
                                             </div>
-                                            <div>
-                                                <div className="font-extrabold text-gray-900 text-base leading-snug">
-                                                    {t('landing.presentCase')}
-                                                </div>
-                                                <div className="text-xs text-gray-500 mt-0.5 font-medium">
-                                                    {t('landing.presentCaseDesc')}
-                                                </div>
+                                            <div className="text-xs text-gray-500 mt-0.5 font-medium">
+                                                {t('landing.presentCaseDesc')}
                                             </div>
                                         </div>
-                                        <ChevronRight size={20} className="text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all shrink-0" />
-                                    </button>
+                                    </div>
+                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                </button>
 
-                                    <button
-                                        onClick={() => navigate('/editor')}
-                                        className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-500 bg-white hover:bg-blue-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
-                                    >
-                                        <div className="flex items-center gap-3.5">
-                                            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                                <PlusCircle size={26} />
+                                <button
+                                    onClick={() => navigate('/editor')}
+                                    className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-blue-500 bg-white hover:bg-blue-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3.5">
+                                        <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                            <PlusCircle size={26} />
+                                        </div>
+                                        <div>
+                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                {t('landing.createNew')}
                                             </div>
-                                            <div>
-                                                <div className="font-extrabold text-gray-900 text-base leading-snug">
-                                                    {t('landing.createNew')}
-                                                </div>
-                                                <div className="text-xs text-gray-500 mt-0.5 font-medium">
-                                                    {t('landing.createNewDesc')}
-                                                </div>
+                                            <div className="text-xs text-gray-500 mt-0.5 font-medium">
+                                                {t('landing.createNewDesc')}
                                             </div>
                                         </div>
-                                        <ChevronRight size={20} className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all shrink-0" />
-                                    </button>
+                                    </div>
+                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-blue-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                </button>
 
-                                    <button
-                                        onClick={() => navigate('/editor?mode=edit')}
-                                        className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-purple-500 bg-white hover:bg-purple-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
-                                    >
-                                        <div className="flex items-center gap-3.5">
-                                            <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                                                <Pencil size={26} />
+                                <button
+                                    onClick={() => navigate('/editor?mode=edit')}
+                                    className="w-full p-4 rounded-2xl border-2 border-gray-100 hover:border-purple-500 bg-white hover:bg-purple-50/40 transition-all text-left flex items-center justify-between gap-4 group cursor-pointer shadow-sm hover:shadow-md"
+                                >
+                                    <div className="flex items-center gap-3.5">
+                                        <div className="w-12 h-12 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                                            <Pencil size={26} />
+                                        </div>
+                                        <div>
+                                            <div className="font-extrabold text-gray-900 text-base leading-snug">
+                                                {t('landing.editExisting')}
                                             </div>
-                                            <div>
-                                                <div className="font-extrabold text-gray-900 text-base leading-snug">
-                                                    {t('landing.editExisting')}
-                                                </div>
-                                                <div className="text-xs text-gray-500 mt-0.5 font-medium">
-                                                    {t('landing.editExistingDesc')}
-                                                </div>
+                                            <div className="text-xs text-gray-500 mt-0.5 font-medium">
+                                                {t('landing.editExistingDesc')}
                                             </div>
                                         </div>
-                                        <ChevronRight size={20} className="text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all shrink-0" />
-                                    </button>
-                                </div>
-                            )}
-                        </div>
+                                    </div>
+                                    <ChevronRight size={20} className="text-gray-400 group-hover:text-purple-600 group-hover:translate-x-1 transition-all shrink-0" />
+                                </button>
+                            </div>
+                        )}
                     </div>
-                ) : (
-                    <div className="w-full flex-1 flex flex-col items-center justify-center">
-                        <StudentView onSessionChange={setInSession} />
-                    </div>
-                )}
+                </div>
             </main>
 
             {/* "MIKÄ MEDCASES ON?" INFO MODAL */}

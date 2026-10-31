@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
 import type { StudentPayload } from '../types';
 
@@ -19,10 +19,12 @@ const getInitialStudentRoom = (): string | null => {
 export const useStudentSession = () => {
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState(false);
+    const [isJoining, setIsJoining] = useState(false);
 
     const initialRoom = getInitialStudentRoom();
     const [joinedRoomId, setJoinedRoomId] = useState<string | null>(initialRoom);
     const joinedRoomIdRef = useRef<string | null>(initialRoom);
+    const pendingRoomIdRef = useRef<string | null>(null);
     const [activeSlide, setActiveSlide] = useState<StudentPayload | null>(null);
     const [isWaiting, setIsWaiting] = useState(false);
 
@@ -38,7 +40,6 @@ export const useStudentSession = () => {
 
         newSocket.on('connect', () => { 
             setIsConnected(true); 
-            setError(null); 
             // If we have an active room (e.g. from sessionStorage after refresh), rejoin immediately
             if (joinedRoomIdRef.current) {
                 newSocket.emit('JOIN_ROOM', { roomId: joinedRoomIdRef.current });
@@ -47,7 +48,22 @@ export const useStudentSession = () => {
 
         newSocket.on('disconnect', () => setIsConnected(false));
 
+        const confirmJoin = (roomId: string) => {
+            setIsJoining(false);
+            setError(null);
+            setJoinedRoomId(roomId);
+            joinedRoomIdRef.current = roomId;
+            pendingRoomIdRef.current = null;
+            try { sessionStorage.setItem(STUDENT_ROOM_KEY, roomId); } catch { /* ignore */ }
+        };
+
+        newSocket.on('ROOM_JOINED', ({ roomId }: { roomId: string }) => {
+            confirmJoin(roomId);
+        });
+
         newSocket.on('ERROR', ({ code, message }: { code?: string; message?: string }) => {
+            setIsJoining(false);
+            pendingRoomIdRef.current = null;
             setError(code || message || 'Virhe');
             setJoinedRoomId(null);
             joinedRoomIdRef.current = null;
@@ -55,6 +71,9 @@ export const useStudentSession = () => {
         });
 
         newSocket.on('SLIDE_UPDATE', (payload: StudentPayload) => {
+            if (pendingRoomIdRef.current) {
+                confirmJoin(pendingRoomIdRef.current);
+            }
             setIsWaiting(false);
             setActiveSlide((prev) => {
                 // Reset answer state only if the slide actually changes
@@ -66,6 +85,9 @@ export const useStudentSession = () => {
         });
 
         newSocket.on('WAITING_FOR_TEACHER', () => {
+            if (pendingRoomIdRef.current) {
+                confirmJoin(pendingRoomIdRef.current);
+            }
             setIsWaiting(true);
             setActiveSlide(null);
         });
@@ -73,8 +95,10 @@ export const useStudentSession = () => {
         newSocket.on('ANSWER_RECEIVED', () => setHasAnswered(true));
 
         newSocket.on('SESSION_ENDED', () => {
+            setIsJoining(false);
             setJoinedRoomId(null);
             joinedRoomIdRef.current = null;
+            pendingRoomIdRef.current = null;
             setActiveSlide(null);
             setIsWaiting(false);
             setHasAnswered(false);
@@ -84,13 +108,17 @@ export const useStudentSession = () => {
         return () => { newSocket.disconnect(); };
     }, []);
 
-    const joinRoom = (roomId: string) => {
-        if (!socket) return;
+    const joinRoom = useCallback((roomId: string) => {
+        if (!socket || !roomId) return;
+        setError(null);
+        setIsJoining(true);
+        pendingRoomIdRef.current = roomId;
         socket.emit('JOIN_ROOM', { roomId });
-        setJoinedRoomId(roomId);
-        joinedRoomIdRef.current = roomId;
-        try { sessionStorage.setItem(STUDENT_ROOM_KEY, roomId); } catch { /* ignore */ }
-    };
+    }, [socket]);
+
+    const clearError = useCallback(() => {
+        setError(null);
+    }, []);
 
     const submitAnswer = (answer: string | string[]) => {
         if (!socket || !activeSlide || hasAnswered) return;
@@ -101,5 +129,16 @@ export const useStudentSession = () => {
         });
     };
 
-    return { isConnected, error, joinedRoomId, activeSlide, isWaiting, hasAnswered, joinRoom, submitAnswer };
+    return {
+        isConnected,
+        isJoining,
+        joinedRoomId,
+        activeSlide,
+        isWaiting,
+        hasAnswered,
+        error,
+        clearError,
+        joinRoom,
+        submitAnswer
+    };
 };

@@ -445,3 +445,17 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Poistettu Tailwind CSS:n kanssa päällekkäinen `@keyframes pulse` -määrite [client/src/index.css](file:///home/pauno/medcases/client/src/index.css) -tiedostosta.
     - Poistettu tarpeettomat exportit `CANONICAL_WIDTH` ja `CANONICAL_HEIGHT` tiedostosta [SlideContainer.tsx](file:///home/pauno/medcases/client/src/components/slide/SlideContainer.tsx).
     - Korvattu vanhentunut avain `editor.backToMenu` yhtenäisellä `editor.backToHome` -avaimella ja siivottu 22 kuollutta/päällekkäistä käännösavainta kielitiedostoista.
+
+- [x] **9.10 Opiskelijan huoneeseen liittymisen virheenhallinta ja vilkkumisen korjaus**
+  - **Prioriteetti:** Korkea / Opiskelijan UX & Vakaus
+  - **Tiedostot:** `server/src/index.ts`, `client/src/hooks/useStudentSession.ts`, `client/src/views/StudentView.tsx`, `client/src/views/LandingView.tsx`
+  - **Ongelma:** Jos opiskelija syötti olemattoman huonekoodin, ruudulla vilahti salamannopeasti jotain ja näkymä palasi tyhjään huonekoodikenttään ilman luettavaa virheilmoitusta.
+  - **Juurisyyt:**
+    1. *Ennenaikainen optimistinen tila*: `useStudentSession` asetti huone-ID:n heti ilman palvelimen vahvistusta, vaihtaen näkymän ~50 ms ajaksi "Katso valkokankaalle" -tilaan ennen `ROOM_NOT_FOUND`-virhettä.
+    2. *Komponentin unmount LandingViewissä*: `LandingView` renderöi `StudentView`:n ehdollisen ternäärioperaattorin molemmissa haaroissa, jolloin tilan muutos unmounttasi ja remounttasi komponentin nollaten opiskelijan syöttämän koodin (`useState('')`).
+  - **Toimenpiteet:**
+    - Lähetetään palvelimelta eksplisiittinen `ROOM_JOINED`-tapahtuma onnistuneesta liittymisestä.
+    - Poistettu optimistinen tilanvaihto `useStudentSession`-hookista ja lisätty `isJoining`-tila latausanimaatiolle.
+    - Säilytetään opiskelijan syöttämä 4-numeroinen koodi virheen sattuessa ja nollataan virheilmoitus heti, kun opiskelija alkaa korjata numeroita.
+    - Tuettu liittymistä Enter-näppäimellä mobiili- ja työpöytänäppäimistöillä.
+    - Korjattu `LandingView` pitämään sama `StudentView`-instanssi koodin syötön ja aktiivisen istunnon yli ilman uudelleenalustusta.
