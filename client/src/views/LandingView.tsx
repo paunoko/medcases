@@ -320,6 +320,7 @@ export const LandingView = () => {
                 isOpen={showAbout}
                 onClose={() => setShowAbout(false)}
                 maxWidth="2xl"
+                position="top"
                 showCloseButton
                 theme="light"
             >

@@ -482,4 +482,4 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
   - **Toimenpiteet:**
     - Uudistettu modaali 3-välilehtiseksi kokonaisuudeksi (*Opettajalle*, *Opiskelijalle*, *Tekijä & Vapaus*) modernilla segmentoidulla valitsimella ja täydellä monikielisyydellä (FI, SV, EN).
     - Esitelty Pauno Komulainen kuopiolaisena naistentautien ja synnytysten erikoislääkärinä, avattu sovelluksen syntytausta lääketieteen opetuksen elävöittämiseksi, korostettu maksutonta käyttöä terveydenhuollon opetuksessa ja lisätty suora painike GNU GPL v3 -lähdekoodiin GitHubissa.
-    - Laajennettu `Modal.tsx`-komponenttia tukemaan `maxWidth="2xl"`-kokoa ilmavampaa luettavuutta varten.
+    - Laajennettu `Modal.tsx`-komponenttia tukemaan `maxWidth="2xl"`-kokoa ilmavampaa luettavuutta varten sekä uutta `position="top"` -asettelua (`items-start pt-8 sm:pt-14`), joka kiinnittää modaalin yläreunan paikoilleen ja estää otsikon ja välilehtien pystysuuntaisen hyppimisen välilehtiä vaihdettaessa.

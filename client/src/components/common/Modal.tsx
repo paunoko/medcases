@@ -8,6 +8,7 @@ export interface ModalProps {
   title?: ReactNode;
   children: ReactNode;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  position?: 'center' | 'top';
   showCloseButton?: boolean;
   closeOnBackdropClick?: boolean;
   closeOnEscape?: boolean;
@@ -28,6 +29,7 @@ export const Modal: React.FC<ModalProps> = ({
   onClose,
   children,
   maxWidth = 'md',
+  position = 'center',
   showCloseButton = false,
   closeOnBackdropClick = true,
   closeOnEscape = true,
@@ -63,10 +65,16 @@ export const Modal: React.FC<ModalProps> = ({
   const isDark = theme === 'dark';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+    <div
+      className={`fixed inset-0 z-50 flex justify-center p-4 overflow-y-auto animate-fade-in ${
+        position === 'top'
+          ? 'items-start pt-8 sm:pt-14 pb-12'
+          : 'items-center'
+      }`}
+    >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={closeOnBackdropClick ? onClose : undefined}
       />
 
