@@ -11,7 +11,8 @@
     "edit": "Redigera",
     "open": "Öppna",
     "home": "Till startsidan",
-    "close": "Stäng"
+    "close": "Stäng",
+    "ok": "OK"
   },
   "landing": {
     "imStudent": "Jag är student",
@@ -133,6 +134,8 @@
     "removeImage": "Ta bort bild",
     "addImage": "Lägg till bild",
     "addImageOptional": "Lägg till bild (valfritt)",
+    "imageAttachment": "Bildbilaga",
+    "enlargedImage": "Förstorad bild",
     "previewMode": "Förhandsgranska",
     "editMode": "Redigera",
     "questionPlaceholder": "Skriv frågan här...",
@@ -170,6 +173,11 @@
       "TRUE_FALSE": "Sant / Falskt",
       "OPEN_TEXT": "Öppen fråga"
     }
+  },
+  "errorBoundary": {
+    "title": "Något gick fel",
+    "message": "Ett oväntat fel uppstod vid rendering av vyn.",
+    "reload": "Ladda om sidan"
   },
   "errors": {
     "ROOM_NOT_FOUND": "Rummet hittades inte. Kontrollera koden.",

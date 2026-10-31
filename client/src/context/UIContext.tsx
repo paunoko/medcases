@@ -128,7 +128,7 @@ const DialogComponent: React.FC<{ dialog: DialogState }> = ({ dialog }) => {
                 : 'bg-blue-600 hover:bg-blue-500 shadow-blue-950/30'
             }`}
           >
-            {dialog.confirmText || (dialog.type === 'confirm' ? t('common.confirm') : 'OK')}
+            {dialog.confirmText || (dialog.type === 'confirm' ? t('common.confirm') : t('common.ok', { defaultValue: 'OK' }))}
           </button>
         </div>
       </div>

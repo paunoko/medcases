@@ -1,4 +1,5 @@
 import React, { useEffect, type ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 
 export interface ModalProps {
@@ -32,6 +33,8 @@ export const Modal: React.FC<ModalProps> = ({
   className = '',
   theme = 'dark',
 }) => {
+  const { t } = useTranslation();
+
   // Close on Escape key
   useEffect(() => {
     if (!isOpen || !closeOnEscape) return;
@@ -83,7 +86,8 @@ export const Modal: React.FC<ModalProps> = ({
                 ? 'text-gray-400 hover:text-white hover:bg-gray-800'
                 : 'text-gray-400 hover:text-gray-700 hover:bg-gray-100'
             }`}
-            title="Sulje"
+            title={t('common.close', { defaultValue: 'Sulje' })}
+            aria-label={t('common.close', { defaultValue: 'Sulje' })}
           >
             <X size={20} />
           </button>

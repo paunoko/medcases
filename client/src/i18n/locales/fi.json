@@ -11,7 +11,8 @@
     "edit": "Muokkaa",
     "open": "Avaa",
     "home": "Etusivulle",
-    "close": "Sulje"
+    "close": "Sulje",
+    "ok": "OK"
   },
   "landing": {
     "imStudent": "Olen opiskelija",
@@ -133,6 +134,8 @@
     "removeImage": "Poista kuva",
     "addImage": "Lisää kuva",
     "addImageOptional": "Lisää kuva (valinnainen)",
+    "imageAttachment": "Kuvaliite",
+    "enlargedImage": "Suurennettu kuva",
     "previewMode": "Esikatselu",
     "editMode": "Muokkaa",
     "questionPlaceholder": "Kirjoita kysymys tähän...",
@@ -170,6 +173,11 @@
       "TRUE_FALSE": "Kyllä / Ei",
       "OPEN_TEXT": "Avoin kysymys"
     }
+  },
+  "errorBoundary": {
+    "title": "Jokin meni pieleen",
+    "message": "Näkymän renderöinnissä tapahtui odottamaton virhe.",
+    "reload": "Päivitä sivu"
   },
   "errors": {
     "ROOM_NOT_FOUND": "Huonetta ei löydy. Tarkista koodi.",

@@ -424,3 +424,13 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Tyhjä kankaan näkymä esitetään vain ja ainoastaan silloin, kun esityksessä on tasan 0 diaa. Kaikissa muissa tilanteissa esityskankaalla on aina valittuna ja esillä aktiivinen dia.
     - Korostettu sivupalkin "+ Uusi dia" -painiketta houkuttelevalla sinisellä tehosteella esityksen ollessa tyhjä.
     - Lisätty kattava Vitest-yksikkötestisarja `useCaseEditor.test.ts` (17/17 testiä läpi).
+
+- [x] **9.8 Kovakoodattujen tekstien täysi lokalisointi (i18n kattavuus 100 %)**
+  - **Prioriteetti:** Keskitaso / Saavutettavuus & Monikielisyys
+  - **Tiedostot:** `client/src/components/ErrorBoundary.tsx`, `client/src/components/common/Modal.tsx`, `client/src/components/slide/SlideBody.tsx`, `client/src/context/UIContext.tsx`, `client/src/i18n/locales/`
+  - **Toimenpiteet:**
+    - Eristetty ErrorBoundaryn virheilmoitus ja painikkeet lokalisoituun `DefaultErrorFallback`-komponenttiin käyttäen `useTranslation()`-hookia ja uutta `errorBoundary`-käännösavainsarjaa.
+    - Korjattu `Modal.tsx`:n sulkunapin kovakoodattu `title="Sulje"` käyttämään `t('common.close')` sekä lisätty `aria-label`.
+    - Korjattu `SlideBody.tsx`:n kuvien alt-tekstit (`imageAttachment` ja `enlargedImage`) monikielisiksi.
+    - Korvattu `UIContext.tsx`:n oletuspainike `t('common.ok')`.
+    - Saavutettu täysi 178 avaimen symmetria kielitiedostojen (`fi.json`, `sv.json`, `en.json`) välillä ilman yhtäkään puuttuvaa käännöstä.

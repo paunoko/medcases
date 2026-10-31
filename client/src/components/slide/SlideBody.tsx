@@ -89,7 +89,7 @@ export const SlideBody: React.FC<Props> = ({
         >
           <img
             src={imageUrl}
-            alt="Slide attachment"
+            alt={t('editor.imageAttachment', { defaultValue: 'Kuvaliite' })}
             className={`w-full h-full object-contain ${mode === 'edit' ? 'opacity-90 group-hover:opacity-40 transition-opacity' : 'group-hover:scale-[1.01] transition-transform duration-300'}`}
           />
 
@@ -144,7 +144,7 @@ export const SlideBody: React.FC<Props> = ({
 
           <img
             src={imageUrl}
-            alt="Enlarged medical view"
+            alt={t('editor.enlargedImage', { defaultValue: 'Suurennettu kuva' })}
             className="max-w-[95vw] max-h-[92vh] object-contain rounded-lg shadow-2xl select-none"
             onClick={e => e.stopPropagation()}
           />

@@ -11,7 +11,8 @@
     "edit": "Edit",
     "open": "Open",
     "home": "Home",
-    "close": "Close"
+    "close": "Close",
+    "ok": "OK"
   },
   "landing": {
     "imStudent": "I'm a student",
@@ -133,6 +134,8 @@
     "removeImage": "Remove image",
     "addImage": "Add image",
     "addImageOptional": "Add image (optional)",
+    "imageAttachment": "Slide attachment",
+    "enlargedImage": "Enlarged medical view",
     "previewMode": "Preview",
     "editMode": "Edit",
     "questionPlaceholder": "Write the question here...",
@@ -170,6 +173,11 @@
       "TRUE_FALSE": "True / False",
       "OPEN_TEXT": "Open question"
     }
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "message": "An unexpected error occurred while rendering the view.",
+    "reload": "Reload page"
   },
   "errors": {
     "ROOM_NOT_FOUND": "Room not found. Check the code.",
