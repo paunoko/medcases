@@ -474,3 +474,12 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korjattu selitetekstin typistyminen (`truncate` poistettu) ja siirretty Takaisin-painike luontevasti kortin vasempaan yläkulmaan (`← Takaisin`) sekä lisätty alas keskelle toinen `Peruuta`-painike, vapauttaen otsikkopillerin koko leveydelleen selkeää luettavuutta varten.
     - Välitetään valittu `.medcase`-tiedosto suoraan router-tilana (`state: { file }`) näkymille `TeacherView` ja `EditorView`, jolloin esitys tai editori avautuu viiveettä.
     - Korjattu varanäkymä `FilePickerView` käyttämään samaa ylämarginaalia ja leveyttä (`max-w-md`), mikäli näkymiin saavutaan suoralla URL-osoitteella.
+
+- [x] **9.12 "Mikä MedCases on?" -tietonäkymän kokonaisuudistus ja tekijäosion lisäys**
+  - **Prioriteetti:** Keskitaso / Viestintä & Avoimuus
+  - **Tiedostot:** `client/src/views/LandingView.tsx`, `client/src/components/common/Modal.tsx`, `client/src/i18n/locales/`
+  - **Tarve:** Aiempi infomodaali oli kapea ja staattinen tiivistelmä. Opettajat kaipaavat kattavaa ymmärrystä pedagogisista hyödyistä (tarinallisuus, kuvantaminen, auditoriokäyttö, zero-database), opiskelijan anonymiteetistä sekä tekijän taustasta ja avoimen koodin vapaasta hyödynnettävyydestä.
+  - **Toimenpiteet:**
+    - Uudistettu modaali 3-välilehtiseksi kokonaisuudeksi (*Opettajalle*, *Opiskelijalle*, *Tekijä & Vapaus*) modernilla segmentoidulla valitsimella ja täydellä monikielisyydellä (FI, SV, EN).
+    - Esitelty Pauno Komulainen kuopiolaisena naistentautien ja synnytysten erikoislääkärinä, avattu sovelluksen syntytausta lääketieteen opetuksen elävöittämiseksi, korostettu maksutonta käyttöä terveydenhuollon opetuksessa ja lisätty suora painike GNU GPL v3 -lähdekoodiin GitHubissa.
+    - Laajennettu `Modal.tsx`-komponenttia tukemaan `maxWidth="2xl"`-kokoa ilmavampaa luettavuutta varten.

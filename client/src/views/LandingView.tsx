@@ -14,7 +14,14 @@ import {
     ChevronRight, 
     ChevronLeft,
     Activity, 
-    ShieldCheck 
+    ShieldCheck,
+    Stethoscope,
+    BookOpen,
+    Smartphone,
+    Sparkles,
+    Heart,
+    Code2,
+    ExternalLink
 } from 'lucide-react';
 
 const RoleSlider = ({
@@ -91,6 +98,7 @@ export const LandingView = () => {
     const [teacherAction, setTeacherAction] = useState<'menu' | 'present' | 'edit'>('menu');
     const [inSession, setInSession] = useState(false);
     const [showAbout, setShowAbout] = useState(false);
+    const [aboutTab, setAboutTab] = useState<'teacher' | 'student' | 'author'>('teacher');
 
     const handleRoleChange = (tab: 'student' | 'teacher') => {
         setActiveTab(tab);
@@ -137,7 +145,7 @@ export const LandingView = () => {
 
             {/* TOP HEADER - Hidden when student is actively in a presentation session */}
             {!inSession && (
-                <AppHeader showAboutButton onAboutClick={() => setShowAbout(true)} />
+                <AppHeader showAboutButton onAboutClick={() => { setAboutTab('teacher'); setShowAbout(true); }} />
             )}
 
             {/* MAIN CONTENT */}
@@ -311,59 +319,232 @@ export const LandingView = () => {
             <Modal
                 isOpen={showAbout}
                 onClose={() => setShowAbout(false)}
-                maxWidth="lg"
+                maxWidth="2xl"
                 showCloseButton
                 theme="light"
             >
-                <div className="p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md">
-                            <Activity size={28} className="stroke-[2.5]" />
+                <div className="p-6 sm:p-8 max-h-[88vh] overflow-y-auto">
+                    {/* Header */}
+                    <div className="flex items-center gap-3.5 mb-5">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 text-white flex items-center justify-center shadow-lg shadow-blue-600/25 shrink-0">
+                            <Activity size={26} className="stroke-[2.5]" />
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black text-blue-950 tracking-tight">MedCases</h3>
-                            <p className="text-xs font-semibold text-gray-500">{t('landing.tagline')}</p>
+                            <h3 className="text-2xl font-black text-gray-900 tracking-tight flex items-center gap-2">
+                                <span>MedCases</span>
+                                <span className="text-[10px] uppercase tracking-wider font-extrabold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">v2.0</span>
+                            </h3>
+                            <p className="text-xs font-semibold text-gray-500 mt-0.5">{t('landing.aboutSubtitle')}</p>
                         </div>
                     </div>
 
-                    <div className="space-y-5 text-gray-700 text-sm leading-relaxed">
-                        <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-100">
-                            <div className="flex items-center gap-2 font-bold text-blue-950 mb-1 text-base">
-                                <GraduationCap size={20} className="text-blue-600" />
-                                <span>{t('landing.aboutStudentTitle')}</span>
-                            </div>
-                            <p className="text-gray-600">
-                                {t('landing.aboutStudentText')}
-                            </p>
-                        </div>
+                    {/* Segmented Tab Bar */}
+                    <div className="bg-gray-100/90 p-1 rounded-2xl flex items-center gap-1 mb-6 border border-gray-200/60 select-none">
+                        <button
+                            type="button"
+                            onClick={() => setAboutTab('teacher')}
+                            className={`flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                                aboutTab === 'teacher'
+                                    ? 'bg-white text-purple-700 shadow-sm border border-purple-100'
+                                    : 'text-gray-500 hover:text-gray-900'
+                            }`}
+                        >
+                            <Presentation size={17} className={aboutTab === 'teacher' ? 'text-purple-600' : 'text-gray-400'} />
+                            <span>{t('landing.aboutTabTeacher')}</span>
+                        </button>
 
-                        <div className="p-4 rounded-2xl bg-purple-50/60 border border-purple-100">
-                            <div className="flex items-center gap-2 font-bold text-purple-950 mb-1 text-base">
-                                <Presentation size={20} className="text-purple-600" />
-                                <span>{t('landing.aboutTeacherTitle')}</span>
-                            </div>
-                            <p className="text-gray-600">
-                                {t('landing.aboutTeacherText')}
-                            </p>
-                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setAboutTab('student')}
+                            className={`flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                                aboutTab === 'student'
+                                    ? 'bg-white text-blue-700 shadow-sm border border-blue-100'
+                                    : 'text-gray-500 hover:text-gray-900'
+                            }`}
+                        >
+                            <GraduationCap size={17} className={aboutTab === 'student' ? 'text-blue-600' : 'text-gray-400'} />
+                            <span>{t('landing.aboutTabStudent')}</span>
+                        </button>
 
-                        <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-100">
-                            <div className="flex items-center gap-2 font-bold text-emerald-950 mb-1 text-base">
-                                <ShieldCheck size={20} className="text-emerald-600" />
-                                <span>{t('landing.aboutPrivacyTitle')}</span>
-                            </div>
-                            <p className="text-gray-600">
-                                {t('landing.aboutPrivacyText')}
-                            </p>
-                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setAboutTab('author')}
+                            className={`flex-1 py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                                aboutTab === 'author'
+                                    ? 'bg-white text-emerald-700 shadow-sm border border-emerald-100'
+                                    : 'text-gray-500 hover:text-gray-900'
+                            }`}
+                        >
+                            <Stethoscope size={17} className={aboutTab === 'author' ? 'text-emerald-600' : 'text-gray-400'} />
+                            <span>{t('landing.aboutTabAuthor')}</span>
+                        </button>
                     </div>
 
-                    <button
-                        onClick={() => setShowAbout(false)}
-                        className="mt-6 w-full bg-gray-900 hover:bg-gray-800 text-white font-bold py-3.5 rounded-xl transition-colors cursor-pointer"
-                    >
-                        {t('common.close')}
-                    </button>
+                    {/* Tab 1: Teacher */}
+                    {aboutTab === 'teacher' && (
+                        <div className="space-y-4 animate-fade-in text-gray-700 text-sm">
+                            <div className="p-4 rounded-2xl bg-purple-50/70 border border-purple-100/90 flex gap-3.5">
+                                <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <BookOpen size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-extrabold text-purple-950 text-base mb-1">
+                                        {t('landing.aboutTeacherT1')}
+                                    </h4>
+                                    <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">
+                                        {t('landing.aboutTeacherD1')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-slate-50 border border-gray-100 flex gap-3.5">
+                                <div className="w-10 h-10 rounded-xl bg-slate-200/80 text-gray-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <MonitorPlay size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-extrabold text-gray-900 text-base mb-1">
+                                        {t('landing.aboutTeacherT2')}
+                                    </h4>
+                                    <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">
+                                        {t('landing.aboutTeacherD2')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-slate-50 border border-gray-100 flex gap-3.5">
+                                <div className="w-10 h-10 rounded-xl bg-slate-200/80 text-gray-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <ShieldCheck size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-extrabold text-gray-900 text-base mb-1">
+                                        {t('landing.aboutTeacherT3')}
+                                    </h4>
+                                    <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">
+                                        {t('landing.aboutTeacherD3')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Tab 2: Student */}
+                    {aboutTab === 'student' && (
+                        <div className="space-y-4 animate-fade-in text-gray-700 text-sm">
+                            <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-100/90 flex gap-3.5">
+                                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <ShieldCheck size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-extrabold text-blue-950 text-base mb-1">
+                                        {t('landing.aboutStudentT1')}
+                                    </h4>
+                                    <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">
+                                        {t('landing.aboutStudentD1')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-slate-50 border border-gray-100 flex gap-3.5">
+                                <div className="w-10 h-10 rounded-xl bg-slate-200/80 text-gray-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <Smartphone size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-extrabold text-gray-900 text-base mb-1">
+                                        {t('landing.aboutStudentT2')}
+                                    </h4>
+                                    <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">
+                                        {t('landing.aboutStudentD2')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-slate-50 border border-gray-100 flex gap-3.5">
+                                <div className="w-10 h-10 rounded-xl bg-slate-200/80 text-gray-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <Sparkles size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-extrabold text-gray-900 text-base mb-1">
+                                        {t('landing.aboutStudentT3')}
+                                    </h4>
+                                    <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">
+                                        {t('landing.aboutStudentD3')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Tab 3: Author & Freedom */}
+                    {aboutTab === 'author' && (
+                        <div className="space-y-4 animate-fade-in text-gray-700 text-sm">
+                            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-100/90 flex gap-3.5">
+                                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <Stethoscope size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-extrabold text-emerald-950 text-base mb-1">
+                                        {t('landing.aboutAuthorT1')}
+                                    </h4>
+                                    <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">
+                                        {t('landing.aboutAuthorD1')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-slate-50 border border-gray-100 flex gap-3.5">
+                                <div className="w-10 h-10 rounded-xl bg-slate-200/80 text-gray-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <Heart size={20} className="text-rose-600" />
+                                </div>
+                                <div>
+                                    <h4 className="font-extrabold text-gray-900 text-base mb-1">
+                                        {t('landing.aboutAuthorT2')}
+                                    </h4>
+                                    <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">
+                                        {t('landing.aboutAuthorD2')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="p-4 rounded-2xl bg-slate-50 border border-gray-100 flex gap-3.5">
+                                <div className="w-10 h-10 rounded-xl bg-slate-200/80 text-gray-700 flex items-center justify-center shrink-0 mt-0.5">
+                                    <Code2 size={20} />
+                                </div>
+                                <div>
+                                    <h4 className="font-extrabold text-gray-900 text-base mb-1">
+                                        {t('landing.aboutAuthorT3')}
+                                    </h4>
+                                    <p className="text-gray-600 leading-relaxed text-xs sm:text-sm">
+                                        {t('landing.aboutAuthorD3')}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* GitHub Action Banner */}
+                            <div className="pt-2 flex justify-center">
+                                <a
+                                    href="https://github.com/paunoko/medcases"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-xl bg-gray-900 hover:bg-gray-800 text-white font-extrabold text-xs sm:text-sm transition-all shadow-md shadow-gray-900/15 active:scale-[0.99] cursor-pointer"
+                                >
+                                    <Code2 size={18} />
+                                    <span>{t('landing.aboutGitHubButton')}</span>
+                                    <ExternalLink size={15} className="text-gray-400" />
+                                </a>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Bottom Close */}
+                    <div className="mt-6 pt-4 border-t border-gray-100">
+                        <button
+                            type="button"
+                            onClick={() => setShowAbout(false)}
+                            className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-extrabold py-3.5 rounded-xl transition-colors cursor-pointer text-sm"
+                        >
+                            {t('common.close')}
+                        </button>
+                    </div>
                 </div>
             </Modal>
         </div>
