@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 
-export const CANONICAL_WIDTH = 1920;
-export const CANONICAL_HEIGHT = 1080;
+const CANONICAL_WIDTH = 1920;
+const CANONICAL_HEIGHT = 1080;
 
 interface Props {
   children: React.ReactNode;

@@ -409,7 +409,7 @@ export const EditorView = () => {
               className="flex-1 px-5 py-3.5 rounded-2xl font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-950/30 transition-all active:scale-95 cursor-pointer flex items-center justify-center gap-2"
             >
               <Home size={18} />
-              <span>{t('editor.backToMenu')}</span>
+              <span>{t('editor.backToHome')}</span>
             </button>
           </div>
         </div>

@@ -434,3 +434,14 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korjattu `SlideBody.tsx`:n kuvien alt-tekstit (`imageAttachment` ja `enlargedImage`) monikielisiksi.
     - Korvattu `UIContext.tsx`:n oletuspainike `t('common.ok')`.
     - Saavutettu täysi 178 avaimen symmetria kielitiedostojen (`fi.json`, `sv.json`, `en.json`) välillä ilman yhtäkään puuttuvaa käännöstä.
+
+- [x] **9.9 Redundantin koodin, käyttämättömien pakettien ja käännösavaimien siivous**
+  - **Prioriteetti:** Keskitaso / Koodikannan puhtaus & suorituskyky
+  - **Tiedostot:** `client/src/App.tsx`, `client/package.json`, `client/src/views/index.ts`, `client/src/index.css`, `client/src/components/slide/SlideContainer.tsx`, `client/src/views/EditorView.tsx`, `client/src/i18n/locales/`
+  - **Toimenpiteet:**
+    - Poistettu käyttämätön kehittäjävalikko (`/menu`) ja siihen liittynyt `Link`-importti [App.tsx](file:///home/pauno/medcases/client/src/App.tsx) -tiedostosta.
+    - Poistettu käyttämättömät npm-riippuvuudet `clsx` ja `tailwind-merge` [client/package.json](file:///home/pauno/medcases/client/package.json) -tiedostosta.
+    - Poistettu kuollut barrel-tiedosto `client/src/views/index.ts`.
+    - Poistettu Tailwind CSS:n kanssa päällekkäinen `@keyframes pulse` -määrite [client/src/index.css](file:///home/pauno/medcases/client/src/index.css) -tiedostosta.
+    - Poistettu tarpeettomat exportit `CANONICAL_WIDTH` ja `CANONICAL_HEIGHT` tiedostosta [SlideContainer.tsx](file:///home/pauno/medcases/client/src/components/slide/SlideContainer.tsx).
+    - Korvattu vanhentunut avain `editor.backToMenu` yhtenäisellä `editor.backToHome` -avaimella ja siivottu 22 kuollutta/päällekkäistä käännösavainta kielitiedostoista.
