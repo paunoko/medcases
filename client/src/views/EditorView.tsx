@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useCaseEditor } from '../hooks/useCaseEditor';
-import { Home, Pencil, Eye, EyeOff, PanelRightOpen, FolderOpen, Save, ArrowRight, CheckCircle2, FileText, Presentation, Sparkles } from 'lucide-react';
+import { Home, Pencil, Eye, EyeOff, PanelRightOpen, FolderOpen, Save, CheckCircle2, FileText, Presentation } from 'lucide-react';
 import { useUI } from '../context/UIContext';
 import { Modal } from '../components/common/Modal';
 import { FilePickerView } from '../components/common/FilePickerView';
@@ -269,15 +269,9 @@ export const EditorView = () => {
                   {t('editor.emptyStateTitle')}
                 </h2>
 
-                <p className="text-sm sm:text-base text-gray-400 leading-relaxed mb-6">
+                <p className="text-sm sm:text-base text-gray-400 leading-relaxed max-w-sm">
                   {t('editor.emptyStateHint')}
                 </p>
-
-                <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-900/80 border border-gray-700/80 text-xs sm:text-sm font-semibold text-blue-300">
-                  <Sparkles size={16} className="text-blue-400 shrink-0" />
-                  <span>{t('editor.emptyStateAction')}</span>
-                  <ArrowRight size={16} className="text-blue-400 shrink-0" />
-                </div>
 
                 {!isSidebarOpen && (
                   <button
