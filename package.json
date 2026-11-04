@@ -1,7 +1,7 @@
 {
-  "name": "medcases-root",
+  "name": "phronesist-root",
   "version": "2.0.0",
-  "description": "A teaching tool for creating and presenting medical cases classroom quizzes",
+  "description": "A teaching tool for clinical reasoning and medical case quizzes",
   "main": "index.js",
   "scripts": {
     "test": "npm run test -w client",

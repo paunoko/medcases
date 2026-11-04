@@ -3,7 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import type { StudentPayload } from '../types';
 
 const SOCKET_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_SERVER_URL || 'http://localhost:3000');
-const STUDENT_ROOM_KEY = 'medcases_student_room';
+const STUDENT_ROOM_KEY = 'phronesist_student_room';
 
 const getInitialStudentRoom = (): string | null => {
     try {

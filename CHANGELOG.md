@@ -1,7 +1,18 @@
-# MedCases – Muutosloki (Changelog)
+# Phronesist – Muutosloki (Changelog)
 
-Kaikki merkittävät muutokset MedCases-projektiin dokumentoidaan tähän tiedostoon.
+Kaikki merkittävät muutokset Phronesist-projektiin dokumentoidaan tähän tiedostoon.
 Formaatti perustuu [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) -ohjeistukseen ja versiointi noudattaa [Semanttista versiointia](https://semver.org/spec/v2.0.0.html).
+
+---
+
+## [2.1.0] - 2026-11-04
+
+### Lisätty (Added)
+- **Sanakirjamääritelmä phronesis-käsitteelle**: "Mikä Phronesist on?" -tietomodaaliin lisätty etymologinen osio (*φρόνησις*, */ˈfrɒn.iː.sɪs/*) sanan klassisesta merkityksestä lääketieteellisessä ja kasvatustieteellisessä päätöksenteossa (FI, EN, SV).
+
+### Muutettu (Changed)
+- **Brändiuudistus: Phronesist ja `.phron`**: Sovelluksen brändinimi vaihdettu kauttaaltaan MedCases -> Phronesist ja tapausarkistojen tiedostomuodoksi standardoitu `.phron` ilman vanhoja `.medcase`-riippuvuuksia.
+- **Päivitetyt palvelin- ja deploy-konfiguraatiot**: Docker Compose -palvelunimi ja Caddy-välityspalvelinohjaukset päivitetty vastaamaan uutta nimeä.
 
 ---
 
@@ -15,7 +26,7 @@ Formaatti perustuu [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) -ohj
 - **Automaattitestaus (Vitest)**: Yksikkötestit sanitointilogiikalle (`sanitizer.test.ts`) ja tiedostovalidoinnille (`fileHelpers.test.ts`).
 - **GitHub Actions CI -automaatioputki**: `.github/workflows/ci.yml` suorittaa lintoimisen, testit ja asiakas- sekä palvelinbuildit automaattisesti jokaiselle pushille ja pull requestille.
 - **Konfiguroitava palvelinportti**: Palvelin lukee ympäristömuuttujan `PORT` (`process.env.PORT || 3000`).
-- **Standardoidut aikaleimatut `.medcase`-tiedostonimet**: Tallennus tuottaa muodon `{sanitized_title}_{YYYY-MM-DD}_{HHmm}.medcase`, mikä estää selainten duplikaattipäätteet (`(1)`, `(2)`) ja säilyttää 100 % takautuvan yhteensopivuuden.
+- **Standardoidut aikaleimatut `.phron`-tiedostonimet**: Tallennus tuottaa muodon `{sanitized_title}_{YYYY-MM-DD}_{HHmm}.phron`, mikä estää selainten duplikaattipäätteet (`(1)`, `(2)`).
 
 ### Muutettu (Changed)
 - **Koodinpätkintä (Code Splitting)**: `TeacherView` ja `EditorView` ladataan dynaamisesti `React.lazy()`-mekanismilla. Asiakaspaketin koko pieneni 610 kB:sta 384 kB:aan (opiskelijoiden mobiililataus nopeutuu merkittävästi luentosaleissa).

@@ -314,7 +314,7 @@ export const EditorView = () => {
                 <input
                   type="file"
                   className="hidden"
-                  accept=".phron,.medcase,.zip"
+                  accept=".phron,.zip"
                   onChange={onFileInputChange}
                 />
               </label>

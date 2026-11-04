@@ -1,4 +1,4 @@
-# MedCases – Kehityksen TODO-lista
+# Phronesist – Kehityksen TODO-lista
 
 Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on koottu havaitut puutteet, bugit ja kehityskohteet priorisoituna ja konkreettisin ratkaisuehdotuksin.
 
@@ -522,9 +522,10 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
 - [x] **10.1 Kokonaisvaltainen brändipäivitys (Phronesist, `.phron` ja phronesis-sanakirjaosio)**
   - **Prioriteetti:** Korkea / Brändi & Identiteetti
   - **Branch:** `feat/rebrand-phronesist` (pidetty `main` koskemattomana)
-  - **Tiedostot:** `client/src/components/common/AppHeader.tsx`, `client/src/views/LandingView.tsx`, `client/src/views/EditorView.tsx`, `client/src/components/common/CaseFileDropzone.tsx`, `client/src/components/editor/EditorSidebar.tsx`, `client/src/utils/fileHelpers.ts`, `client/src/utils/fileHelpers.test.ts`, `client/src/i18n/locales/`, `client/index.html`, `client/public/manifest.json`, `data-description.md`, `server/src/index.ts`, `server/src/utils/logger.ts`, `.gitignore`
+  - **Tiedostot:** `client/src/components/common/AppHeader.tsx`, `client/src/views/LandingView.tsx`, `client/src/views/EditorView.tsx`, `client/src/components/common/CaseFileDropzone.tsx`, `client/src/components/editor/EditorSidebar.tsx`, `client/src/utils/fileHelpers.ts`, `client/src/utils/fileHelpers.test.ts`, `client/src/i18n/locales/`, `client/index.html`, `client/public/manifest.json`, `data-description.md`, `project-structure.md`, `README.md`, `DEPLOYMENT.md`, `docker-compose.yml`, `Caddyfile`, `.env.example`, `package.json`, `server/package.json`, `server/src/index.ts`, `server/src/utils/logger.ts`, `.gitignore`
   - **Toimenpiteet:**
-    - Päivitetty brändinimi MedCases -> **Phronesist** läpi koko käyttöliittymän, ylätunnisteen, metatietojen ja palvelimen lokien.
-    - Vaihdettu tallennustiedostomuodoksi **`.phron`** (muodossa `{otsikko}_{YYYY-MM-DD}_{HHmm}.phron`).
-    - Varmistettu 100 % takautuva yhteensopivuus vanhoille `.medcase`-tiedostoille (tiedostonvalitsimet ja lataaja avaavat molemmat saumattomasti).
+    - Päivitetty brändinimi MedCases -> **Phronesist** läpi koko käyttöliittymän, ylätunnisteen, metatietojen, pakettikonfiguraatioiden ja palvelimen lokien.
+    - Vaihdettu tiedostopäätteeksi puhtaasti **`.phron`** (muodossa `{otsikko}_{YYYY-MM-DD}_{HHmm}.phron`).
+    - Tehty puhdas leikkaus (clean cutover) ilman vanhoja `.medcase`-riippuvuuksia tai takautuvaa yhteensopivuutta (sovellus ei ole vielä ollut tuotannossa).
+    - Päivitetty `localStorage`-avaimet muotoon `phronesist_student_room`, `phronesist_teacher_session` ja `phronesist_selected_role`.
     - Lisätty "Mikä Phronesist on?" -näkymän "Tausta ja tekijä" -välilehdelle ja otsikkoon tieteellinen, sanakirjamainen osio sanasta **phronesis** (kreikaksi *φρόνησις*, foneettisesti */ˈfrɒn.iː.sɪs/*) selityksineen ja määritelmineen (FI, EN, SV).

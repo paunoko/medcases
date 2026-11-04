@@ -85,7 +85,7 @@
   },
   "teacher": {
     "uploadFailed": "Kunde inte öppna filen",
-    "uploadFailedMsg": "Det gick inte att öppna filen. Se till att det är en korrekt .phron- eller .medcase-fil.",
+    "uploadFailedMsg": "Det gick inte att öppna filen. Se till att det är en korrekt .phron-fil.",
     "slidesReady": "{{count}} diabilder färdiga.",
     "roomCode": "Rumskod",
     "studentsOnline": "{{count}} studenter online",
@@ -123,7 +123,7 @@
     "hideSidebar": "Dölj sidopanel",
     "showSidebar": "Visa sidopanel",
     "uploadFailed": "Kunde inte öppna filen",
-    "uploadFailedMsg": "Se till att filen är en giltig .phron- eller .medcase-fil.",
+    "uploadFailedMsg": "Se till att filen är en giltig .phron-fil.",
     "open": "Öppna",
     "save": "Spara",
     "unsavedChanges": "Avsluta utan att spara?",

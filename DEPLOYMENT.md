@@ -1,16 +1,16 @@
-# MedCases Deployment & Production Guide
+# Phronesist Deployment & Production Guide
 
-This guide details the hardware requirements, architecture, capacity benchmarks, and production deployment options for MedCases. It is designed both for individual instructors and institutional university IT administrators.
+This guide details the hardware requirements, architecture, capacity benchmarks, and production deployment options for Phronesist. It is designed both for individual instructors and institutional university IT administrators.
 
 ---
 
 ## 1. Architectural Overview & Institutional Benefits
 
-MedCases is engineered with a **client-side first, zero-database architecture**:
+Phronesist is engineered with a **client-side first, zero-database architecture**:
 
 - **Zero Database (No SQL/NoSQL engine):** There is no PostgreSQL, MySQL, or MongoDB to install, maintain, tune, or back up.
 - **Zero Personally Identifiable Information (PII) & GDPR Compliance:** Students participate anonymously using a 4-digit room code without user accounts, emails, or passwords. No sensitive student data is ever written to disk.
-- **Client-Side Media Processing:** Medical imaging (radiographs, CT, histology, ECGs) is packaged into local `.medcase` ZIP archives and extracted directly in the presenter's browser using Web APIs. **The server never streams or stores heavy image binaries**, transmitting only lightweight WebSocket JSON control packets (~100–300 bytes each).
+- **Client-Side Media Processing:** Medical imaging (radiographs, CT, histology, ECGs) is packaged into local `.phron` ZIP archives and extracted directly in the presenter's browser using Web APIs. **The server never streams or stores heavy image binaries**, transmitting only lightweight WebSocket JSON control packets (~100–300 bytes each).
 - **Single-Binary Delivery:** The production Docker image bundles both the React frontend and Node.js WebSocket backend into a single Alpine container weighing less than 150 MB.
 
 ---
@@ -34,11 +34,11 @@ Because the server acts solely as a real-time WebSocket state coordinator and st
 
 ## 3. Recommended Production Deployment: Docker Compose + Caddy (Automatic HTTPS)
 
-The most robust and elegant way to deploy MedCases in production is using Docker Compose with **Caddy** as a reverse proxy. Caddy automatically provisions, configures, and renews TLS/SSL certificates from Let's Encrypt with zero manual intervention.
+The most robust and elegant way to deploy Phronesist in production is using Docker Compose with **Caddy** as a reverse proxy. Caddy automatically provisions, configures, and renews TLS/SSL certificates from Let's Encrypt with zero manual intervention.
 
 ### Prerequisites
 - Docker and Docker Compose installed (`docker compose version >= 2.0`)
-- A public domain name (e.g., `medcases.your-university.edu`) pointing to your server's IP address (A / AAAA DNS record)
+- A public domain name (e.g., `phronesist.your-university.edu`) pointing to your server's IP address (A / AAAA DNS record)
 - Ports `80` and `443` open in your firewall
 
 ### 1-Minute Setup
@@ -55,7 +55,7 @@ The most robust and elegant way to deploy MedCases in production is using Docker
    ```
    Edit `.env` and set your public domain name:
    ```ini
-   DOMAIN=medcases.your-university.edu
+   DOMAIN=phronesist.your-university.edu
    ACME_EMAIL=admin@your-university.edu
    ```
 
@@ -65,11 +65,11 @@ The most robust and elegant way to deploy MedCases in production is using Docker
    ```
 
 4. **Verify:**
-   Open `https://medcases.your-university.edu` in your browser. Caddy will have automatically obtained a valid HTTPS certificate, and MedCases is live.
+   Open `https://phronesist.your-university.edu` in your browser. Caddy will have automatically obtained a valid HTTPS certificate, and Phronesist is live.
 
 To view live container logs:
 ```bash
-docker compose logs -f medcases
+docker compose logs -f phronesist
 ```
 
 To stop or restart:
@@ -82,26 +82,26 @@ docker compose up -d
 
 ## 4. Standalone Docker Deployment
 
-If your institution already runs a centralized reverse proxy (e.g., Traefik, HAProxy, or enterprise Nginx) or you wish to run MedCases standalone on an internal port:
+If your institution already runs a centralized reverse proxy (e.g., Traefik, HAProxy, or enterprise Nginx) or you wish to run Phronesist standalone on an internal port:
 
 ### Building the Image
 ```bash
 # Build for root URL path (default)
-docker build -t medcases .
+docker build -t phronesist .
 
-# Or build for a custom subpath (e.g., /medcases)
-docker build --build-arg VITE_BASE_PATH=/medcases -t medcases .
+# Or build for a custom subpath (e.g., /phronesist)
+docker build --build-arg VITE_BASE_PATH=/phronesist -t phronesist .
 ```
 
 ### Running the Container
 ```bash
 # Basic run on port 3000
 docker run -d \
-  --name medcases \
+  --name phronesist \
   --restart unless-stopped \
   -p 3000:3000 \
-  -v medcases_logs:/app/server/logs \
-  medcases
+  -v phronesist_logs:/app/server/logs \
+  phronesist
 ```
 
 ---
@@ -109,12 +109,12 @@ docker run -d \
 ## 5. Reverse Proxy Configuration Examples
 
 ### Nginx
-If placing MedCases behind an existing Nginx server, ensure WebSocket upgrade headers are passed correctly:
+If placing Phronesist behind an existing Nginx server, ensure WebSocket upgrade headers are passed correctly:
 
 ```nginx
 server {
     listen 443 ssl http2;
-    server_name medcases.example.edu;
+    server_name phronesist.example.edu;
 
     ssl_certificate /path/to/cert.pem;
     ssl_certificate_key /path/to/key.pem;
@@ -142,7 +142,7 @@ server {
 
 ### Caddy (Standalone `Caddyfile`)
 ```caddyfile
-medcases.example.edu {
+phronesist.example.edu {
     reverse_proxy localhost:3000
     encode zstd gzip
 }
@@ -165,7 +165,7 @@ medcases.example.edu {
 
 ## 7. Institutional IT FAQ & Security Checklist
 
-#### Does MedCases store student responses permanently?
+#### Does Phronesist store student responses permanently?
 No. All student answers and active room states exist solely in the server's volatile RAM. Once the instructor ends the session or 60 minutes of inactivity elapse, the room and answers are purged immediately (`rooms.delete(roomId)`).
 
 #### Can students or attendees tamper with slides or reveal answers?
@@ -179,4 +179,4 @@ No. The backend uses strict payload sanitization (`sanitizer.ts`). The `isCorrec
 - Outbound: Standard DNS (`53`) and HTTPS (`443`) for Let's Encrypt certificate issuance.
 
 #### How do we scale horizontally across multiple servers?
-If institutional adoption grows beyond 5,000+ simultaneous students across hundreds of concurrent halls, simply attach the official `@socket.io/redis-adapter` to the backend. This enables running multiple MedCases container replicas behind a round-robin load balancer with sticky sessions.
+If institutional adoption grows beyond 5,000+ simultaneous students across hundreds of concurrent halls, simply attach the official `@socket.io/redis-adapter` to the backend. This enables running multiple Phronesist container replicas behind a round-robin load balancer with sticky sessions.

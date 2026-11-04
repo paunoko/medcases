@@ -6,7 +6,7 @@ import { createStudentPayload } from '../utils/sanitizer';
 // Use relative path in production, localhost in dev
 const SOCKET_URL = import.meta.env.PROD ? '' : (import.meta.env.VITE_SERVER_URL || 'http://localhost:3000');
 
-export const TEACHER_SESSION_KEY = 'medcases_teacher_session';
+export const TEACHER_SESSION_KEY = 'phronesist_teacher_session';
 
 interface StoredTeacherSession {
     roomId: string;

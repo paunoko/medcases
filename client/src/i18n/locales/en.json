@@ -85,7 +85,7 @@
   },
   "teacher": {
     "uploadFailed": "Failed to open file",
-    "uploadFailedMsg": "Failed to open file. Make sure it is a valid .phron or .medcase file.",
+    "uploadFailedMsg": "Failed to open file. Make sure it is a valid .phron file.",
     "slidesReady": "{{count}} slides ready.",
     "roomCode": "Room Code",
     "studentsOnline": "{{count}} students online",
@@ -123,7 +123,7 @@
     "hideSidebar": "Hide sidebar",
     "showSidebar": "Show sidebar",
     "uploadFailed": "Failed to open file",
-    "uploadFailedMsg": "Make sure the file is a valid .phron or .medcase file.",
+    "uploadFailedMsg": "Make sure the file is a valid .phron file.",
     "open": "Open",
     "save": "Save",
     "unsavedChanges": "Leave without saving?",

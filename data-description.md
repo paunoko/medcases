@@ -1,10 +1,10 @@
 # Phronesist Data Format (`.phron`)
 
-A `.phron` file is a standard ZIP archive containing a patient case definition and all its associated media assets. (Legacy `.medcase` files are completely compatible and load interchangeably). This guide explains how to construct your own patient cases manually by writing the underlying JSON.
+A `.phron` file is a standard ZIP archive containing a patient case definition and all its associated media assets. This guide explains how to construct your own patient cases manually by writing the underlying JSON.
 
 ## Archive Structure
 
-A working `.phron` (or `.medcase`) archive must have the following internal structure:
+A working `.phron` archive must have the following internal structure:
 
 ```
 my-case-name.phron/ (ZIP Archive)
@@ -22,7 +22,6 @@ When saved from the Phronesist editor, `.phron` files follow a standardized, col
 
 - **Title prefix**: Lowercase alphanumeric title with spaces and special characters replaced by underscores.
 - **Timestamp**: Full ISO date (`YYYY-MM-DD`) and 24-hour time in hours and minutes (`HHmm`), preventing browser download duplicate suffixes (such as `(1)`, `(2)`).
-- **Backward compatibility**: The `.phron` loader is completely file-name and extension agnostic; archives created with legacy `.medcase` extensions or custom filenames (e.g., `case.medcase`, `rintakipu_261104.medcase`) continue to open and run seamlessly.
 
 ## The `case.json` Structure
 
@@ -46,7 +45,7 @@ Every slide object in the `slides` array shares a set of common base fields, but
 - `type` (String, Required): Determines the slide type. Must be one of: `"INFO"`, `"MULTIPLE_CHOICE"`, `"TRUE_FALSE"`, or `"OPEN_TEXT"`.
 - `title` (String, Required): The title of the slide.
 - `content` (String, Required): The main descriptive text or introduction for the slide context.
-- `imageFileName` (String, Optional): The filename of an image stored in the `images/` directory. Standard MedCases archives normalize and name images by their 1-based slide position: `slide{index}.{ext}` (e.g., `"slide1.jpg"`, `"slide2.png"`). The built-in editor automatically standardizes image names on save. (Existing archives with custom filenames remain backward-compatible when loaded).
+- `imageFileName` (String, Optional): The filename of an image stored in the `images/` directory. Phronesist archives normalize and name images by their 1-based slide position: `slide{index}.{ext}` (e.g., `"slide1.jpg"`, `"slide2.png"`). The built-in editor automatically standardizes image names on save.
 
 ---
 
@@ -93,7 +92,7 @@ Presents a question where the student answers by typing free-form text.
 
 ## Complete Example `case.json`
 
-Here is a fully functioning example incorporating all slide types. Save this as `case.json`, put any required images in an `images/` folder, zip them together, and change the file extension to `.phron` (or `.medcase`).
+Here is a fully functioning example incorporating all slide types. Save this as `case.json`, put any required images in an `images/` folder, zip them together, and change the file extension to `.phron`.
 
 ```json
 {

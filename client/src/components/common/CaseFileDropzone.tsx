@@ -73,7 +73,7 @@ export const CaseFileDropzone: React.FC<CaseFileDropzoneProps> = ({
             <input
                 ref={fileInputRef}
                 type="file"
-                accept=".phron,.medcase"
+                accept=".phron"
                 className="hidden"
                 onChange={handleFileInputChange}
             />

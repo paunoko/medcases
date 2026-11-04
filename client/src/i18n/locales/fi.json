@@ -85,7 +85,7 @@
   },
   "teacher": {
     "uploadFailed": "Avaaminen epäonnistui",
-    "uploadFailedMsg": "Tiedoston avaaminen epäonnistui. Varmista, että kyseessä on oikea .phron- tai .medcase-tiedosto.",
+    "uploadFailedMsg": "Tiedoston avaaminen epäonnistui. Varmista, että kyseessä on oikea .phron-tiedosto.",
     "slidesReady": "{{count}} diaa valmiina.",
     "roomCode": "Huonekoodi",
     "studentsOnline": "{{count}} opiskelijaa linjoilla",
@@ -123,7 +123,7 @@
     "hideSidebar": "Piilota sivupalkki",
     "showSidebar": "Näytä sivupalkki",
     "uploadFailed": "Avaaminen epäonnistui",
-    "uploadFailedMsg": "Varmista, että tiedosto on oikea .phron- tai .medcase-tiedosto.",
+    "uploadFailedMsg": "Varmista, että tiedosto on oikea .phron-tiedosto.",
     "open": "Avaa",
     "save": "Tallenna",
     "unsavedChanges": "Poistu tallentamatta?",

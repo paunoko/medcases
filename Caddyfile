@@ -4,7 +4,7 @@
 }
 
 {$DOMAIN:localhost} {
-    reverse_proxy medcases:3000
+    reverse_proxy phronesist:3000
 
     # Modern compression for bundle transfer
     encode zstd gzip

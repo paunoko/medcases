@@ -1,8 +1,8 @@
-# MedCases
+# Phronesist
 
-An interactive, privacy-focused clinical case teaching and audience response platform designed for medical, dental, and healthcare education.
+An interactive, privacy-focused clinical reasoning and patient case teaching platform for medical and healthcare education.
 
-MedCases empowers instructors to present clinical patient scenarios, medical imaging, and real-time interactive questions in lecture halls and small-group sessions—while students participate anonymously using their phones or laptops without accounts, downloads, or logins.
+Phronesist empowers instructors to present clinical patient scenarios, diagnostic imaging, and real-time interactive questions in lecture halls and small-group sessions—while students participate anonymously using their phones or laptops without accounts, downloads, or logins.
 
 ---
 
@@ -27,7 +27,7 @@ MedCases empowers instructors to present clinical patient scenarios, medical ima
 - 🔒 **Zero Database & Privacy by Design (GDPR Compliant)**:
   - **No Database to Maintain**: Eliminates complex database setups, backups, and schema migrations.
   - **Zero PII**: No student names, emails, or personal identifiers are collected or stored.
-  - **Offline-First `.medcase` Files**: Patient cases and high-resolution images are packaged as portable ZIP archives stored safely on your own computer.
+  - **Offline-First `.phron` Files**: Patient cases and high-resolution images are packaged as portable ZIP archives stored safely on your own computer.
 
 - 🌍 **Multilingual**: Native full-interface support for **Finnish (Suomi)**, **Swedish (Svenska)**, and **English**, complete with an interactive language slider.
 
@@ -38,11 +38,11 @@ MedCases empowers instructors to present clinical patient scenarios, medical ima
 ```mermaid
 flowchart LR
     subgraph Teacher ["👨‍🏫 Teacher (Projector / Laptop)"]
-        Editor["1. Case Editor\n(Creates .medcase)"] --> Presenter["2. Presentation Mode\n(Opens 4-Digit Room)"]
+        Editor["1. Case Editor\n(Creates .phron)"] --> Presenter["2. Presentation Mode\n(Opens 4-Digit Room)"]
         Presenter --> Reveal["3. Lock & Reveal\n(Live Results & Model Answer)"]
     end
 
-    subgraph Server ["⚡ MedCases Server (Docker / Node)"]
+    subgraph Server ["⚡ Phronesist Server (Docker / Node)"]
         WebSocketHub["In-Memory WebSocket Hub\n(Zero DB, Zero Storage)"]
     end
 
@@ -56,8 +56,8 @@ flowchart LR
 ```
 
 ### For Instructors
-1. **Prepare**: Build an interactive case in the built-in Editor, or load an existing `.medcase` file.
-2. **Launch**: Click **"Esitä potilastapauksia / Present Cases"** and select your `.medcase` file. The presentation opens immediately with a 4-digit Room PIN and on-screen QR code.
+1. **Prepare**: Build an interactive case in the built-in Editor, or load an existing `.phron` file.
+2. **Launch**: Click **"Esitä potilastapauksia / Present Cases"** and select your `.phron` file. The presentation opens immediately with a 4-digit Room PIN and on-screen QR code.
 3. **Present**: Navigate through patient history, lab values, and imaging.
 4. **Interact**: When a question slide appears, students answer in real time. Click **"Lukitse ja paljasta / Lock & reveal"** (or hit `Space`) to reveal answer distributions and correct answers.
 5. **Multi-Case Sessions**: Pick subsequent patient cases directly from the presenter sidebar without students needing to reconnect.
@@ -105,7 +105,7 @@ flowchart LR
 
 ## Production Deployment (1-Minute Setup)
 
-MedCases is packaged as a unified Docker container and includes a turnkey `docker-compose.yml` with **Caddy** for automatic HTTPS.
+Phronesist is packaged as a unified Docker container and includes a turnkey `docker-compose.yml` with **Caddy** for automatic HTTPS.
 
 1. **Configure your domain:**
    ```bash
@@ -113,8 +113,8 @@ MedCases is packaged as a unified Docker container and includes a turnkey `docke
    ```
    Set your public domain in `.env`:
    ```ini
-   DOMAIN=medcases.your-university.edu
-   ACME_EMAIL=admin@your-university.edu
+   DOMAIN=phronesist.example.edu
+   ACME_EMAIL=admin@example.edu
    ```
 
 2. **Launch with Docker Compose:**
@@ -122,7 +122,7 @@ MedCases is packaged as a unified Docker container and includes a turnkey `docke
    docker compose up -d
    ```
 
-3. Open `https://medcases.your-university.edu` in your browser. Caddy automatically provisions and renews SSL certificates from Let's Encrypt.
+3. Open `https://phronesist.example.edu` in your browser. Caddy automatically provisions and renews SSL certificates from Let's Encrypt.
 
 👉 For detailed institutional hosting guidelines, Nginx reverse proxy examples, and capacity benchmarks, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
@@ -131,7 +131,7 @@ MedCases is packaged as a unified Docker container and includes a turnkey `docke
 ## Documentation
 
 - 🚀 [Deployment & Production Guide](DEPLOYMENT.md) – Hardware sizing, capacity benchmarks, and institutional IT checklist.
-- 📥 [Data Format Description](data-description.md) – File structure and JSON schema of `.medcase` archives.
+- 📥 [Data Format Description](data-description.md) – File structure and JSON schema of `.phron` archives.
 - 📂 [Project Structure](project-structure.md) – Directory organization and component hierarchy.
 - ✅ [Task Checklist & Changelog](TODO.md) – Comprehensive task tracking and architecture log.
 

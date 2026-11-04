@@ -136,7 +136,7 @@ export const EditorSidebar: React.FC<EditorSidebarProps> = ({
               <input
                 type="file"
                 className="hidden"
-                accept=".phron,.medcase,.zip"
+                accept=".phron,.zip"
                 onChange={onFileInputChange}
               />
             </label>

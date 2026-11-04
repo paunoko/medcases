@@ -73,7 +73,7 @@ const RoleSlider = ({
     );
 };
 
-const ROLE_STORAGE_KEY = 'medcases_selected_role';
+const ROLE_STORAGE_KEY = 'phronesist_selected_role';
 
 const getInitialRole = (locationStateTab?: unknown): 'student' | 'teacher' => {
     if (locationStateTab === 'student' || locationStateTab === 'teacher') {

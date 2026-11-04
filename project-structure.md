@@ -1,9 +1,9 @@
 # Project Structure
 
 ```text
-medcases/
+phronesist/
 ├── package.json              # Juuri: Orkestroi serverin ja clientin käynnistyksen
-├── .gitignore                # Git-asetukset (sis. .medcase-eston)
+├── .gitignore                # Git-asetukset (sis. .phron-eston)
 ├── README.md                 # Dokumentaatio
 │
 ├── server/                   # Backend (Node.js + Socket.io)

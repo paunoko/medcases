@@ -1,5 +1,5 @@
 services:
-  medcases:
+  phronesist:
     build:
       context: .
       dockerfile: Dockerfile
@@ -27,7 +27,7 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
-      - medcases
+      - phronesist
 
 volumes:
   caddy_data:

@@ -24,7 +24,6 @@ Thumbs.db
 # --- Projektikohtaiset tiedostot (TÄRKEIN LISÄYS) ---
 # Estetään testidatan ja potilastapausten joutuminen Gitiin
 *.phron
-*.medcase
 *.zip
 # Jos purat zippejä johonkin temp-kansioon testatessa
 temp/
