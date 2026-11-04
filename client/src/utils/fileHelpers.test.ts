@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validatePatientCase, CaseValidationError } from './fileHelpers';
+import { validatePatientCase, CaseValidationError, generateCaseFilename } from './fileHelpers';
 
 describe('validatePatientCase', () => {
   it('accepts a fully valid patient case structure', () => {
@@ -115,5 +115,27 @@ describe('validatePatientCase', () => {
     } catch (e) {
       expect((e as CaseValidationError).code).toBe('INVALID_SLIDE');
     }
+  });
+});
+
+describe('generateCaseFilename', () => {
+  it('formats title with YYYY-MM-DD_HHmm and sanitized title', () => {
+    // 2026-11-04 14:35
+    const fixedDate = new Date(2026, 10, 4, 14, 35);
+    const filename = generateCaseFilename('Rintakipupotilas', fixedDate);
+    expect(filename).toBe('rintakipupotilas_2026-11-04_1435.medcase');
+  });
+
+  it('pads single-digit months, days, hours, and minutes with leading zeroes and trims trailing delimiters', () => {
+    // 2026-05-07 09:05
+    const fixedDate = new Date(2026, 4, 7, 9, 5);
+    const filename = generateCaseFilename('Akuutti vatsa!', fixedDate);
+    expect(filename).toBe('akuutti_vatsa_2026-05-07_0905.medcase');
+  });
+
+  it('falls back to "case" if title has no alphanumeric characters', () => {
+    const fixedDate = new Date(2026, 0, 15, 8, 0);
+    const filename = generateCaseFilename('??? !!!', fixedDate);
+    expect(filename).toBe('case_2026-01-15_0800.medcase');
   });
 });

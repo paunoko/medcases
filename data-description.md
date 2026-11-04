@@ -14,6 +14,16 @@ my-case-name.medcase/ (ZIP Archive)
     └── slide2.png
 ```
 
+### Archive Filename Convention
+
+When saved from the MedCases editor, `.medcase` files follow a standardized, collision-free naming format:
+`{sanitized_title}_{YYYY-MM-DD}_{HHmm}.medcase`
+(e.g., `rintakipupotilas_2026-11-04_1430.medcase`).
+
+- **Title prefix**: Lowercase alphanumeric title with spaces and special characters replaced by underscores.
+- **Timestamp**: Full ISO date (`YYYY-MM-DD`) and 24-hour time in hours and minutes (`HHmm`), preventing browser download duplicate suffixes (such as `(1)`, `(2)`).
+- **Backward compatibility**: The `.medcase` loader is completely file-name agnostic; archives created with any custom or legacy filenames (e.g., `case.medcase`, `rintakipu_261104.medcase`) continue to open and run seamlessly.
+
 ## The `case.json` Structure
 
 The root of `case.json` consists of two main sections: `meta` and `slides`.

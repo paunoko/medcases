@@ -483,3 +483,14 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Uudistettu modaali 3-välilehtiseksi kokonaisuudeksi (*Opettajalle*, *Opiskelijalle*, *Tekijä & Vapaus*) modernilla segmentoidulla valitsimella ja täydellä monikielisyydellä (FI, SV, EN).
     - Esitelty Pauno Komulainen kuopiolaisena naistentautien ja synnytysten erikoislääkärinä, avattu sovelluksen syntytausta lääketieteen opetuksen elävöittämiseksi, korostettu maksutonta käyttöä terveydenhuollon opetuksessa ja lisätty suora painike GNU GPL v3 -lähdekoodiin GitHubissa.
     - Laajennettu `Modal.tsx`-komponenttia tukemaan `maxWidth="2xl"`-kokoa ilmavampaa luettavuutta varten sekä uutta `position="top"` -asettelua (`items-start pt-8 sm:pt-14`), joka kiinnittää modaalin yläreunan paikoilleen ja estää otsikon ja välilehtien pystysuuntaisen hyppimisen välilehtiä vaihdettaessa.
+
+- [x] **9.13 `.medcase`-tiedostojen nimeämiskäytännön standardointi (`otsikko_YYYY-MM-DD_HHmm.medcase`) ja spesifikaatiopäivitys**
+  - **Prioriteetti:** Keskitaso / Tiedostojärjestelmä & UX
+  - **Tiedostot:** `client/src/utils/fileHelpers.ts`, `client/src/utils/fileHelpers.test.ts`, `data-description.md`
+  - **Tarve:** Tiedostojen tallennus tuotti aiemmin muotoa `otsikko_YYMMDD.medcase`, mikä johti saman päivän aikana toistuvissa tallennuksissa latauskansion duplikaattiliitteisiin (`(1)`, `(2)` jne.). Lisäksi nimeämiskäytäntö ei ollut virallisesti dokumentoitu tiedostoarkkitehtuurin määrittelyssä.
+  - **Toimenpiteet:**
+    - Toteutettu `generateCaseFilename(title, date)` -apufunktio, joka muodostaa aikaleimatun tiedostonimen `{sanitized_title}_{YYYY-MM-DD}_{HHmm}.medcase` (esim. `rintakipupotilas_2026-11-04_1435.medcase`).
+    - Huomioitu nimen sanitointi: poistettu erikoismerkit, trimmattu reunojen alaviivat ja asetettu fallback-nimi `case`, mikäli otsikossa ei ole alfanumeerisia merkkejä.
+    - Päivitetty `data-description.md` sisältämään uusi `Archive Filename Convention` -osio.
+    - Varmistettu 100 % takautuva yhteensopivuus (backward compatibility): lataaja on täysin riippumaton arkiston ulkoisesta tiedostonimestä ja lukee sisällön ZIP-paketin sisäisestä `case.json`-tiedostosta. Vanhat tapaukset avautuvat entiseen tapaan.
+    - Lisätty kattavat yksikkötestit `client/src/utils/fileHelpers.test.ts` -tiedostoon (20/20 testiä läpi).

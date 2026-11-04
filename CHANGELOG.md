@@ -15,6 +15,7 @@ Formaatti perustuu [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) -ohj
 - **Automaattitestaus (Vitest)**: Yksikkötestit sanitointilogiikalle (`sanitizer.test.ts`) ja tiedostovalidoinnille (`fileHelpers.test.ts`).
 - **GitHub Actions CI -automaatioputki**: `.github/workflows/ci.yml` suorittaa lintoimisen, testit ja asiakas- sekä palvelinbuildit automaattisesti jokaiselle pushille ja pull requestille.
 - **Konfiguroitava palvelinportti**: Palvelin lukee ympäristömuuttujan `PORT` (`process.env.PORT || 3000`).
+- **Standardoidut aikaleimatut `.medcase`-tiedostonimet**: Tallennus tuottaa muodon `{sanitized_title}_{YYYY-MM-DD}_{HHmm}.medcase`, mikä estää selainten duplikaattipäätteet (`(1)`, `(2)`) ja säilyttää 100 % takautuvan yhteensopivuuden.
 
 ### Muutettu (Changed)
 - **Koodinpätkintä (Code Splitting)**: `TeacherView` ja `EditorView` ladataan dynaamisesti `React.lazy()`-mekanismilla. Asiakaspaketin koko pieneni 610 kB:sta 384 kB:aan (opiskelijoiden mobiililataus nopeutuu merkittävästi luentosaleissa).

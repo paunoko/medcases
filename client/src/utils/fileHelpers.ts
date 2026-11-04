@@ -21,6 +21,19 @@ export const revokeImageUrls = (imageMap?: ImageMap | null) => {
 const CASE_FILENAME = 'case.json';
 const IMAGES_FOLDER = 'images';
 
+export const generateCaseFilename = (title: string, date: Date = new Date()): string => {
+    const rawSafe = (title || '').replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const safeName = rawSafe.replace(/^_+|_+$/g, '') || 'case';
+
+    const year = date.getFullYear().toString();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+
+    return `${safeName}_${year}-${month}-${day}_${hours}${minutes}.medcase`;
+};
+
 export const saveCaseToZip = async (
     caseData: PatientCase,
     imageFiles: Record<string, File>
@@ -64,16 +77,7 @@ export const saveCaseToZip = async (
 
     // 4. Generate and download
     const blob = await zip.generateAsync({ type: "blob" });
-
-    // Sanitize filename and add timestamp
-    const safeName = caseData.meta.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-
-    const date = new Date();
-    const year = date.getFullYear().toString().slice(-2);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const timestamp = `${year}${month}${day}`;
-    const filename = `${safeName}_${timestamp}.medcase`;
+    const filename = generateCaseFilename(caseData.meta.title);
 
     saveAs(blob, filename);
     return filename;
