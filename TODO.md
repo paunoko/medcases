@@ -494,3 +494,12 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Päivitetty `data-description.md` sisältämään uusi `Archive Filename Convention` -osio.
     - Varmistettu 100 % takautuva yhteensopivuus (backward compatibility): lataaja on täysin riippumaton arkiston ulkoisesta tiedostonimestä ja lukee sisällön ZIP-paketin sisäisestä `case.json`-tiedostosta. Vanhat tapaukset avautuvat entiseen tapaan.
     - Lisätty kattavat yksikkötestit `client/src/utils/fileHelpers.test.ts` -tiedostoon (20/20 testiä läpi).
+
+- [x] **9.14 Editorin tallennusdialogin esteettinen selkeytys ja tiedostonimen rivittyminen**
+  - **Prioriteetti:** Keskitaso / Editori UX
+  - **Tiedostot:** `client/src/views/EditorView.tsx`
+  - **Ongelma:** Tallennuskuittausdialogissa oli päällekkäinen ja tilaa vievä vihreä `.MEDCASE`-lätkä, ja pitkät tiedostonimet katkesivat `truncate`-määritteen vuoksi kesken (`...`).
+  - **Toimenpiteet:**
+    - Poistettu redundantti `.MEDCASE`-tunniste laatikosta.
+    - Korvattu `truncate` katkeamattomalla rivityksellä (`break-all select-all leading-relaxed`) ja ankkuroitu tiedostokuvake yläreunaan (`items-start mt-0.5`).
+    - Kasvatettu dialogin leveyttä (`maxWidth="lg"`), jolloin monisanaiset ja pitkät aikaleimatut tiedostonimet näkyvät aina 100 % kokonaisuudessaan ilman typistymistä.

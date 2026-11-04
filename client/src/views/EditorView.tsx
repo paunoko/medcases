@@ -381,7 +381,7 @@ export const EditorView = () => {
       <Modal
         isOpen={!!saveModal?.isOpen}
         onClose={() => setSaveModal(null)}
-        maxWidth="md"
+        maxWidth="lg"
         showCloseButton
         theme="dark"
       >
@@ -396,13 +396,10 @@ export const EditorView = () => {
             </div>
           </div>
 
-          <div className="bg-gray-950/80 border border-gray-800 p-4 rounded-2xl mb-8 flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 min-w-0">
-              <FileText size={20} className="text-emerald-400 shrink-0" />
-              <span className="font-mono text-sm text-gray-200 truncate select-all">{saveModal?.filename}</span>
-            </div>
-            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-lg shrink-0 border border-emerald-500/20">
-              .medcase
+          <div className="bg-gray-950/80 border border-gray-800 p-4 rounded-2xl mb-8 flex items-start gap-3">
+            <FileText size={20} className="text-emerald-400 shrink-0 mt-0.5" />
+            <span className="font-mono text-sm text-gray-200 break-all select-all leading-relaxed">
+              {saveModal?.filename}
             </span>
           </div>
 
