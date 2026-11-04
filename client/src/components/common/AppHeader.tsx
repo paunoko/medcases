@@ -23,7 +23,7 @@ export const AppHeader: React.FC<AppHeaderProps> = ({
                 </div>
                 <div>
                     <div className="flex items-baseline gap-2">
-                        <h1 className="text-2xl font-black text-blue-950 tracking-tight">MedCases</h1>
+                        <h1 className="text-2xl font-black text-blue-950 tracking-tight">Phronesist</h1>
                         <span className="hidden md:inline-block text-xs font-semibold text-gray-500 border-l border-gray-200 pl-2">
                             {t('landing.tagline')}
                         </span>

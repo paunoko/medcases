@@ -31,7 +31,7 @@ export const generateCaseFilename = (title: string, date: Date = new Date()): st
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
 
-    return `${safeName}_${year}-${month}-${day}_${hours}${minutes}.medcase`;
+    return `${safeName}_${year}-${month}-${day}_${hours}${minutes}.phron`;
 };
 
 export const saveCaseToZip = async (

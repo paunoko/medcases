@@ -514,3 +514,17 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Korostettu opiskelijan vaivatonta ja nopeaa liittymistä ("sekunneissa omalla puhelimellaan") ja selkeää inhimillistä anonymiteettiä ilman virheen pelkoa.
     - Päivitetty välilehti "Tausta ja tekijä" ja laajennettu maksuton käyttöoikeus "kaikkeen opetukseen".
     - Synkronoitu ja harmonisoitu käännökset suomeksi, englanniksi ja ruotsiksi (FI, EN, SV).
+
+---
+
+## 10. Brändiuudistus: Phronesist ja `.phron`-tiedostomuoto
+
+- [x] **10.1 Kokonaisvaltainen brändipäivitys (Phronesist, `.phron` ja phronesis-sanakirjaosio)**
+  - **Prioriteetti:** Korkea / Brändi & Identiteetti
+  - **Branch:** `feat/rebrand-phronesist` (pidetty `main` koskemattomana)
+  - **Tiedostot:** `client/src/components/common/AppHeader.tsx`, `client/src/views/LandingView.tsx`, `client/src/views/EditorView.tsx`, `client/src/components/common/CaseFileDropzone.tsx`, `client/src/components/editor/EditorSidebar.tsx`, `client/src/utils/fileHelpers.ts`, `client/src/utils/fileHelpers.test.ts`, `client/src/i18n/locales/`, `client/index.html`, `client/public/manifest.json`, `data-description.md`, `server/src/index.ts`, `server/src/utils/logger.ts`, `.gitignore`
+  - **Toimenpiteet:**
+    - Päivitetty brändinimi MedCases -> **Phronesist** läpi koko käyttöliittymän, ylätunnisteen, metatietojen ja palvelimen lokien.
+    - Vaihdettu tallennustiedostomuodoksi **`.phron`** (muodossa `{otsikko}_{YYYY-MM-DD}_{HHmm}.phron`).
+    - Varmistettu 100 % takautuva yhteensopivuus vanhoille `.medcase`-tiedostoille (tiedostonvalitsimet ja lataaja avaavat molemmat saumattomasti).
+    - Lisätty "Mikä Phronesist on?" -näkymän "Tausta ja tekijä" -välilehdelle ja otsikkoon tieteellinen, sanakirjamainen osio sanasta **phronesis** (kreikaksi *φρόνησις*, foneettisesti */ˈfrɒn.iː.sɪs/*) selityksineen ja määritelmineen (FI, EN, SV).

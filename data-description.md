@@ -1,13 +1,13 @@
-# MedCases Data Format (`.medcase`)
+# Phronesist Data Format (`.phron`)
 
-A `.medcase` file is essentially a standard ZIP archive containing a patient case definition and all its associated media assets. This guide explains how to construct your own patient cases manually by writing the underlying JSON.
+A `.phron` file is a standard ZIP archive containing a patient case definition and all its associated media assets. (Legacy `.medcase` files are completely compatible and load interchangeably). This guide explains how to construct your own patient cases manually by writing the underlying JSON.
 
 ## Archive Structure
 
-A working `.medcase` archive must have the following internal structure:
+A working `.phron` (or `.medcase`) archive must have the following internal structure:
 
 ```
-my-case-name.medcase/ (ZIP Archive)
+my-case-name.phron/ (ZIP Archive)
 ├── case.json         # The main JSON file defining the case data
 └── images/           # Directory containing all referenced image files
     ├── slide1.jpg
@@ -16,13 +16,13 @@ my-case-name.medcase/ (ZIP Archive)
 
 ### Archive Filename Convention
 
-When saved from the MedCases editor, `.medcase` files follow a standardized, collision-free naming format:
-`{sanitized_title}_{YYYY-MM-DD}_{HHmm}.medcase`
-(e.g., `rintakipupotilas_2026-11-04_1430.medcase`).
+When saved from the Phronesist editor, `.phron` files follow a standardized, collision-free naming format:
+`{sanitized_title}_{YYYY-MM-DD}_{HHmm}.phron`
+(e.g., `rintakipupotilas_2026-11-04_1430.phron`).
 
 - **Title prefix**: Lowercase alphanumeric title with spaces and special characters replaced by underscores.
 - **Timestamp**: Full ISO date (`YYYY-MM-DD`) and 24-hour time in hours and minutes (`HHmm`), preventing browser download duplicate suffixes (such as `(1)`, `(2)`).
-- **Backward compatibility**: The `.medcase` loader is completely file-name agnostic; archives created with any custom or legacy filenames (e.g., `case.medcase`, `rintakipu_261104.medcase`) continue to open and run seamlessly.
+- **Backward compatibility**: The `.phron` loader is completely file-name and extension agnostic; archives created with legacy `.medcase` extensions or custom filenames (e.g., `case.medcase`, `rintakipu_261104.medcase`) continue to open and run seamlessly.
 
 ## The `case.json` Structure
 
@@ -93,7 +93,7 @@ Presents a question where the student answers by typing free-form text.
 
 ## Complete Example `case.json`
 
-Here is a fully functioning example incorporating all slide types. Save this as `case.json`, put any required images in an `images/` folder, zip them together, and change the file extension to `.medcase`.
+Here is a fully functioning example incorporating all slide types. Save this as `case.json`, put any required images in an `images/` folder, zip them together, and change the file extension to `.phron` (or `.medcase`).
 
 ```json
 {

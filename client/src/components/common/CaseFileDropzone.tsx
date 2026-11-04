@@ -73,7 +73,7 @@ export const CaseFileDropzone: React.FC<CaseFileDropzoneProps> = ({
             <input
                 ref={fileInputRef}
                 type="file"
-                accept=".medcase"
+                accept=".phron,.medcase"
                 className="hidden"
                 onChange={handleFileInputChange}
             />
@@ -91,7 +91,7 @@ export const CaseFileDropzone: React.FC<CaseFileDropzoneProps> = ({
             </div>
 
             <p className="font-extrabold text-gray-900 text-base leading-snug">
-                {t('teacher.dragFileHere', { defaultValue: 'Raahaa .medcase-tiedosto tähän' })}
+                {t('teacher.dragFileHere', { defaultValue: 'Raahaa .phron-tiedosto tähän' })}
             </p>
 
             <div className="flex items-center gap-2.5 w-full max-w-[160px] my-0.5">

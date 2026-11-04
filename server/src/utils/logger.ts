@@ -45,7 +45,7 @@ export const logger = winston.createLogger({
     // do not have docker log drivers configured, or are running it via PM2.
     new DailyRotateFile({
       dirname: logDir,
-      filename: 'medcases-%DATE%.log',
+      filename: 'phronesist-%DATE%.log',
       datePattern: 'YYYY-MM-DD',
       zippedArchive: true,
       maxSize: '20m',

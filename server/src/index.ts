@@ -356,7 +356,7 @@ app.get(new RegExp(`^${BASE_PATH}.*`), (req, res) => {
 // Start port at 3000 (configurable via PORT environment variable)
 const PORT = parseInt(process.env.PORT || '3000', 10);
 server.listen(PORT, () => {
-  logger.info(`\n--- MEDCASES SERVER ---`);
+  logger.info(`\n--- PHRONESIST SERVER ---`);
   logger.info(`Listening on port ${PORT}`);
   logger.info(`Ready for connections...\n`);
 });

@@ -1,6 +1,6 @@
 {
-  "name": "MedCases",
-  "short_name": "MedCases",
+  "name": "Phronesist",
+  "short_name": "Phronesist",
   "description": "Interactive clinical patient cases for medical and healthcare education",
   "start_url": "/",
   "display": "standalone",

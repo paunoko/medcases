@@ -63,7 +63,7 @@ export type CaseSlide =
   | BooleanSlide 
   | OpenTextSlide;
 
-// Root object (.medcase file content)
+// Root object (.phron file content)
 export interface PatientCase {
   meta: {
     id: string;
