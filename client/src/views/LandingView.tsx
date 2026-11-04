@@ -433,7 +433,7 @@ export const LandingView = () => {
                         <div className="space-y-4 animate-fade-in text-gray-700 text-sm">
                             <div className="p-4 rounded-2xl bg-blue-50/70 border border-blue-100/90 flex gap-3.5">
                                 <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0 mt-0.5">
-                                    <ShieldCheck size={20} />
+                                    <Smartphone size={20} />
                                 </div>
                                 <div>
                                     <h4 className="font-extrabold text-blue-950 text-base mb-1">
@@ -447,7 +447,7 @@ export const LandingView = () => {
 
                             <div className="p-4 rounded-2xl bg-slate-50 border border-gray-100 flex gap-3.5">
                                 <div className="w-10 h-10 rounded-xl bg-slate-200/80 text-gray-700 flex items-center justify-center shrink-0 mt-0.5">
-                                    <Smartphone size={20} />
+                                    <ShieldCheck size={20} />
                                 </div>
                                 <div>
                                     <h4 className="font-extrabold text-gray-900 text-base mb-1">

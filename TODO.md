@@ -503,3 +503,14 @@ Tämä tehtävälista pohjautuu koodikannan kattavaan auditointiin. Listaan on k
     - Poistettu redundantti `.MEDCASE`-tunniste laatikosta.
     - Korvattu `truncate` katkeamattomalla rivityksellä (`break-all select-all leading-relaxed`) ja ankkuroitu tiedostokuvake yläreunaan (`items-start mt-0.5`).
     - Kasvatettu dialogin leveyttä (`maxWidth="lg"`), jolloin monisanaiset ja pitkät aikaleimatut tiedostonimet näkyvät aina 100 % kokonaisuudessaan ilman typistymistä.
+
+- [x] **9.15 Infomodaalin ("Mikä MedCases on?") kielen ja sisältöjen hionta (asiallinen asiaproosa, ei hehkutusta)**
+  - **Prioriteetti:** Keskitaso / Viestintä & Kieli
+  - **Tiedostot:** `client/src/i18n/locales/` (`fi.json`, `en.json`, `sv.json`), `client/src/views/LandingView.tsx`
+  - **Tarve:** Aiemmat tekstit sisälsivät markkinointihenkistä hehkutusta ja teknistä jargonia ("zoomattava lightbox", "Zero-Database"). Teksteistä haluttiin selkeää, opettajille ja esittäjille suoraa asiaproosaa, josta käy heti ilmi mitä sovelluksella voi tehdä ja miten se toimii salissa.
+  - **Toimenpiteet:**
+    - Karsittu tekniset termit ja korulauseet.
+    - Muotoiltu "Tapauksen rakentaminen ja esittäminen" siten, ettei synny väärinkäsitystä jäykästä lomakeputkesta, vaan diojen vapaasta rakenteesta.
+    - Korostettu opiskelijan vaivatonta ja nopeaa liittymistä ("sekunneissa omalla puhelimellaan") ja selkeää inhimillistä anonymiteettiä ilman virheen pelkoa.
+    - Päivitetty välilehti "Tausta ja tekijä" ja laajennettu maksuton käyttöoikeus "kaikkeen opetukseen".
+    - Synkronoitu ja harmonisoitu käännökset suomeksi, englanniksi ja ruotsiksi (FI, EN, SV).
